@@ -1,0 +1,57 @@
+[package]
+name = "console-experience"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+default-run = "console-experience" # Explicitly tell Cargo which binary to run
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "console_experience_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sysinfo = "0.30"
+walkdir = "2.5.0"
+steamlocate = "2.0.1"
+winreg = "0.55.0"
+windows = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_System_Com",
+    "Win32_UI_Shell",
+    "Win32_System_WinRT",
+    "Management_Deployment",
+    "ApplicationModel",
+    "ApplicationModel_Core",
+    "Win32_System_Threading",
+    "Win32_Security",
+] }
+
+[[bin]]
+name = "console-experience"
+path = "src/main.rs"
+
+[[bin]]
+name = "watchdog"
+path = "src/watchdog/main.rs"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+pedantic = "warn"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-global-shortcut = "2"
+

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console Xperience - Ultimate</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --steam-dark: #171d25;
+            --steam-blue: #1a9fff;
+            --steam-gradient: linear-gradient(135deg, #06BFFF 0%, #2D73FF 100%);
+            --glass: rgba(23, 29, 37, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #8b929a;
+            --focus-glow: 0 0 15px rgba(26, 159, 255, 0.6);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            user-select: none;
+        }
+
+        /* --- BACKGROUND LAYER --- */
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 0;
+            /* Animation: Slow Zoom for cinematic feel */
+            animation: slowZoom 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* Vignette + Gradient */
+            background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%),
+                        linear-gradient(to right, rgba(14, 19, 27, 0.95) 0%, rgba(14, 19, 27, 0.6) 50%, rgba(14, 19, 27, 0.2) 100%);
+            z-index: 1;
+        }
+
+        /* Ambient Particles (Simulated with CSS) */
+        .particles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.05;
+            z-index: 1;
+            pointer-events: none;
+            mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
+        }
+
+        /* --- STEAM-LIKE SIDEBAR MENU --- */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 200;
+            width: 320px;
+            height: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 10px 0 50px rgba(0,0,0,0.5);
+        }
+
+        .sidebar.expanded {
+            transform: translateX(0);
+        }
+
+        /* User Profile Top */
+        .sidebar-header {
+            padding: 0 30px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar-large {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: url('https://ui-avatars.com/api/?name=Diablo&background=0D8DEF&color=fff&size=64');
+            background-size: cover;
+            box-shadow: 0 0 20px rgba(13, 141, 239, 0.4);
+            border: 2px solid #fff;
+        }
+
+        .user-info h2 { margin: 0; font-size: 1.2rem; font-weight: 600; letter-spacing: 0.5px; }
+        .user-info span { font-size: 0.85rem; color: var(--steam-blue); font-weight: 500; text-transform: uppercase; }
+
+        /* Menu Items */
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 5px;
+        }
+
+        .menu-item {
+            width: 100%;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.15s ease-out;
+            font-size: 1.1rem;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .menu-item .icon {
+            width: 30px;
+            text-align: center;
+            margin-right: 20px;
+            font-size: 1.2rem;
+        }
+
+        /* Focus State for Menu */
+        .menu-item.focused {
+            background: #fff;
+            color: #171d25;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 700;
+        }
+        
+        .menu-item.focused .icon { transform: scale(1.1); }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 20px 30px;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .content-area {
+            flex: 1;
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-rows: 80px 1fr 120px;
+            padding: 0 80px;
+            transition: filter 0.3s, transform 0.3s;
+        }
+
+        /* Blur content when menu is open */
+        .sidebar.expanded ~ .content-area {
+            filter: blur(10px) brightness(0.6);
+            transform: scale(0.98) translateX(20px);
+            pointer-events: none;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .clock-widget {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .system-status {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* MAIN STAGE */
+        .main-stage {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        /* Game Info (Left Side) */
+        .game-meta {
+            max-width: 600px;
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .game-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 0.9;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+
+        .game-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.15);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stat strong { color: #fff; display: block; font-size: 1.3rem; margin-bottom: 2px; }
+
+        /* Carousel */
+        .carousel-wrapper {
+            width: 100%;
+            overflow: visible;
+            padding-top: 40px; /* Space for pop-up effect */
+        }
+
+        .carousel {
+            display: flex;
+            gap: 25px;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .card {
+            min-width: 200px;
+            height: 300px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transform-origin: center center;
+            filter: brightness(0.7);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card.focused {
+            min-width: 240px;
+            height: 360px;
+            filter: brightness(1.1);
+            box-shadow: 0 0 0 4px #fff, 0 20px 50px rgba(0,0,0,0.8);
+            transform: translateY(-30px) scale(1.05);
+            z-index: 10;
+        }
+
+        .card-progress {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.5);
+        }
+        .progress-bar { height: 100%; background: var(--steam-blue); width: 0%; box-shadow: 0 0 10px var(--steam-blue); }
+
+        /* FOOTER */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls-hint {
+            display: flex;
+            gap: 30px;
+        }
+
+        .hint {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-circle {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 0 #9ca3af;
+            font-size: 0.9rem;
+        }
+        
+        .btn-circle.green { background: #10b981; color: #fff; box-shadow: 0 4px 0 #059669; }
+        .btn-circle.red { background: #ef4444; color: #fff; box-shadow: 0 4px 0 #b91c1c; }
+        .btn-circle.blue { background: #3b82f6; color: #fff; box-shadow: 0 4px 0 #2563eb; }
+        .btn-circle.yellow { background: #f59e0b; color: #fff; box-shadow: 0 4px 0 #d97706; }
+
+    </style>
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="particles"></div>
+
+    <!-- SIDEBAR MENU -->
+    <div class="sidebar" id="sidebar">
+        
+        <div class="sidebar-header">
+            <div class="avatar-large"></div>
+            <div class="user-info">
+                <h2>DIABLO</h2>
+                <span>Online</span>
+            </div>
+        </div>
+
+        <div class="menu-list" id="menuList">
+            <div class="menu-item focused" data-index="0">
+                <div class="icon">🏠</div>
+                <div class="label">INICIO</div>
+            </div>
+            
+            <div class="menu-item" data-index="1">
+                <div class="icon">�</div>
+                <div class="label">BIBLIOTECA</div>
+            </div>
+            
+            <div class="menu-item" data-index="2">
+                <div class="icon">🔍</div>
+                <div class="label">BUSCAR</div>
+            </div>
+
+            <div class="menu-divider"></div>
+
+            <div class="menu-item" data-index="3">
+                <div class="icon">⚙️</div>
+                <div class="label">AJUSTES</div>
+            </div>
+
+            <div class="menu-item" data-index="4">
+                <div class="icon">💻</div>
+                <div class="label">ESCRITORIO</div>
+            </div>
+
+            <div class="menu-item" style="color: #ef4444;" data-index="5">
+                <div class="icon">⭕</div>
+                <div class="label">APAGAR</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content-area">
+        
+        <div class="header">
+            <div class="clock-widget" id="clock">22:45</div>
+            <div class="system-status">
+                <span>WIFI 5G</span>
+                <span>🎮 85%</span>
+            </div>
+        </div>
+
+        <div class="main-stage">
+            
+            <div class="game-meta">
+                <div class="game-logo" id="gameTitle">CYBERPUNK 2077</div>
+                <div class="game-tags">
+                    <span class="tag">RPG</span>
+                    <span class="tag">Open World</span>
+                    <span class="tag">Sci-Fi</span>
+                </div>
+                <div class="game-stats">
+                    <div class="stat"><strong>45h 20m</strong>Tiempo Jugado</div>
+                    <div class="stat"><strong>65%</strong>Logros</div>
+                    <div class="stat"><strong>3</strong>Amigos jugando</div>
+                </div>
+            </div>
+
+            <div class="carousel-wrapper">
+                <div class="carousel" id="carousel">
+                    <!-- Cards injected via JS -->
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <div class="controls-hint" id="gameControls">
+                <div class="hint"><div class="btn-circle green">A</div> Jugar</div>
+                <div class="hint"><div class="btn-circle blue">X</div> Detalles</div>
+                <div class="hint"><div class="btn-circle yellow">Y</div> Favorito</div>
+                <div class="hint"><div class="btn-circle">M</div> Menú</div>
+            </div>
+            <div class="controls-hint" id="menuControls" style="display: none;">
+                <div class="hint"><div class="btn-circle green">A</div> Seleccionar</div>
+                <div class="hint"><div class="btn-circle red">B</div> Volver</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA ---
+        const games = [
+            { id: 1, title: "CYBERPUNK 2077", bg: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?q=80&w=1920&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=600&auto=format&fit=crop", progress: 80 },
+            { id: 2, title: "ELDEN RING", bg: "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=1920&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1599557452673-810620857739?q=80&w=600&auto=format&fit=crop", progress: 45 },
+            { id: 3, title: "FORZA HORIZON 5", bg: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1920&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1549468057-5b7fa1a41d72?q=80&w=600&auto=format&fit=crop", progress: 10 },
+            { id: 4, title: "GOD OF WAR", bg: "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=1920&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=600&auto=format&fit=crop", progress: 100 },
+            { id: 5, title: "MINECRAFT", bg: "https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=1920&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1607988795622-97fa530dd6e5?q=80&w=600&auto=format&fit=crop", progress: 60 }
+        ];
+
+        let selectedIndex = 0;
+        let menuOpen = false;
+        let menuIndex = 0;
+        const menuItemsCount = 6;
+        
+        const carousel = document.getElementById('carousel');
+        const heroBg = document.getElementById('heroBg');
+        const gameTitle = document.getElementById('gameTitle');
+        const sidebar = document.getElementById('sidebar');
+        const menuItems = document.querySelectorAll('.menu-item');
+        const gameControls = document.getElementById('gameControls');
+        const menuControls = document.getElementById('menuControls');
+        const clockWidget = document.getElementById('clock');
+
+        // Clock Update
+        setInterval(() => {
+            const now = new Date();
+            clockWidget.innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
+
+        // --- RENDER ---
+        function render() {
+            carousel.innerHTML = '';
+            games.forEach((game, index) => {
+                const card = document.createElement('div');
+                card.className = `card ${index === selectedIndex ? 'focused' : ''}`;
+                card.innerHTML = `
+                    <img src="${game.cover}" alt="${game.title}">
+                    <div class="card-progress"><div class="progress-bar" style="width: ${game.progress}%"></div></div>
+                `;
+                // Only allow click if menu is closed
+                card.onclick = () => { if(!menuOpen) selectGame(index); };
+                carousel.appendChild(card);
+            });
+
+            const currentGame = games[selectedIndex];
+            heroBg.style.backgroundImage = `url('${currentGame.bg}')`;
+            gameTitle.innerText = currentGame.title;
+
+            const cardWidth = 225; // Adjusted for new size + gap
+            const offset = selectedIndex * -cardWidth + (window.innerWidth / 2 - 150); // Center active card
+            carousel.style.transform = `translateX(${offset}px)`;
+        }
+
+        function selectGame(index) {
+            if (index < 0) index = 0;
+            if (index >= games.length) index = games.length - 1;
+            selectedIndex = index;
+            render();
+        }
+
+        function updateMenuVisuals() {
+            menuItems.forEach((item, index) => {
+                if (index === menuIndex) {
+                    item.classList.add('focused');
+                } else {
+                    item.classList.remove('focused');
+                }
+            });
+        }
+
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                sidebar.classList.add('expanded');
+                gameControls.style.display = 'none';
+                menuControls.style.display = 'flex';
+                // Reset menu selection
+                menuIndex = 0;
+                updateMenuVisuals();
+            } else {
+                sidebar.classList.remove('expanded');
+                gameControls.style.display = 'flex';
+                menuControls.style.display = 'none';
+            }
+        }
+
+        // --- CONTROLS ---
+        document.addEventListener('keydown', (e) => {
+            // Global Toggle
+            if (e.key === 'm' || e.key === 'M') {
+                toggleMenu();
+                return;
+            }
+
+            if (menuOpen) {
+                // Menu Navigation
+                if (e.key === 'ArrowUp') {
+                    menuIndex--;
+                    if (menuIndex < 0) menuIndex = menuItemsCount - 1;
+                    updateMenuVisuals();
+                }
+                if (e.key === 'ArrowDown') {
+                    menuIndex++;
+                    if (menuIndex >= menuItemsCount) menuIndex = 0;
+                    updateMenuVisuals();
+                }
+                if (e.key === 'Enter' || e.key === ' ') {
+                    // Simulate selection
+                    const selectedLabel = menuItems[menuIndex].querySelector('.label').innerText;
+                    alert(`Seleccionado: ${selectedLabel}`);
+                    if (selectedLabel === 'ESCRITORIO' || selectedLabel === 'INICIO') toggleMenu();
+                }
+                if (e.key === 'Escape' || e.key === 'b' || e.key === 'B') {
+                    toggleMenu();
+                }
+            } else {
+                // Game Grid Navigation
+                if (e.key === 'ArrowRight') selectGame(selectedIndex + 1);
+                if (e.key === 'ArrowLeft') selectGame(selectedIndex - 1);
+                if (e.key === 'Enter' || e.key === ' ') {
+                    alert(`Lanzando: ${games[selectedIndex].title}`);
+                }
+            }
+        });
+
+        // Initial Render
+        render();
+
+    </script>
+</body>
+</html>
