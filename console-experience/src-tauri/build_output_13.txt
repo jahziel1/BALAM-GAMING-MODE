@@ -1,0 +1,15 @@
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+error[E0599]: no method named `FindPackagesForUser` found for struct `PackageManager` in the current scope
+    --> src\adapters\xbox_scanner.rs:26:42
+     |
+  26 |             let packages = match manager.FindPackagesForUser(&HSTRING::new()) {
+     |                                          ^^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `FindPackages` with a similar name, but with different arguments
+    --> C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-0.52.0\src\Windows\Management\Deployment\mod.rs:2022:5
+     |
+2022 |     pub fn FindPackages(&self) -> ::windows_core::Result<super::super::Foundation::Collections::IIterable<super::super::ApplicationModel::Package>> {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `console-experience` (lib) due to 1 previous error

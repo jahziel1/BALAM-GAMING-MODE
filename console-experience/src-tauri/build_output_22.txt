@@ -1,0 +1,23 @@
+    Checking windows v0.52.0
+    Checking gilrs-core v0.5.15
+    Checking sysinfo v0.30.13
+    Checking gilrs v0.10.10
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+warning: unused variable: `event`
+  --> src\adapters\gamepad_adapter.rs:37:51
+   |
+37 |                     while let Some(gilrs::Event { event, .. }) = g.next_event() {
+   |                                                   ^^^^^ help: try ignoring the field: `event: _`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `greet` is never used
+ --> src\lib.rs:3:4
+  |
+3 | fn greet(name: &str) -> String {
+  |    ^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `console-experience` (lib) generated 2 warnings (run `cargo fix --lib -p console-experience` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 25.09s

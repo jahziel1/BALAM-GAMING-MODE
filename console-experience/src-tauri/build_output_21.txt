@@ -1,0 +1,11 @@
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+warning: function `greet` is never used
+ --> src\lib.rs:3:4
+  |
+3 | fn greet(name: &str) -> String {
+  |    ^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `console-experience` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.59s

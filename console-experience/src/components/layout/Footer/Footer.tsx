@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ isGamepad: initialOverride }) => {
     }
 
     const handleKeyDown = () => setInputType('keyboard');
-    
+
     const handleGamepadConnect = (e: GamepadEvent) => {
       const id = e.gamepad.id.toLowerCase();
       if (id.includes('sony') || id.includes('dual') || id.includes('ps')) {
@@ -33,17 +33,16 @@ const Footer: React.FC<FooterProps> = ({ isGamepad: initialOverride }) => {
     };
 
     // Also listen for button presses to switch back to gamepad mode if user was on keyboard
-    let animationFrameId: number;
     const pollGamepads = () => {
       const gamepads = navigator.getGamepads();
       for (const gp of gamepads) {
         if (gp && gp.buttons.some(b => b.pressed)) {
-           // Detect type again based on connected gamepad
-           const id = gp.id.toLowerCase();
-           if (id.includes('sony')) setInputType('playstation');
-           else if (id.includes('nintendo')) setInputType('nintendo');
-           else setInputType('xbox');
-           break;
+          // Detect type again based on connected gamepad
+          const id = gp.id.toLowerCase();
+          if (id.includes('sony')) setInputType('playstation');
+          else if (id.includes('nintendo')) setInputType('nintendo');
+          else setInputType('xbox');
+          break;
         }
       }
       // Throttle polling: check every 100ms or so instead of every frame?
@@ -52,12 +51,12 @@ const Footer: React.FC<FooterProps> = ({ isGamepad: initialOverride }) => {
       // We need a lightweight listener for "any button press" to switch context from Keyboard -> Gamepad
       // Efficient polling strategy: check every 200ms
     };
-    
+
     const interval = setInterval(pollGamepads, 200);
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('gamepadconnected', handleGamepadConnect);
-    
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('gamepadconnected', handleGamepadConnect);

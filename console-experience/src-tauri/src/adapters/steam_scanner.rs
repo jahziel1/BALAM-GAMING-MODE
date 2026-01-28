@@ -11,7 +11,7 @@ impl SteamScanner {
 
         // In steamlocate v2, locate() returns a SteamDir
         match SteamDir::locate() {
-            Ok(mut steam_dir) => {
+            Ok(steam_dir) => {
                 // Find apps
                 // Note: v2 requires manual iteration over library folders or using `apps()` directly if available
                 // Let's use the most standard way for v2: iterate over libraries

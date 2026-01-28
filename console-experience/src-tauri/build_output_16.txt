@@ -1,0 +1,33 @@
+    Updating crates.io index
+     Locking 11 packages to latest compatible versions
+      Adding cfg_aliases v0.2.1
+      Adding core-foundation v0.9.4
+      Adding gilrs v0.10.10 (available: v0.11.1)
+      Adding gilrs-core v0.5.15
+      Adding inotify v0.10.2
+      Adding inotify-sys v0.1.5
+      Adding io-kit-sys v0.4.1
+      Adding libudev-sys v0.1.4
+      Adding mach2 v0.4.3
+      Adding nix v0.29.0
+      Adding vec_map v0.8.2
+ Downloading crates ...
+  Downloaded vec_map v0.8.2
+  Downloaded gilrs-core v0.5.15
+  Downloaded gilrs v0.10.10
+    Checking windows v0.52.0
+   Compiling gilrs v0.10.10
+    Checking vec_map v0.8.2
+    Checking gilrs-core v0.5.15
+    Checking sysinfo v0.30.13
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+warning: function `greet` is never used
+ --> src\lib.rs:3:4
+  |
+3 | fn greet(name: &str) -> String {
+  |    ^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `console-experience` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 36.80s

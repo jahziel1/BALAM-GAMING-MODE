@@ -1,6 +1,5 @@
 use std::process::Command;
 use tauri::{AppHandle, Manager};
-use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 use sysinfo::{Pid, System};
@@ -8,11 +7,16 @@ use winreg::enums::*;
 use winreg::RegKey;
 
 // Windows Native Imports
-use windows::core::{HSTRING, Interface};
 use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CLSCTX_LOCAL_SERVER, COINIT_APARTMENTTHREADED};
 use windows::Win32::UI::Shell::{IApplicationActivationManager, ApplicationActivationManager};
 
 // Lanza el juego y opcionalmente activa el Watchdog
+/// Launch a game and monitor its lifecycle.
+///
+/// This function handles different launch strategies based on the game ID:
+/// - Steam: Uses the `steam://` protocol.
+/// - Xbox/UWP: Uses native Windows COM activation to get a real PID.
+/// - Native: Standard executable launch.
 pub fn launch_game_process(id: &str, path: &str, app_handle: &AppHandle) -> Result<(), String> {
     println!("Launching game: {} ({})", id, path);
     let app_handle_clone = app_handle.clone();
@@ -26,38 +30,41 @@ pub fn launch_game_process(id: &str, path: &str, app_handle: &AppHandle) -> Resu
 
         let status = Command::new("cmd")
             .args(["/C", "start", &steam_url])
-            .status(); // Wait for the command to finish launching (it returns instantly)
+            .status()
+            .map_err(|e| format!("Failed to launch Steam command: {}", e))?;
             
-        match status {
-            Ok(s) => println!("Steam launch command status: {}", s),
-            Err(e) => println!("ERROR launching Steam command: {}", e),
-        }
+        println!("Steam launch command status: {}", status);
             
         // Use Registry Watchdog for Steam (Robust & Efficient)
         minimize_window(&app_handle_clone);
         start_steam_registry_watchdog(app_id, app_handle_clone);
 
     } else if id.starts_with("xbox_") {
-        // Xbox / UWP Strategy
-        let app_id = path; // For Xbox, the 'path' IS the AppUserModelId
-        println!("Executing Xbox Command: explorer.exe shell:AppsFolder\\{}", app_id);
+        // Xbox / UWP Strategy (Native Activation)
+        println!("Attempting native UWP activation for: {}", path);
         
-        // Launch via Explorer
-        let _ = Command::new("explorer")
-            .arg(format!("shell:AppsFolder\\{}", app_id))
-            .spawn();
-            
-        minimize_window(&app_handle_clone);
-        
-        // TODO: Implement UWP Watchdog (Hard without PID).
-        // For now, we rely on manual "Resume" or "Home" button.
-        // Or we could poll foreground window?
-        println!("Xbox game launched. Watchdog not fully supported for UWP yet.");
+        match launch_uwp_app(path) {
+            Ok(pid) => {
+                println!("Xbox game launched natively with PID: {}", pid);
+                minimize_window(&app_handle_clone);
+                start_watchdog(pid, app_handle_clone);
+            }
+            Err(e) => {
+                println!("Failed native Xbox launch: {}. Falling back to explorer...", e);
+                // Fallback to Shell launch (Less robust, no PID)
+                let _ = Command::new("explorer")
+                    .arg(format!("shell:AppsFolder\\{}", path))
+                    .spawn()
+                    .map_err(|e| format!("Extreme failure: Explorer fallback failed: {}", e))?;
+                
+                minimize_window(&app_handle_clone);
+            }
+        }
         
     } else {
         // Standard Executable Strategy
         let exe_path = std::path::Path::new(path);
-        let working_dir = exe_path.parent().unwrap_or(exe_path);
+        let working_dir = exe_path.parent().ok_or_else(|| "Invalid game path".to_string())?;
 
         let child = Command::new(path)
             .current_dir(working_dir)
@@ -127,8 +134,6 @@ fn start_steam_registry_watchdog(app_id: String, app_handle: AppHandle) {
     });
 }
 
-// start_folder_watchdog REMOVED in favor of Registry Watchdog
-
 fn restore_window(app_handle: &AppHandle) {
     if let Some(window) = app_handle.get_webview_window("main") {
         let _ = window.show();
@@ -160,7 +165,12 @@ fn start_watchdog(pid: u32, app_handle: AppHandle) {
     });
 }
 
-// Native UWP Launcher Implementation
+/// Activates a UWP application natively using COM interfaces.
+///
+/// SAFETY: This function uses `unsafe` because it interacts directly with the
+/// Windows COM API (`IApplicationActivationManager`).
+/// Justification: There is no safe wrapper in Rust for UWP activation that returns
+/// the process PID, which is required for our watchdog system.
 fn launch_uwp_app(app_user_model_id: &str) -> Result<u32, String> {
     unsafe {
         // Initialize COM (Important for UWP activation)
@@ -168,26 +178,21 @@ fn launch_uwp_app(app_user_model_id: &str) -> Result<u32, String> {
         let _ = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
 
         // Create Instance of ApplicationActivationManager
-        let manager: IApplicationActivationManager = match CoCreateInstance(
+        let manager: IApplicationActivationManager = CoCreateInstance(
             &ApplicationActivationManager, 
             None, 
             CLSCTX_LOCAL_SERVER
-        ) {
-            Ok(m) => m,
-            Err(e) => return Err(format!("Failed to create ApplicationActivationManager: {}", e)),
-        };
+        ).map_err(|e| format!("Failed to create ApplicationActivationManager: {}", e))?;
 
-        let mut pid: u32 = 0;
-        let app_id_hstring = HSTRING::from(app_user_model_id);
+        let app_id_hstring = windows::core::HSTRING::from(app_user_model_id);
 
         // ActivateApplication returns the PID
-        match manager.ActivateApplication(
+        let pid = manager.ActivateApplication(
             &app_id_hstring,
             None, // Arguments
             windows::Win32::UI::Shell::AO_NONE
-        ) {
-            Ok(returned_pid) => Ok(returned_pid),
-            Err(e) => Err(format!("Failed to ActivateApplication: {}", e))
-        }
+        ).map_err(|e| format!("Failed to ActivateApplication: {}", e))?;
+
+        Ok(pid)
     }
 }

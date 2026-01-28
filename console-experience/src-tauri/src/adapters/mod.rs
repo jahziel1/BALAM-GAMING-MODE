@@ -3,3 +3,5 @@ pub mod process_launcher;
 pub mod steam_scanner;
 pub mod epic_scanner;
 pub mod xbox_scanner;
+pub mod windows_system_adapter;
+pub mod gamepad_adapter;

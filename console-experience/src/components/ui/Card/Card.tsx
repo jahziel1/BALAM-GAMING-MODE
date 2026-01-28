@@ -19,8 +19,8 @@ const Card: React.FC<CardProps> = ({ title, image, isFocused = false, isLoading 
   // If external loading state is true, render skeleton
   if (isLoading) {
     return (
-      <div 
-        className={`card skeleton ${isFocused ? 'focused' : ''}`} 
+      <div
+        className={`card skeleton ${isFocused ? 'focused' : ''}`}
         style={style}
         data-testid="game-card-skeleton"
       >
@@ -30,9 +30,9 @@ const Card: React.FC<CardProps> = ({ title, image, isFocused = false, isLoading 
   }
 
   return (
-    <div 
-      className={`card ${isFocused ? 'focused' : ''} ${imgError ? 'error' : ''}`} 
-      style={style} 
+    <div
+      className={`card ${isFocused ? 'focused' : ''} ${imgError ? 'error' : ''}`}
+      style={style}
       data-testid="game-card"
       onClick={onClick}
       onDoubleClick={onDoubleClick}
@@ -41,20 +41,21 @@ const Card: React.FC<CardProps> = ({ title, image, isFocused = false, isLoading 
     >
       <div className="card-image-container">
         {!imgError ? (
-          <img 
-            src={image} 
-            alt={title} 
-            loading="lazy"
+          <img
+            src={image}
+            alt={title}
             className={imgLoaded ? 'loaded' : ''}
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
           />
         ) : (
           <div className="fallback-content">
-             <ImageOff size={48} color="#444" />
-             <span style={{fontSize: '0.8rem', color: '#666', marginTop: '10px', textAlign: 'center', padding: '0 10px'}}>
-               {title}
-             </span>
+            <ImageOff size={48} color="#444" />
+          </div>
+        )}
+        {(!imgLoaded || imgError) && (
+          <div className="card-title-fallback">
+            {title}
           </div>
         )}
       </div>

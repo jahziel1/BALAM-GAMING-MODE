@@ -1,6 +1,4 @@
-use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
-use crate::domain::Game; // Asumimos que existirá esta entidad
 
 // Simple scanner that looks for .exe files in given directories
 // TODO: In production, this should parse Steam library folders properly.

@@ -1,25 +1,39 @@
 .top-bar {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 80px; /* Consoles have tall headers for TV visibility */
+  height: 80px;
+  /* Consoles have tall headers for TV visibility */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5vw; /* Responsive padding */
+  padding: 0 5vw;
+  /* Responsive padding */
   z-index: 100;
   /* Gradient fade at top */
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-  pointer-events: none; /* Let clicks pass through to game grid if needed */
-  box-sizing: border-box; /* Ensure padding doesn't overflow width */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  /* Let clicks pass through to game grid if needed */
+  box-sizing: border-box;
+  /* Ensure padding doesn't overflow width */
 }
 
 /* ... existing styles ... */
 
 @media (max-width: 768px) {
-  .username { display: none; } /* Hide username on small screens */
-  .system-status { gap: 15px; }
-  .clock { font-size: 1.2rem; }
+  .username {
+    display: none;
+  }
+
+  /* Hide username on small screens */
+  .system-status {
+    gap: 15px;
+  }
+
+  .clock {
+    font-size: 1.2rem;
+  }
 }
 
 .user-section {
@@ -30,10 +44,11 @@
 }
 
 .avatar-small {
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #2D73FF;
-  border: 2px solid rgba(255,255,255,0.8);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 10px rgba(45, 115, 255, 0.5);
 }
 
@@ -68,12 +83,57 @@
 
 .status-icons .icon.active {
   color: #fff;
-  filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+.status-item.clickable {
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.status-item.clickable:hover {
+  transform: scale(1.1);
+}
+
+.status-item.clickable:active {
+  transform: scale(0.95);
+}
+
+.status-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.icon.charging {
+  color: #22c55e;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.icon.low {
+  color: #ef4444;
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 2px #22c55e);
+  }
+
+  50% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 8px #22c55e);
+  }
 }
 
 .clock {
-  font-family: 'Inter', sans-serif; /* Clean font for numbers */
-  font-size: 1.5rem; /* Large for TV */
+  font-family: 'Inter', sans-serif;
+  /* Clean font for numbers */
+  font-size: 1.5rem;
+  /* Large for TV */
   font-weight: 300;
   letter-spacing: 0.5px;
 }

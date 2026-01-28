@@ -1,23 +1,27 @@
 .card {
-  min-width: 200px;
-  height: 300px;
-  background: #1a1a1a;
+  width: var(--card-width);
+  height: var(--card-height);
+  background: #1e1e24;
+  /* Slightly lighter background */
   border-radius: 12px;
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Elastic bounce */
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   transform-origin: center center;
-  filter: brightness(0.6) saturate(0.8);
-  /* GPU Acceleration Hints */
+  filter: brightness(0.8);
+  /* Increased base brightness */
   will-change: transform, filter, box-shadow;
   backface-visibility: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  scroll-snap-align: start;
 }
 
 .card-image-container {
   width: 100%;
   height: 100%;
-  background: #1a1a1a; /* Placeholder color */
+  background: #1a1a1a;
+  /* Placeholder color */
   position: relative;
   overflow: hidden;
 }
@@ -43,8 +47,13 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Error State / Fallback */
@@ -60,15 +69,31 @@
 .fallback-icon {
   font-size: 3rem;
   margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.card-title-fallback {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
 }
 
 /* Shine Effect */
 .card::after {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
-  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
   transition: left 0.5s;
   pointer-events: none;
@@ -76,8 +101,9 @@
 }
 
 .card.focused {
-  transform: scale(1.08) translateY(-10px); /* Reduced scale from 1.15 to 1.08 */
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  transform: scale(1.08) translateY(-10px);
+  /* Reduced scale from 1.15 to 1.08 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   border: 2px solid #fff;
   z-index: 10;
 }

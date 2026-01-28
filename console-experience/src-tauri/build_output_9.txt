@@ -1,0 +1,33 @@
+    Checking windows v0.52.0
+    Checking sysinfo v0.30.13
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+warning: unused import: `IAudioClient`
+ --> src\adapters\windows_system_adapter.rs:3:107
+  |
+3 | use windows::Win32::Media::Audio::{IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole, IMMDevice, IAudioClient};
+  |                                                                                                           ^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0308]: mismatched types
+    --> src\adapters\windows_system_adapter.rs:47:64
+     |
+  47 |             let volume: IAudioEndpointVolume = device.Activate(CLSCTX_ALL.0, None)
+     |                                                       -------- ^^^^^^^^^^^^ expected `CLSCTX`, found `u32`
+     |                                                       |
+     |                                                       arguments to this method are incorrect
+     |
+note: method defined here
+    --> C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-0.52.0\src\Windows\Win32\Media\Audio\mod.rs:3048:19
+     |
+3048 |     pub unsafe fn Activate<T>(&self, dwclsctx: super::super::System::Com::CLSCTX, pactivationparams: ::core::option::Option<*const super:...
+     |                   ^^^^^^^^
+help: consider removing the tuple struct field `0`
+     |
+  47 -             let volume: IAudioEndpointVolume = device.Activate(CLSCTX_ALL.0, None)
+  47 +             let volume: IAudioEndpointVolume = device.Activate(CLSCTX_ALL, None)
+     |
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `console-experience` (lib) generated 1 warning
+error: could not compile `console-experience` (lib) due to 1 previous error; 1 warning emitted

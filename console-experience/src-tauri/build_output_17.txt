@@ -1,0 +1,16 @@
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+error[E0277]: expected a `FnOnce()` closure, found `HashMap<_, _>`
+  --> src\adapters\gamepad_adapter.rs:73:49
+   |
+73 | ...                   .or_insert_with(HashMap::new())
+   |                        -------------- ^^^^^^^^^^^^^^ expected an `FnOnce()` closure, found `HashMap<_, _>`
+   |                        |
+   |                        required by a bound introduced by this call
+   |
+   = help: the trait `FnOnce()` is not implemented for `HashMap<_, _>`
+   = note: wrap the `HashMap<_, _>` in a closure with no arguments: `|| { /* code */ }`
+note: required by a bound in `std::collections::hash_map::Entry::<'a, K, V>::or_insert_with`
+  --> /rustc/254b59607d4417e9dffbc307138ae5c86280fe4c\library\std\src\collections\hash\map.rs:2371:5
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `console-experience` (lib) due to 1 previous error

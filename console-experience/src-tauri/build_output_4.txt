@@ -1,0 +1,9 @@
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+error[E0599]: no method named `Activate` found for struct `IMMDevice` in the current scope
+  --> src\adapters\windows_system_adapter.rs:47:33
+   |
+47 |             let volume = device.Activate::<IAudioEndpointVolume>(CLSCTX_ALL.0, None)
+   |                                 ^^^^^^^^ method not found in `IMMDevice`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `console-experience` (lib) due to 1 previous error

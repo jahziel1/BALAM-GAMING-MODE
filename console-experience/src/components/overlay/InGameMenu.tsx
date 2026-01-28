@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './InGameMenu.css';
 import { Play, XCircle, Home } from 'lucide-react';
-import { Game } from '../../domain/game';
-import { useGamepad } from '../../hooks/useGamepad';
+import { Game } from '../../types/game';
 
 interface InGameMenuProps {
   game: Game;
+  activeIndex: number; // Controlled by parent App.tsx
   onResume: () => void;
   onQuitGame: () => void;
   onGoHome: () => void;
@@ -13,44 +13,16 @@ interface InGameMenuProps {
 
 const MENU_OPTIONS = [
   { id: 'resume', label: 'RESUME GAME', icon: <Play /> },
-  { id: 'quit', label: 'QUIT GAME', icon: <XCircle />, danger: true },
   { id: 'home', label: 'LIBRARY', icon: <Home /> },
+  { id: 'quit', label: 'QUIT GAME', icon: <XCircle />, danger: true },
 ];
 
-const InGameMenu: React.FC<InGameMenuProps> = ({ game, onResume, onQuitGame, onGoHome }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Keyboard & Gamepad Logic
+const InGameMenu: React.FC<InGameMenuProps> = ({ game, activeIndex, onResume, onQuitGame, onGoHome }) => {
   const handleOptionClick = (optionId: string) => {
     if (optionId === 'resume') onResume();
     if (optionId === 'quit') onQuitGame();
     if (optionId === 'home') onGoHome();
   };
-
-  const handleAction = () => {
-    handleOptionClick(MENU_OPTIONS[activeIndex].id);
-  };
-
-  useGamepad({
-    onButtonDown: (btn) => {
-      if (btn === 'Up') setActiveIndex(prev => Math.max(0, prev - 1));
-      if (btn === 'Down') setActiveIndex(prev => Math.min(MENU_OPTIONS.length - 1, prev + 1));
-      if (btn === 'A') handleAction();
-      if (btn === 'B') onResume(); // B always resumes
-    }
-  });
-
-  // Keyboard fallback
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowUp') setActiveIndex(prev => Math.max(0, prev - 1));
-      if (e.key === 'ArrowDown') setActiveIndex(prev => Math.min(MENU_OPTIONS.length - 1, prev + 1));
-      if (e.key === 'Enter') handleAction();
-      if (e.key === 'Escape') onResume();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [activeIndex]);
 
   return (
     <div className="ingame-overlay">
@@ -65,10 +37,9 @@ const InGameMenu: React.FC<InGameMenuProps> = ({ game, onResume, onQuitGame, onG
 
         <div className="ingame-menu">
           {MENU_OPTIONS.map((opt, idx) => (
-            <div 
+            <div
               key={opt.id}
               className={`ingame-item ${idx === activeIndex ? 'focused' : ''} ${opt.danger ? 'danger' : ''}`}
-              onMouseEnter={() => setActiveIndex(idx)}
               onClick={() => handleOptionClick(opt.id)}
             >
               <span className="icon">{opt.icon}</span>

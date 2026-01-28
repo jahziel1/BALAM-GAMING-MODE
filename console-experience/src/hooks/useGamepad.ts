@@ -2,11 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 type GamepadButton = 'A' | 'B' | 'X' | 'Y' | 'LB' | 'RB' | 'LT' | 'RT' | 'Back' | 'Start' | 'LS' | 'RS' | 'Up' | 'Down' | 'Left' | 'Right';
 
-interface GamepadState {
-  connected: boolean;
-  buttons: Record<GamepadButton, boolean>;
-  axes: number[];
-}
 
 interface UseGamepadOptions {
   onButtonDown?: (button: GamepadButton) => void;

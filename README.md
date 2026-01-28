@@ -54,6 +54,7 @@ Transforma tu PC con Windows en una experiencia de consola dedicada. Sin distrac
 ### Comandos
 ```bash
 # Instalar dependencias
+cd console-experience
 npm install
 
 # Iniciar en modo desarrollo con Hot Reload (Frontend + Rust)

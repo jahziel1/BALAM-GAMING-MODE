@@ -1,0 +1,18 @@
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+warning: unused import: `IAudioClient`
+ --> src\adapters\windows_system_adapter.rs:3:107
+  |
+3 | use windows::Win32::Media::Audio::{IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole, IMMDevice, IAudioClient};
+  |                                                                                                           ^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0599]: no method named `Activate` found for struct `IMMDevice` in the current scope
+  --> src\adapters\windows_system_adapter.rs:47:55
+   |
+47 |             let volume: IAudioEndpointVolume = device.Activate(CLSCTX_ALL.0)
+   |                                                       ^^^^^^^^ method not found in `IMMDevice`
+
+For more information about this error, try `rustc --explain E0599`.
+warning: `console-experience` (lib) generated 1 warning
+error: could not compile `console-experience` (lib) due to 1 previous error; 1 warning emitted
