@@ -33,6 +33,14 @@ El proyecto seguirá estrictamente una arquitectura por capas para desacoplar la
 *   **Testing:**
     *   **Cobertura:** Toda nueva lógica de negocio debe incluir sus **Unit Tests**.
     *   No se acepta código sin tests asociados.
+*   **Performance-First (Critical):**
+    *   Todo re-renderizado debe ser justificado. Usar `React.memo`, `useMemo` y `useCallback` por defecto en componentes de la galería.
+    *   Evitar lecturas del DOM en bucles de animación o polling.
+    *   Mantener el bundle de Tauri por debajo de los 100MB si es posible.
+*   **Native-First Architecture (KISS/CLEAN):**
+    *   **Prioridad Nativa:** Usar siempre APIs nativas de Windows (Win32, COM, WinRT) para interactuar con hardware y sistema. Evitar `Command::new` para utilidades de sistema si existe una API de bajo nivel.
+    *   **Control Total:** Interceptar eventos del sistema (ej: teclas multimedia) para suprimir la UI nativa de Windows (OSD) y mantener la inmersión de consola.
+    *   **Eficiencia:** El backend en Rust debe ser el "cerebro" reactivo, comunicándose con el frontend vía eventos (`emit`) para evitar polling innecesario.
 
 ## 3. Estándares Específicos: Rust (Backend)
 *   **Seguridad de Memoria:**
@@ -52,6 +60,9 @@ El proyecto seguirá estrictamente una arquitectura por capas para desacoplar la
 *   **Gestión de Estado Atómica:**
     *   Minimizar re-renderizados globales. Usar selectores de estado granulares.
     *   Componentes que se actualizan frecuentemente (ej: cursor, barra de progreso) deben estar aislados.
+*   **Asset Management:**
+    *   Las imágenes críticas (placeholders, logos) deben estar locales en `src/assets`.
+    *   Cargar imágenes remotas de forma perezosa (lazy loading).
 
 ## 6. Herramientas de Calidad Automática (Linters)
 Para garantizar el cumplimiento de estas normas sin intervención humana constante, se configuran las siguientes herramientas obligatorias:

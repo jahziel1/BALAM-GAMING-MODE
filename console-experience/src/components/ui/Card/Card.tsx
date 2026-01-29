@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect, forwardRef } from 'react';
 import './Card.css';
 import { ImageOff } from 'lucide-react';
 
@@ -12,14 +12,33 @@ interface CardProps {
   onDoubleClick?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ title, image, isFocused = false, isLoading = false, style, onClick, onDoubleClick }) => {
+const Card = forwardRef<HTMLDivElement, CardProps>(({
+  title,
+  image,
+  isFocused = false,
+  isLoading = false,
+  style,
+  onClick,
+  onDoubleClick
+}, ref) => {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  // If external loading state is true, render skeleton
+  // Performance optimization: only scroll into view if focused changes to true
+  useEffect(() => {
+    if (isFocused && ref && typeof ref !== 'function' && ref.current) {
+      ref.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [isFocused, ref]);
+
   if (isLoading) {
     return (
       <div
+        ref={ref}
         className={`card skeleton ${isFocused ? 'focused' : ''}`}
         style={style}
         data-testid="game-card-skeleton"
@@ -31,6 +50,7 @@ const Card: React.FC<CardProps> = ({ title, image, isFocused = false, isLoading 
 
   return (
     <div
+      ref={ref}
       className={`card ${isFocused ? 'focused' : ''} ${imgError ? 'error' : ''}`}
       style={style}
       data-testid="game-card"
@@ -59,9 +79,8 @@ const Card: React.FC<CardProps> = ({ title, image, isFocused = false, isLoading 
           </div>
         )}
       </div>
-      {/* Shine effect is handled via CSS ::after pseudo-element */}
     </div>
   );
-};
+});
 
 export default memo(Card);

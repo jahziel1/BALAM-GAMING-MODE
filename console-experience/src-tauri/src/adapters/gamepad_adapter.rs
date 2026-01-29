@@ -3,6 +3,7 @@ use std::thread;
 use std::time::Duration;
 use windows::Win32::UI::Input::XboxController::*;
 use gilrs::{Gilrs, Button};
+use tracing::{info, error};
 
 // Helper struct to track button state changes
 struct ButtonState {
@@ -28,7 +29,7 @@ impl ButtonState {
 
 pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
     thread::spawn(move || {
-        println!("--- BALAM ENGINE: DUAL-CHANNEL NAVIGATION (Web + Native Reliability) ---");
+        info!("--- BALAM ENGINE: DUAL-CHANNEL NAVIGATION (Web + Native Reliability) ---");
         
         // Trackers for debounce / edge detection
         let mut btn_a = ButtonState::new();
@@ -93,7 +94,7 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
                 while let Some(_) = g.next_event() {} 
                 
                 for (_, gamepad) in g.gamepads() {
-                    active_source = "GILRS";
+                    // active_source = "GILRS";
                     if gamepad.is_pressed(Button::South) { pressed_a = true; } // A / Cross
                     if gamepad.is_pressed(Button::East) { pressed_b = true; }  // B / Circle
                     if gamepad.is_pressed(Button::Start) { pressed_menu = true; }
@@ -148,7 +149,7 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
 fn handle_wakeup<R: Runtime>(app: &AppHandle<R>) {
     if let Some(win) = app.get_webview_window("main") {
         if !win.is_visible().unwrap_or(false) {
-            println!("[NATIVE] Waking up Shell!");
+            info!("[NATIVE] Waking up Shell!");
             let _ = win.show();
             let _ = win.set_always_on_top(true);
             let _ = win.set_focus();

@@ -2,6 +2,7 @@ use crate::domain::Game;
 use winreg::enums::*;
 use winreg::RegKey;
 use std::collections::HashSet;
+use tracing::info;
 
 pub struct XboxScanner;
 
@@ -11,7 +12,7 @@ impl XboxScanner {
     pub fn scan() -> Vec<Game> {
         let mut games = Vec::new();
         let mut seen_ids = HashSet::new();
-        println!("Scanning Xbox/UWP Apps (Deduplicated Registry)...");
+        info!("Scanning Xbox/UWP Apps (Deduplicated Registry)...");
 
         let hkcu = RegKey::predef(HKEY_CURRENT_USER);
         let path = "Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\CurrentVersion\\AppModel\\Repository\\Packages";
@@ -68,7 +69,7 @@ impl XboxScanner {
             }
         }
 
-        println!("Found {} unique Xbox/UWP games", games.len());
+        info!("Xbox/UWP scan complete. Found {} unique games", games.len());
         games
     }
 }

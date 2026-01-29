@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 use serde::Deserialize;
 use crate::domain::Game;
+use tracing::info;
 
 #[derive(Deserialize, Debug)]
 struct EpicManifest {
@@ -21,7 +22,7 @@ pub struct EpicScanner;
 impl EpicScanner {
     pub fn scan() -> Vec<Game> {
         let mut games = Vec::new();
-        println!("Scanning Epic Games...");
+        info!("Scanning Epic Games...");
 
         // Standard Epic Manifests location
         let manifest_path = "C:\\ProgramData\\Epic\\EpicGamesLauncher\\Data\\Manifests";
@@ -54,7 +55,7 @@ impl EpicScanner {
             }
         }
         
-        println!("Found {} Epic games", games.len());
+        info!("Epic Games scan complete. Found {} games", games.len());
         games
     }
 }

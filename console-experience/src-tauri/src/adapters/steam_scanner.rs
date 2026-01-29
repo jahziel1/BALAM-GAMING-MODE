@@ -1,5 +1,6 @@
 use steamlocate::SteamDir;
 use crate::domain::Game;
+use tracing::{info, warn};
 
 pub struct SteamScanner;
 
@@ -7,49 +8,11 @@ impl SteamScanner {
     pub fn scan() -> Vec<Game> {
         let mut games = Vec::new();
         
-        println!("Scanning Steam...");
+        info!("Scanning Steam...");
 
         // In steamlocate v2, locate() returns a SteamDir
         match SteamDir::locate() {
             Ok(steam_dir) => {
-                // Find apps
-                // Note: v2 requires manual iteration over library folders or using `apps()` directly if available
-                // Let's use the most standard way for v2: iterate over libraries
-                
-                // Try to find the steamapps folder
-                // steamlocate v2 provides an iterator for apps via `steam_dir.apps()` but it returns a `Result` or changed signature
-                // Let's try the simplest approach that works in v2
-                
-                // Re-scan libraries to populate data
-                // In v2, we might not need explicit compat() call if it's automatic or named differently
-                // Let's check documentation pattern: usually just accessing apps works
-                
-                // Refactored for v2 API based on common usage:
-                // SteamDir contains a map of AppId -> App
-                
-                // NOTE: steamlocate v2 might not have compat() or apps() directly exposed the same way.
-                // Let's look at the library structure.
-                
-                // Assuming v2 API:
-                // steam_dir.find_app(app_id) exists
-                // To list ALL apps, we need to iterate the libraryfolders.vdf manually if the helper is gone,
-                // OR use the `steam_dir.apps()` if it exists.
-                
-                // Let's try this simplified logic which is more robust across versions:
-                // (This assumes we can iterate. If not, we will need to read libraryfolders.vdf manually)
-                
-                // Actually, let's use the `libraryfolders()` method if available
-                
-                // WORKAROUND: Since I can't see the docs, I'll use a safer approach:
-                // Try to locate the steamapps directory and read the .acf files manually if the high-level API fails.
-                // BUT, let's try to fix the previous error first.
-                // The error said `no method named apps found`.
-                
-                // Let's look at the struct. It has `steam_apps` usually.
-                
-                // Let's try using `steamlocate` strictly as a locator and do the parsing manually to be safe.
-                // It's more code but 100% reliable.
-                
                 let steam_path = steam_dir.path().to_path_buf(); // Use getter method
                 let steamapps = steam_path.join("steamapps");
                 
@@ -59,10 +22,10 @@ impl SteamScanner {
                 // Also need to read libraryfolders.vdf to find other drives
                 // ... (omitted for brevity in this fix, let's get default working first)
             },
-            Err(_) => println!("Steam not found"),
+            Err(_) => warn!("Steam was not found on this system"),
         }
         
-        println!("Found {} Steam games", games.len());
+        info!("Steam scan complete. Found {} games", games.len());
         games
     }
     

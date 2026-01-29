@@ -186,7 +186,6 @@ body {
   display: flex;
   align-items: center;
   padding-left: 5vw;
-  scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
 }
@@ -255,4 +254,22 @@ body.input-keyboard {
 body.input-keyboard .menu-hint-area,
 body.input-keyboard .card {
   cursor: none;
+}
+
+/* Gamepad Status Tag */
+.gamepad-status-tag {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 10000;
+  pointer-events: none;
+  letter-spacing: 1px;
 }

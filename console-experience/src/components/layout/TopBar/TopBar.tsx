@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wifi, Battery, BatteryCharging, Gamepad2, Bell, Volume2, WifiOff } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import './TopBar.css';
 
 interface SystemStatus {
@@ -41,16 +42,28 @@ const TopBar: React.FC<TopBarProps> = ({ onVolumeChange }) => {
     return () => clearInterval(poller);
   }, []);
 
+  // Listen for background volume changes (Keyboard/System) for instant icon update
+  useEffect(() => {
+    const setupListener = async () => {
+      const unlisten = await listen<number>('volume-changed', (event) => {
+        setStatus(prev => prev ? { ...prev, volume: event.payload } : null);
+        // Also trigger OSD if changed externally
+        onVolumeChange?.(event.payload);
+      });
+      return unlisten;
+    };
+
+    const unlistenPromise = setupListener();
+    return () => { unlistenPromise.then(unlisten => unlisten()); };
+  }, [onVolumeChange]);
+
   const handleVolumeClick = async () => {
     const currentVol = status?.volume ?? 75;
     const nextVol = (currentVol + 10) > 100 ? 0 : currentVol + 10;
 
     try {
       await invoke('set_volume', { level: nextVol });
-      // Update local state for immediate feedback
-      setStatus(prev => prev ? { ...prev, volume: nextVol } : null);
-      // Trigger OSD
-      onVolumeChange?.(nextVol);
+      // The background monitor will emit 'volume-changed', which updates the state.
     } catch (err) {
       console.error("Failed to set volume:", err);
     }
@@ -65,7 +78,7 @@ const TopBar: React.FC<TopBarProps> = ({ onVolumeChange }) => {
   };
 
   return (
-    <div className="top-bar">
+    <div className="top-bar" data-testid="top-bar">
       {/* Left: User Profile (Compact) */}
       <div className="user-section">
         <div className="avatar-small"></div>

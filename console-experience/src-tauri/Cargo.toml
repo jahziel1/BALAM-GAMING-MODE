@@ -23,6 +23,8 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
 gilrs = "0.10"
 sysinfo = "0.30"
 walkdir = "2.5.0"
@@ -63,7 +65,7 @@ path = "src/watchdog/main.rs"
 [lints.clippy]
 unwrap_used = "deny"
 expect_used = "deny"
-pedantic = "warn"
+pedantic = { level = "warn", priority = -1 }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"
