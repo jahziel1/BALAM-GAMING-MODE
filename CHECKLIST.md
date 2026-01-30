@@ -1,277 +1,437 @@
-# Estado del Proyecto y Checklist
-
-## 🟢 Implementado y Robusto (Stable)
-
-### 🕹️ Input & Control (Universal)
-- [x] **Arquitectura Input Inmortal (Dual-Channel)** — Rust (XInput/Gilrs) + Web (Gamepad API)
-- [x] **Soporte Multi-Plataforma:** Xbox, PlayStation, Switch
-- [x] **Global Wake-Up:** Combo `LB + RB + START` funcional en segundo plano
-- [x] **Paridad UX de Consola:** Navegación intuitiva, indicadores visuales sincronizados
-- [ ] **Feedback Háptico (Vibración):** Confirmaciones táctiles al lanzar/cerrar juegos — *Rust (Gilrs)*
-
-### 🎮 Gestión de Juegos (Backend Nativo)
-- [x] **Scanner Universal (Básico):** Steam (Solo ruta default) + Epic + Xbox/UWP — *Rust*
-  - *Nota: Actualmente ignora bibliotecas en discos secundarios.*
-- [ ] **Scanner Multi-Librería (Steam):** Soporte para discos externos (D:, E:) leyendo `libraryfolders.vdf` — *Rust*
-- [x] **Registry Watchdog (Steam):** Detección de ruta de instalación — *Rust (winreg)*
-- [x] **Process Watchdog (Genérico):** Detección por PID — *Rust (sysinfo)*
-- [x] **UWP Native Launch:** Activación COM con PID real — *Rust (IApplicationActivationManager)*
-- [x] **Task Killer Universal:** Steam/Epic/UWP — *Rust*
-- [x] **Cache Persistente (Básico):** Carga instantánea JSON — *Rust (serde_json)*
-  - *Nota: Falta validación de esquema y recuperación ante corrupción de archivo.*
-- [ ] **Validación de Integridad de Cache:** Versionado de esquema para evitar crashes tras updates — *Rust*
-
-### 🖥️ Frontend (React UI)
-- [x] **CSS Fluido:** Variables con `clamp()` para escalado TV/Handheld
-- [x] **Memoización:** Componente Card optimizado con `React.memo()`
-- [x] **Mode Selector:** Biblioteca ↔ In-Game Menu
-- [ ] **Launch Feedback (Juice):** Spinner/Animación visual inmediata al pulsar "Jugar" para confirmar acción
-
-
-### 🏗️ Arquitectura
-- [x] **Hexagonal (Rust):** `adapters/`, `ports/`, `domain/`
-- [x] **Tauri v2:** Build moderno y ligero (~50MB RAM)
+# 📋 BALAM CONSOLE EXPERIENCE - CHECKLIST PRIORIZADO
+**Objetivo:** Shell nativo de consola para Windows que reemplaza Explorer.exe con experiencia moderna tipo Steam Deck/Xbox/PlayStation.
 
 ---
 
-## 🟡 Fase 1: MVP Premium (Prioridad Alta)
+## ✅ FASE 0: FUNDACIÓN (COMPLETADO - Stable)
 
-### 🖼️ Metadatos Ricos — *Híbrido*
-- [ ] **SteamGridDB/IGDB Integration** — Backend descarga, Frontend muestra
-  - [ ] `metadata_fetcher.rs`: HTTP client + cache de imágenes — *Rust (reqwest)*
-  - [ ] Portadas HD (600x900) guardadas en `AppData/Local/Balam/covers/`
-  - [ ] Fondos dinámicos (hero art) por juego
-  - [ ] Fallback a icono local si no hay conexión
+### 🕹️ Input & Control (Arquitectura Inmortal)
+- [x] Arquitectura Dual-Channel (Rust XInput/Gilrs + Web Gamepad API)
+- [x] Soporte multi-plataforma (Xbox, PlayStation, Switch)
+- [x] Global Wake-Up (LB + RB + START)
+- [x] Detección dinámica de hardware y layouts
+- [x] Conmutación híbrida mando ↔ teclado/ratón
+- [x] Navegación intuitiva tipo consola
 
-### 🔊 Audio Feedback (SFX) — *Web (v1) → Rust (v2)*
-- [ ] **Sonidos de Navegación** — Web Audio API
-  - [ ] `nav.wav` (mover), `select.wav` (confirmar), `back.wav` (regresar)
-  - [ ] Volumen sincronizado con volumen del sistema
-  - [ ] *Futuro:* Migrar a `rodio` (Rust) si hay latencia
+### 🎮 Discovery System (3 Capas)
+- [x] Autodetección (Steam, Epic, Xbox/UWP, GOG, Registry)
+- [x] Motor de identidad (PE Headers, deduplicación)
+- [x] Gestión manual (Balam Explorer + Manual Add)
 
-### ⌨️ Teclado Virtual — *100% Frontend*
-- [ ] **On-Screen Keyboard** — React Component
-  - [ ] Grid QWERTY navegable con D-Pad
-  - [ ] Soporte para búsqueda y futuros inputs
-  - [ ] Animaciones suaves
+### 🖼️ Metadatos & Assets
+- [x] Cache local (Balam Grid Engine)
+- [x] SteamGridDB integration
+- [x] Hero art dinámico
+- [x] Secure asset protocol (Tauri)
 
-### 🔍 Buscador / Filtros — *100% Frontend*
-- [ ] **Búsqueda por Nombre** — React + fuse.js
-- [ ] **Filtros Rápidos:** Instalado, Steam, Epic, Xbox, Favoritos
-- [ ] Resultados en tiempo real (<16ms)
+### 🔐 Gestión de Procesos
+- [x] Single Instance Protocol (Auto-kill + Confirmation modal)
+- [x] Button intelligence (PLAY → RESUME → SWITCH)
+- [x] Failsafe logic (guard contra relanzamientos accidentales)
 
-### 🔔 Notificaciones Toast — *Híbrido*
-- [ ] **Sistema de Toasts** — Rust emite, React renderiza
-  - [ ] "Juego cerrado", "Nuevo juego detectado", "Error de lanzamiento"
-  - [ ] Animaciones CSS (slide-in, fade-out)
+### 🎨 Side Blade (Overlay)
+- [x] Global shortcut (Ctrl+Shift+Q)
+- [x] Window management (hide/show nativo)
+- [x] Stable rendering (Dashboard siempre en DOM)
+- [x] Resume button (sin relanzar)
 
-### ⏰ Reloj Visible — *100% Frontend*
-- [ ] **Mostrar Hora** — Componente en TopBar
-  - [ ] Formato 12h/24h según preferencia
-  - [ ] Fecha opcional al hacer hover/focus
+### �️ Sidebar/Menu Navigation
+- [x] **🚨 FIX: Gamepad Navigation CRÍTICO** ⭐⭐⭐⭐⭐
+  - [x] Sidebar no responde correctamente a D-Pad
+  - [x] Items no reciben focus visible con mando
+  - [x] Botones/opciones no ejecutan correctamente con A button
+  - [x] Back button (B) no funciona para cerrar sidebar
+  - [x] Implementar focus management completo:
+    - [x] D-Pad Up/Down para navegar items
+    - [x] A button para seleccionar
+    - [x] B button para cerrar sidebar
+    - [x] LB/RB para cambiar entre secciones (si hay tabs)
+  - [x] Visual feedback: Highlight claro en item con focus (SelectableItem component)
+  - [x] Quick Settings: D-Pad LEFT/RIGHT ajusta sliders
+  - [ ] Testing: Validar en Xbox/PS/Switch controllers (pendiente hardware)
 
-### 🎨 Fondos Dinámicos — *Híbrido*
-- [ ] **Hero Art por Juego** — Cambiar fondo al seleccionar juego
-  - [ ] Imágenes de SteamGridDB (hero/background)
-  - [ ] Transición suave con fade
-  - [ ] Fallback a gradiente si no hay imagen
+### �🏗️ Arquitectura
+- [x] Hexagonal (Rust: adapters/ports/domain)
+- [x] Tauri v2
+- [x] Logging estructurado (tracing)
+- [x] CSP + Asset Protocol habilitado
 
-### 🖥️ Panel de Performance — *Rust (sysinfo) + Frontend*
-- [ ] **Métricas del Sistema** — Mostrar en overlay o Settings
-  - [ ] CPU % uso
-  - [ ] RAM usada / total
-  - [ ] GPU % (si disponible vía WMI)
-  - [ ] Temperaturas (si disponible)
-
-### 🖼️ Screensaver / Modo Inactivo — *100% Frontend*
-- [ ] **Activar tras X minutos sin input**
-  - [ ] Slideshow de carátulas de juegos
-  - [ ] Despertar con cualquier botón
-  - [ ] Tiempo configurable en Settings
-
-### 🎵 Música Ambiental (Opcional) — *Web Audio API*
-- [ ] **Música de fondo en el Shell**
-  - [ ] Toggle on/off en Settings
-  - [ ] Volumen independiente
-  - [ ] Loop suave sin cortes
-
----
-
-## 🟠 Fase 2: Feature Parity con Steam Big Picture
-
-### ⚙️ Configuración de Sistema — *100% Backend Nativo (Win32/WinRT)*
-
-#### 🔊 Audio
-- [ ] **Volumen Master** — *Rust (IAudioEndpointVolume)*
-- [ ] **Mute/Unmute** — *Rust (IAudioEndpointVolume)*
-- [ ] **Seleccionar Dispositivo de Salida** — *Rust (IMMDeviceEnumerator)*
-  - [ ] Listar: Altavoces, Auriculares, HDMI, etc.
-  - [ ] Cambiar dispositivo activo
-
-#### 🖥️ Pantalla
-- [ ] **Brillo** — *Rust (SetMonitorBrightness / WMI)*
-  - [ ] Solo monitores con DDC/CI (la mayoría de externos)
-- [ ] **Resolución + Refresh Rate** — *Rust (ChangeDisplaySettingsEx)*
-  - [ ] Listar modos disponibles (1080p@60, 1440p@144, etc.)
-  - [ ] Aplicar sin reinicio
-- [ ] **Modo Noche (Night Light)** — *Rust (Registry: BlueLightReductionState)*
-  - [ ] Toggle on/off del filtro de luz azul
-
-#### 🌐 Conectividad
-- [ ] **WiFi: Ver Redes** — *Rust (WlanScan + WlanGetAvailableNetworkList)*
-- [ ] **WiFi: Conectar/Desconectar** — *Rust (WlanConnect / WlanDisconnect)*
-- [ ] **WiFi: Estado Actual** — *Rust (WlanQueryInterface)*
-  - [ ] SSID conectado, señal, velocidad
-- [ ] **Bluetooth: Toggle On/Off** — *Rust (bthserv service + WinRT Radio)*
-- [ ] **Modo Avión** — *Rust (WinRT RadioAccessStatus)*
-
-#### ⚡ Energía
-- [ ] **Apagar / Reiniciar / Suspender** — Ya implementado ✅
-- [ ] **Plan de Energía** — *Rust (PowerSetActiveScheme)*
-  - [ ] Cambiar entre: Balanced, High Performance, Power Saver
-- [ ] **Batería: Nivel + Estado** — *Rust (GetSystemPowerStatus)*
-  - [ ] Mostrar % y si está cargando/descargando
-  - [ ] Tiempo restante estimado
-
-#### 🎮 Controladores
-- [ ] **Ver Gamepads Conectados** — Ya implementado ✅
-- [ ] **Vibración: Toggle On/Off** — *Rust (XInputSetState)*
-- [ ] **Intensidad de Vibración** — *Rust (XInputSetState)*
-  - [ ] Slider 0-100%
-
-#### 💾 Almacenamiento
-- [ ] **Espacio en Disco** — *Rust (GetDiskFreeSpaceEx)*
-  - [ ] Mostrar: "C: 245 GB libres de 500 GB"
-  - [ ] Barra visual de uso
-
-#### 🔒 Sistema
-- [ ] **Bloquear PC (Lock)** — *Rust (LockWorkStation)*
-- [ ] **No Molestar (Focus Assist)** — *Rust (Registry: FocusAssistState)*
-  - [ ] Silenciar notificaciones de Windows
-
-- [ ] UI de Settings navegable con gamepad — *Frontend*
-
-### 🎨 Personalización — *Híbrido*
-- [ ] **Temas de Color:** Dark, Light, OLED Black, Xbox Green, PS Blue
-  - [ ] CSS Variables dinámicas — *Frontend*
-  - [ ] Persistencia en `config.json` — *Rust*
-
-### 📊 Estadísticas de Juego — *100% Local (Offline-First)*
-- [ ] **Tracking Universal** — *Rust (Watchdog ya existente)*
-  - [ ] Guardar timestamp inicio/fin de cada sesión en SQLite
-  - [ ] Calcular tiempo total jugado por juego
-  - [ ] Sin APIs externas, sin configuración del usuario
-- [ ] **Base de Datos:** SQLite local en `AppData/Local/Balam/stats.db` — *Rust (rusqlite)*
-- [ ] **Mostrar en Tarjeta:** "Jugado 12.5 horas" — *Frontend*
-- [ ] **Historial de Sesiones:** Última sesión, fecha, duración — *Frontend*
-
-### 🔄 Auto-Inicio — *100% Backend Nativo*
-- [ ] **Registro de Windows** — *Rust (winreg)*
-  - [ ] Escribir en `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
-  - [ ] Toggle en Settings UI
-
-### 📱 Detección de Dispositivo — *Rust (WMI + Win32)*
-- [ ] **Detectar Tipo de Dispositivo:**
-  - [ ] Desktop (sin batería, chassis tipo 3/6)
-  - [ ] Laptop (con batería, chassis tipo 9/10)
-  - [ ] Tablet (pantalla táctil, chassis tipo 30/31)
-  - [ ] Handheld (Steam Deck, ROG Ally, Legion Go, GPD Win)
-- [ ] **WMI Queries:** `Win32_SystemEnclosure.ChassisTypes`, `Win32_ComputerSystem.Model`
-- [ ] **Adaptar UI:**
-  - [ ] Ocultar sección batería en Desktop
-  - [ ] Fuentes más grandes en Handheld
-  - [ ] Tips específicos por dispositivo
-
-### 🎮 Ajustes de Controlador (Solo Shell) — *Híbrido*
-- [ ] **Deadzone Personalizado** — Slider por usuario (solo afecta navegación del Shell)
-- [ ] **Personalizar combo Wake-Up** — Cambiar LB+RB+START a otra combinación
-
-> **Nota:** El remapeo de botones a nivel de sistema y la calibración de joystick requieren drivers externos (ViGEmBus, DS4Windows) o la UI nativa de Windows. Estos quedan **fuera del scope** para mantener una experiencia zero-config.
+### 🎨 Design System & Reusable Components (2026-01-30)
+- [x] CSS Variables System (centralized colors, glassmorphism, focus states)
+- [x] OverlayPanel (base component for InGameMenu, QuickSettings, future panels)
+- [x] SelectableItem (unified focus/hover for all interactive items)
+- [x] ButtonHint (consistent gamepad/keyboard hints across all UI)
+- [x] Slider component (integrated with SelectableItem)
+- [x] Responsive layout (Desktop/Tablet/Handheld breakpoints)
 
 ---
 
-## 🔴 Fase 3: Superar Steam Big Picture
+## 🔥 FASE 1: CRÍTICA - SHELL SURVIVAL (Prioridad Máxima)
+**Sin estos, Balam NO puede reemplazar Explorer.exe**
 
-### 🎮 Scanners Adicionales — *100% Backend Nativo*
-- [ ] **GOG Scanner** — *Rust*
-  - [ ] Leer registro de GOG Galaxy
-  - [ ] Parsear database de instalación
-- [ ] **Emulator Scanner** — *Rust*
-  - [ ] Detectar RetroArch, Dolphin, RPCS3, PCSX2, Yuzu/Ryujinx
-  - [ ] Configurar rutas de ROMs
-- [ ] **Itch.io Scanner** — *Rust*
-  - [ ] Leer SQLite de la app itch
-- [ ] **Epic Watchdog Mejorado** — *Rust*
-  - [ ] Fallback a monitoreo por directorio si PID cambia
+### 1. 🌐 WiFi Manager ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Backend: Windows WLAN API (`windows` crate)
+  - [ ] `scan_networks()` - WlanGetAvailableNetworkList
+  - [ ] `connect_to_wifi(ssid, password)` - WlanConnect
+  - [ ] `disconnect_wifi()` - WlanDisconnect
+  - [ ] `get_signal_strength()` - Nivel de señal
+- [ ] Frontend: Panel en Sidebar
+  - [ ] Lista de redes + iconos de señal (📶/📡/📻)
+  - [ ] Input de contraseña (auto-invocar Virtual Keyboard)
+  - [ ] Toast notifications (conexión exitosa/error)
 
-### 🖥️ Modo Shell Puro (Kiosk) — *100% Backend Nativo*
-- [ ] **Shell Replacement** — *Rust*
-  - [ ] `taskkill /F /IM explorer.exe` al activar
-  - [ ] Restaurar explorer al salir o crashear
-  - [ ] Manejo de errores robusto
-- [ ] **Bloqueo de Alt+Tab** — *Rust (SetWindowsHookEx)*
+### 2. 📡 Bluetooth Manager ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Backend: btleplug + windows::Devices::Bluetooth
+  - [ ] `scan_bluetooth_devices()` - BLE + Classic
+  - [ ] `pair_device(address)` - Con PIN si requerido
+  - [ ] `get_paired_devices()` - Estado conectado/desconectado
+  - [ ] `connect_device()` / `disconnect_device()`
+- [ ] Frontend: Panel BT en Sidebar
+  - [ ] Iconos contextuales (🎮 Mando / 🎧 Auricular)
+  - [ ] Estado de batería (si disponible via BLE)
+  - [ ] Toast al conectar/desconectar
 
-### 👤 Perfil de Usuario — *Híbrido*
-- [ ] **Sistema de Perfiles** — Rust (SQLite) + React (UI)
-  - [ ] Múltiples usuarios
-  - [ ] Estadísticas y favoritos por perfil
-  - [ ] Avatar personalizable
+### 3. ⌨️ Virtual Keyboard ⭐⭐⭐⭐⭐ [CRÍTICO] ✅ COMPLETADO
+- [x] **Gamepad Navigation (Steam-style)**
+  - [x] D-Pad navigation entre teclas (grid 2D)
+  - [x] A button para seleccionar tecla
+  - [x] B button para cerrar teclado
+  - [x] Conversión de inputs de gamepad a eventos de teclado
+- [x] **Steam-style Shortcuts**
+  - [x] LB (Left Bumper) → Backspace
+  - [x] RB (Right Bumper) → Shift (mayúsculas/minúsculas)
+  - [x] LT (Left Trigger - axis 2) → Space
+  - [x] RT (Right Trigger - axis 5) → Symbols toggle
+- [x] **Layouts Optimizados**
+  - [x] QWERTY layout balanceado (10-10-10-10-5)
+  - [x] SPACE centrado en fila inferior
+  - [x] Símbolos comunes accesibles (-, _, !, ?)
+  - [x] Distribución similar a Steam Big Picture
+- [x] **Input Device Detection**
+  - [x] Auto-open con Gamepad/Mouse
+  - [x] Auto-close con Keyboard físico
+  - [x] Prevención de loops con isTrusted check
+- [x] **Search Integration**
+  - [x] Real-time filtering con CustomEvent
+  - [x] onTextChange callbacks estables
+  - [x] Sincronización con SearchOverlay
 
-### 🌐 Navegador Integrado — *WebView Nativo*
-- [ ] **Abrir URLs in-app** — Tauri WebView
-- [ ] Navegación con gamepad (experimental)
+### 4. 🔊 Audio Device Switcher ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Backend: IMMDeviceEnumerator (Core Audio API)
+  - [ ] `list_audio_devices()` - Todos los dispositivos
+  - [ ] `set_default_device(id)` - Cambiar output
+  - [ ] `get_volume(device_id)` - Volumen por dispositivo
+- [ ] Frontend: Dropdown en Blade
+  - [ ] Icono dinámico (🔊 Altavoz / 🎧 Auriculares)
+  - [ ] Slider de volumen independiente
+
+### 5. ⚡ Power Management ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Backend: ExitWindowsEx API
+  - [ ] `shutdown()` - EWX_SHUTDOWN
+  - [ ] `restart()` - EWX_REBOOT
+  - [ ] `sleep()` - SetSuspendState
+  - [ ] `get_battery_status()` - Nivel + carga (portátiles)
+- [ ] Frontend: Sidebar + Modal
+  - [ ] Confirmación con countdown 5s
+  - [ ] Icono de batería % en TopBar (portátiles)
+
+### 6. 🛡️ Crash Watchdog ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Implementación: balam-watchdog.exe (Rust standalone)
+  - [ ] Check cada 5s si balam.exe vive
+  - [ ] Auto-restart si crash
+  - [ ] Log crash dump a %AppData%/Balam/crashes/
+  - [ ] Safe Mode: 3 crashes en 5min → lanzar explorer.exe
+- [ ] Instalador: Agregar a Windows startup registry
+
+### 7. 🎮 Game Library Virtualization ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Frontend: @tanstack/react-virtual
+  - [ ] Renderizar solo 15 cards visibles + 5 buffer
+  - [ ] Reciclaje de componentes DOM
+  - [ ] Smooth scroll con gamepad
+- [ ] Testing: 500+ juegos sin lag (<16ms frame time)
+
+### 8. 🚀 Fast Boot (<2s) ⭐⭐⭐⭐⭐ [CRÍTICO]
+- [ ] Splash HTML estática (<500ms desde main())
+- [ ] Code splitting (React.lazy para Blade, FileExplorer)
+- [ ] Bundle optimization (minify, tree-shake, gzip)
+- [ ] Profiling: console.time desde window.onload
+
+### 9. 💾 SQLite Cache ⭐⭐⭐⭐ [MUY IMPORTANTE]
+- [ ] Backend: rusqlite + serde
+  - [ ] Schema: games table con indices optimizados
+  - [ ] WAL mode + prepared statements
+  - [ ] Background writes (Tokio task)
+- [ ] Comandos: cache_game_metadata, get_cached_games, update_play_time
+- [ ] Schema migrations automáticas
 
 ---
 
-## 🔮 Fase 4: Red Social P2P (Muy Futuro - Experimental)
+## ⚡ FASE 2: PERFORMANCE - HANDHELD EXPERIENCE (Crítico si target es portátil)
 
-> ⚠️ **Nota:** Esta fase es experimental y de muy largo plazo. No es necesaria para igualar Steam Big Picture. Se incluye como visión a futuro.
+### 10. 🔋 TDP Control (RyzenAdj) ⭐⭐⭐⭐⭐ [CRÍTICO EN HANDHELDS]
+- [ ] Backend: RyzenAdj wrapper
+  - [ ] Empaquetar ryzenadj.exe + WinRing0x64.sys
+  - [ ] Auto-instalación driver con UAC
+  - [ ] Conflict detection (Armoury Crate, Legion Space)
+  - [ ] set_tdp(watts), set_gpu_clock(mhz), set_temp_limit(celsius)
+- [ ] Frontend: Panel en Blade
+  - [ ] Slider TDP 5-30W + Presets (🍃 Eco / ⚖️ Balanced / 🚀 Turbo)
+  - [ ] GPU Boost toggle (+200MHz)
+  - [ ] Thermal slider (70-95°C)
 
-### 💬 Balam Network — *Rust (libp2p + Kademlia DHT)*
-- [ ] **Integrar libp2p** — Cada Shell es un nodo de la red P2P
-- [ ] **Conectar a red DHT existente (IPFS)** — Sin servidor propio, $0 de infraestructura
-- [ ] **Identidad Descentralizada** — Cada usuario tiene un PeerId único (keypair local)
-- [ ] **Sistema de Amigos** — Agregar amigos por ID o código QR
-- [ ] **Estado "Now Playing"** — Publicar qué juego estás jugando a tus amigos
-- [ ] **Chat P2P Encriptado** — Mensajes directos sin servidor central
-- [ ] **Invitar a Juego** — Notificación P2P para unirse a partida
+### 11. 🎮 FPS Limiter (Multi-Layer) ⭐⭐⭐⭐⭐ [CRÍTICO EN HANDHELDS]
+- [ ] Backend:
+  - [ ] Layer 1: RTSS Integration (shared memory control)
+  - [ ] Layer 2: In-Game Config Modifier (UE/Unity/Source)
+  - [ ] Layer 3: Power Throttle (Auto-TDP based on FPS)
+- [ ] Frontend: Slider 30/40/60/120/144/Uncapped
+  - [ ] Indicador de método activo (🎯 RTSS / 🎮 In-Game / ⚡ Power)
+  - [ ] Toggle "Match Refresh Rate"
 
-> **Arquitectura:** Cada usuario con Balam Shell instalado ES parte de la infraestructura. No hay costos de servidor porque la red es los usuarios mismos.
+### 12. 🖥️ Display Controls ⭐⭐⭐⭐ [IMPORTANTE EN PORTÁTILES]
+- [ ] Backend: Windows Display API
+  - [ ] set_brightness() - DDC/CI o WMI
+  - [ ] toggle_hdr() - DXGI SetHdrState
+  - [ ] change_resolution() - ChangeDisplaySettings
+- [ ] Frontend: Blade panel
+  - [ ] Slider brillo (solo si hardware soporta)
+  - [ ] HDR toggle + Quick resolution buttons
 
-## 🧹 Deuda Técnica (Tech Debt)
-
-### Limpieza de Código
-- [ ] Eliminar `greet()` de `lib.rs` — Template sin usar
-- [ ] Eliminar `useGamepad.ts` — Hook obsoleto
-- [ ] Migrar `println!` a `tracing` — Logs estructurados
-
-### Seguridad
-- [ ] Habilitar CSP en `tauri.conf.json`
-- [ ] Validar rutas en `launch_game` y `kill_game`
-- [ ] Sanitizar inputs de usuario
-
-### Performance
-- [ ] Optimizar `sysinfo`: usar `refresh_process(pid)` en vez de `new_all()`
-- [ ] Scan Asíncrono: no bloquear UI durante escaneo inicial
-
-### Build & Distribución
-- [ ] Instalador MSI (Tauri WiX)
-- [ ] Auto-Update (tauri-plugin-updater)
-- [ ] Modo Portable (.exe standalone)
-- [ ] Firma de Código (certificado)
-
----
-
-## 🐛 Bugs Conocidos
-- [ ] Mouse requiere clic inicial tras minimizar (mitigado por canal nativo)
+### 13. 📊 System Metrics ⭐⭐⭐⭐ [MUY IMPORTANTE]
+- [ ] Backend: sysinfo + Tokio loop (1Hz)
+  - [ ] CPU/RAM usage
+  - [ ] GPU usage/temps (NVML/ADL)
+  - [ ] Smart throttling (solo si Blade abierto)
+- [ ] Frontend: Mini widget en Blade
+  - [ ] Barras horizontales con colores (Verde/Amarillo/Rojo)
 
 ---
 
-## 📊 Leyenda de Arquitectura
+## 🎨 FASE 3: POLISH - CONSOLE FEEL (Da valor real al producto)
 
-| Símbolo | Significado |
-|---------|-------------|
-| *Rust* | Implementación 100% nativa en backend |
-| *Frontend* | Implementación 100% en React/Web |
-| *Híbrido* | Rust para lógica/datos, React para UI |
-| *WebView Nativo* | Usa el WebView de Tauri directamente |
+### 14. 🔍 Async Game Scanning ⭐⭐⭐⭐
+- [ ] Backend: tokio::spawn_blocking
+  - [ ] Eventos: scan-started, game-found, scan-progress, scan-complete
+  - [ ] File watcher (incremental re-scan)
+- [ ] Frontend: Progress bar no bloqueante
+
+### 15. 🖼️ Image Optimization ⭐⭐⭐
+- [ ] Frontend: IntersectionObserver lazy loading
+  - [ ] Viewport-based + blur-up placeholder
+  - [ ] LRU eviction (max 50 imágenes)
+- [ ] Backend: WebP thumbnails (300x400px, 85% quality)
+
+### 16. 🔍 Search & Filters ⭐⭐⭐⭐⭐ [ALTA PRIORIDAD]
+- [ ] **Search by Name (Frontend - fuse.js)**
+  - [ ] Input searchbar en TopBar con icono 🔍
+  - [ ] Fuzzy search (tolera typos)
+  - [ ] Highlight de coincidencias en cards
+  - [ ] Clear button (X) para limpiar
+  - [ ] Shortcut: Y button para activar búsqueda
+- [ ] **Quick Filters (Toggle chips)**
+  - [ ] [Todos] [Instalados] [Steam] [Epic] [Xbox] [GOG]
+  - [ ] [⭐ Favoritos] [🕐 Recientes]
+  - [ ] Combinables: "Steam + Favoritos"
+  - [ ] Contador: "45 juegos mostrados"
+- [ ] **Sorting Options**
+  - [ ] Dropdown: [Alfabético] [Último jugado] [Más jugado] [Recién agregado]
+  - [ ] Guardar preferencia en localStorage
+
+### 17. ⏰ Clock & Date Display ⭐⭐⭐⭐ [QUICK WIN]
+- [ ] **TopBar Clock (Frontend)**
+  - [ ] Posición: TopBar derecha
+  - [ ] Format: "23:45 | 29 Ene 2026"
+  - [ ] Auto-update cada minuto (no cada segundo, ahorra CPU)
+  - [ ] Opcional: Toggle segundos en Settings
+
+### 18. 🎮 Game Stats & Tracking ⭐⭐⭐⭐⭐ [ALTA PRIORIDAD]
+- [ ] **Play Time Tracking (Backend - SQLite)**
+  - [ ] Watchdog: Registrar inicio/fin de sesión
+  - [ ] Actualizar play_time en DB cada minuto
+  - [ ] Comando: `get_game_stats(id)` retorna tiempo total
+- [ ] **UI Display (Frontend)**
+  - [ ] Hero section: "Has jugado 87 horas"
+  - [ ] Library card: Mini badge "12h jugado"
+  - [ ] Stats panel: Top 10 juegos más jugados
+
+### 19. ⭐ Favorites & Recents ⭐⭐⭐⭐⭐ [ALTA PRIORIDAD]
+- [ ] **Favorites System (Backend - SQLite)**
+  - [ ] Comando: `toggle_favorite(id)` - Alternar estado
+  - [ ] Flag en DB: favorite INTEGER DEFAULT 0
+- [ ] **UI Integration (Frontend)**
+  - [ ] Botón ⭐ en Hero section (toggle favorite)
+  - [ ] Filter chip "Favoritos" muestra solo starred
+  - [ ] Visual: Estrella dorada en card si es favorito
+- [ ] **Recents Auto-tracking**
+  - [ ] Ordenar por last_played DESC
+  - [ ] Filter chip "Recientes" muestra últimos 20 jugados
+
+### 20. 🔊 Audio SFX (UI Sounds) ⭐⭐⭐⭐ [CONSOLE FEEL]
+- [ ] **Sound Effects (Web Audio API)**
+  - [ ] Assets: nav.wav, select.wav, back.wav, whoosh.wav, launch.wav
+  - [ ] Hook: `useSound()` custom con preload
+  - [ ] Volumen: 30% del master (no invasivo)
+  - [ ] Toggle: Settings permite desactivar sonidos
+- [ ] **Trigger Events:**
+  - [ ] nav.wav - Al mover entre cards (D-Pad)
+  - [ ] select.wav - Al confirmar acción (A button)
+  - [ ] whoosh.wav - Al abrir Blade
+  - [ ] launch.wav - Al lanzar juego
+
+### 21. 🎮 Haptic Feedback (Vibración) ⭐⭐⭐⭐⭐ [CONSOLE FEEL]
+- [ ] **Backend: Gilrs vibration API**
+  - [ ] `trigger_vibration(strength, duration_ms)` comando
+  - [ ] Soporte Xbox/PS/Switch controllers
+- [ ] **Feedback Triggers:**
+  - [ ] Débil (200ms) - Al navegar entre items
+  - [ ] Medio (300ms) - Al lanzar juego
+  - [ ] Fuerte (500ms) - Al cerrar juego
+- [ ] **Settings:** Toggle para habilitar/deshabilitar
+
+### 22. 📥 Download Manager ⭐⭐⭐⭐⭐ [CRÍTICO PARA UX]
+- [ ] **Steam Update Detection (Backend)**
+  - [ ] Antes de `launch_game()`, verificar si requiere update
+  - [ ] Steam API: Verificar `AppUpdateState`
+  - [ ] Si update pendiente → Mostrar UI de descarga
+- [ ] **Progress UI (Frontend)**
+  - [ ] Modal: "Descargando update para [Juego]... 45%"
+  - [ ] Barra de progreso con MB/s
+  - [ ] Botón: [Cancelar] [Jugar sin actualizar (si posible)]
+- [ ] **Epic/Xbox Integration:**
+  - [ ] Epic: Verificar manifiestos antes de launch
+  - [ ] Xbox: Verificar estado de paquete UWP
+
+### 23. ⚛️ React Performance Tuning ⭐⭐⭐
+- [ ] React.memo() en Card, InGameMenu, Sidebar
+- [ ] useCallback para event handlers
+- [ ] Context API splitting (Data vs UI)
+- [ ] GPU acceleration CSS (will-change, translateZ)
+
+### 24. 📸 Screenshot System ⚠️ [OPCIONAL]
+- [ ] Backend: BitBlt framebuffer capture
+- [ ] Frontend: Botón en Blade + Toast + thumbnail preview
+
+---
+
+## � FASE 4: ADVANCED (Post-Launch / v1.2+)
+
+### ❌ Prioridad Baja o Descartado:
+- 🎵 Media Controls (Spotify tiene su propia UI)
+- 🏆 Achievements Tracking (Steam/Xbox lo hacen, redundante)
+- 🌬️ Fan Curves (muy avanzado, requiere NBFC)
+- 🎬 Replay Buffer (ShadowPlay/ReLive ya existen)
+
+### ✅ Considerar para v1.2:
+- 🎨 **Themes/Customization** (Accent colors, fondos personalizados)
+- 🎵 **Ambient Background Music** (Música sutil en dashboard, toggle on/off)
+- 🌐 **Cloud Saves Sync** (Backup de saves a OneDrive/Google Drive)
+- 📱 **Companion App** (Control remoto desde celular vía WebSocket)
+
+---
+
+## 📊 ROADMAP DE IMPLEMENTACIÓN (Actualizado)
+
+### **Sprint 0.5 (3-5 días): HOTFIX CRÍTICO** [ANTES DE TODO]
+- **🚨 FIX: Sidebar/Menu Gamepad Navigation**
+  - Navegar items con D-Pad
+  - Seleccionar con A button
+  - Cerrar con B button
+  - Focus visual claro
+  - Testing en Xbox/PS/Switch
+
+### **Sprint 1 (2 semanas): Shell Survival Core** [CRÍTICO]
+1. WiFi Manager
+2. Bluetooth Manager
+3. Virtual Keyboard  
+4. Audio Device Switcher
+5. Power Management
+
+### **Sprint 2 (2 semanas): Stability + Performance Core** [CRÍTICO]
+6. Crash Watchdog
+7. Game Library Virtualization (react-virtual)
+8. Fast Boot Optimization (<2s)
+9. SQLite Cache + Schema
+
+### **Sprint 3 (2-3 semanas): Handheld Features** [SI TARGET ES PORTÁTIL]
+10. TDP Control (RyzenAdj)
+11. FPS Limiter (3 layers)
+12. Display Controls (Brillo/HDR)
+13. System Metrics (CPU/GPU/RAM monitoring)
+
+### **Sprint 4 (2 semanas): Console UX Features** [ALTA PRIORIDAD]
+14. Async Game Scanning
+15. Image Lazy Loading + WebP
+16. **🔍 Search & Filters** (fuse.js, sorteos, contador)
+17. **⏰ Clock/Date Display** (TopBar)
+18. **🎮 Game Stats Tracking** (Tiempo jugado, top 10)
+19. **⭐ Favorites & Recents** (Toggle favoritos, filtro recientes)
+20. **📥 Download Manager** (Steam/Epic update detection)
+
+### **Sprint 5 (1-2 semanas): Polish & Feel** [CONSOLE IMMERSION]
+21. **🔊 Audio SFX** (nav.wav, select.wav, whoosh.wav)
+22. **🎮 Haptic Feedback** (Vibración en navegación/launch)
+23. React Performance Tuning (memo, callbacks, GPU CSS)
+24. Screenshot System (opcional)
+
+### **Post-Launch (v1.2+):** [NICE-TO-HAVE]
+25. Themes/Customization
+26. Ambient Background Music
+27. Cloud Saves Sync
+28. Companion App (remote control)
+
+
+---
+
+## 🎯 MÉTRICAS DE ÉXITO
+
+| Métrica | Target Desktop | Target Handheld |
+|---------|----------------|-----------------|
+| Boot Time | <2s | <3s |
+| UI FPS | 60fps | 60fps |
+| Memory (Idle) | <200MB | <250MB |
+| Memory (500 games) | <500MB | <600MB |
+| Game Launch | <1s | <1.5s |
+| Blade Toggle | <100ms | <150ms |
+| **Sidebar Navigation (Gamepad)** | **<100ms** | **<100ms** |
+| WiFi Connect | <3s | <3s |
+
+**Criterios de Aceptación (Sidebar):**
+- ✅ D-Pad responde en <100ms
+- ✅ Focus visual siempre visible
+- ✅ A button ejecuta acción correctamente
+- ✅ B button cierra sidebar
+- ✅ Funciona en Xbox/PS4/PS5/Switch Pro controllers
+
+---
+
+## 📝 NOTAS DE DECISIÓN
+
+### **Desktop PC Build:**
+- Implementar: Items 1-9 (Shell Survival + Performance Core)
+- Omitir: Items 10-12 (TDP/FPS/Brillo no aplican)
+- Opcional: Items 13-18
+
+### **Handheld PC Build (ROG Ally, Legion Go, Steam Deck):**
+- Implementar: Items 1-13 (TODO hasta System Metrics)
+- TDP + FPS Limiter son **LA razón de ser** de un handheld shell
+- Opcional: Items 14-18
+
+### **Dependencias Críticas:**
+**Rust:**
+- `windows = "0.52"` - Windows API
+- `tauri = "2.0"` - Framework
+- `rusqlite = "0.30"` - SQLite
+- `tokio = "1.35"` - Async
+- `sysinfo = "0.30"` - Metrics
+- `btleplug = "0.11"` - Bluetooth
+
+**Frontend:**
+- `react = "18.2"`
+- `@tauri-apps/api = "2.0"`
+- `@tanstack/react-virtual = "3.0"`
+
+---
+
+**Versión:** v1.0 "Phoenix"
+**Última actualización:** 2026-01-30
+**Status:** 🟢 Fase 0 Completa | ✅ Sprint 0.5 Completo | 🎨 Design System Completado | 🚀 Listo para Sprint 1

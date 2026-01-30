@@ -1,0 +1,318 @@
+/* Virtual Keyboard Overlay */
+.virtual-keyboard-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 50vh;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-top: var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 15000;
+    animation: slideUp 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    gap: 20px;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Input Preview */
+.keyboard-input-preview {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+}
+
+.keyboard-input {
+    flex: 1;
+    height: 50px;
+    padding: 0 20px;
+    background: var(--color-background-elevated);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.keyboard-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-glow);
+}
+
+.keyboard-input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.keyboard-input-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.keyboard-action-btn {
+    height: 50px;
+    padding: 0 24px;
+    background: var(--color-background-elevated);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.keyboard-action-btn:hover:not(:disabled) {
+    background: rgba(var(--color-primary-rgb), 0.1);
+    border-color: var(--color-primary);
+    color: var(--color-text-primary);
+}
+
+.keyboard-action-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.keyboard-action-btn.primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.keyboard-action-btn.primary:hover:not(:disabled) {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary-light);
+    box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.4);
+}
+
+/* Keyboard Container */
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* Key Buttons */
+.key-btn {
+    min-width: 50px;
+    height: 50px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-background-elevated);
+    color: var(--color-text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.key-btn.special {
+    background: rgba(var(--color-primary-rgb), 0.1);
+    border-color: rgba(var(--color-primary-rgb), 0.3);
+    font-size: 0.9rem;
+    min-width: auto;
+    padding: 0 16px;
+}
+
+.key-btn.space {
+    min-width: 200px;
+}
+
+.key-btn:hover {
+    background: rgba(var(--color-primary-rgb), 0.15);
+    border-color: var(--color-primary);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.key-btn.focused {
+    background: var(--focus-bg);
+    color: var(--color-text-primary);
+    border-color: var(--color-primary);
+    transform: translateY(0);
+    box-shadow: var(--focus-shadow), var(--focus-glow), 0 3px 0 rgba(0, 0, 0, 0.3);
+    animation: keyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes keyPulse {
+    0%, 100% {
+        box-shadow: var(--focus-shadow), var(--focus-glow), 0 3px 0 rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 32px rgba(var(--color-primary-rgb), 0.6), 0 0 0 4px rgba(var(--color-primary-rgb), 0.4), 0 3px 0 rgba(0, 0, 0, 0.3);
+    }
+}
+
+.key-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary-light);
+    color: white;
+}
+
+.key-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+/* Keyboard Hints */
+.keyboard-hints {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--color-text-tertiary);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hint-separator {
+    color: var(--color-text-tertiary);
+    opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .virtual-keyboard-overlay {
+        height: 55vh;
+    }
+
+    .key-btn {
+        min-width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+
+    .key-btn.space {
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .virtual-keyboard-overlay {
+        height: 60vh;
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .keyboard-input-preview {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .keyboard-input-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .keyboard-action-btn {
+        flex: 1;
+    }
+
+    .keyboard-container {
+        padding: 12px;
+        gap: 6px;
+    }
+
+    .keyboard-row {
+        gap: 6px;
+    }
+
+    .key-btn {
+        min-width: 40px;
+        height: 40px;
+        font-size: 0.95rem;
+    }
+
+    .key-btn.special {
+        font-size: 0.8rem;
+        padding: 0 12px;
+    }
+
+    .key-btn.space {
+        min-width: 150px;
+    }
+
+    .keyboard-hints {
+        font-size: 0.8rem;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .virtual-keyboard-overlay {
+        height: 65vh;
+    }
+
+    .key-btn {
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .key-btn.special {
+        font-size: 0.75rem;
+        padding: 0 10px;
+    }
+
+    .key-btn.space {
+        min-width: 120px;
+    }
+
+    .keyboard-input {
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .keyboard-action-btn {
+        height: 44px;
+        font-size: 0.9rem;
+        padding: 0 16px;
+    }
+}
