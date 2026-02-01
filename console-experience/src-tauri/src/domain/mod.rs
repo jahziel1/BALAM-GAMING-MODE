@@ -1,3 +1,4 @@
+pub mod bluetooth;
 pub mod display;
 pub mod entities;
 pub mod errors;

@@ -54,6 +54,7 @@ function App() {
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isWiFiPanelOpen, setIsWiFiPanelOpen] = useState(false);
+  const [isBluetoothPanelOpen, setIsBluetoothPanelOpen] = useState(false);
   const [pendingLaunchIndex, setPendingLaunchIndex] = useState<number | null>(null);
   const [osdValue, setOsdValue] = useState(75);
   const [isOsdVisible, setIsOsdVisible] = useState(false);
@@ -397,6 +398,20 @@ function App() {
     };
   }, []);
 
+  // Bluetooth Panel toggle listener (Ctrl+B)
+  useEffect(() => {
+    const setupListener = async () => {
+      const unlisten = await listen('toggle-bluetooth-panel', () => {
+        setIsBluetoothPanelOpen((prev) => !prev);
+      });
+      return unlisten;
+    };
+    const unlistenPromise = setupListener();
+    return () => {
+      void unlistenPromise.then((unlisten) => unlisten());
+    };
+  }, []);
+
   // ============================================================================
   // DERIVED STATE
   // ============================================================================
@@ -505,6 +520,8 @@ function App() {
         }}
         isWiFiPanelOpen={isWiFiPanelOpen}
         onCloseWiFiPanel={() => setIsWiFiPanelOpen(false)}
+        isBluetoothPanelOpen={isBluetoothPanelOpen}
+        onCloseBluetoothPanel={() => setIsBluetoothPanelOpen(false)}
         virtualKeyboard={virtualKeyboard}
         controllerType={controllerType}
       />

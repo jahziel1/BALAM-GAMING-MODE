@@ -6,11 +6,13 @@ pub mod infrastructure;
 pub mod ports;
 
 use crate::application::commands::{
-    add_game_manually, apply_performance_profile, connect_wifi, disconnect_wifi, forget_wifi, get_brightness,
-    get_current_wifi, get_games, get_refresh_rate, get_saved_networks, get_supported_refresh_rates, get_system_drives,
-    get_system_status, get_tdp_config, get_wifi_signal_strength, kill_game, launch_game, list_directory, log_message,
-    logout_pc, remove_game, restart_pc, scan_games, scan_wifi_networks, set_brightness, set_refresh_rate, set_tdp,
-    set_volume, shutdown_pc, supports_brightness_control, supports_tdp_control,
+    add_game_manually, apply_performance_profile, connect_bluetooth_device, connect_wifi, disconnect_bluetooth_device,
+    disconnect_wifi, forget_wifi, get_brightness, get_connected_bluetooth_devices, get_current_wifi, get_games,
+    get_paired_bluetooth_devices, get_refresh_rate, get_saved_networks, get_supported_refresh_rates, get_system_drives,
+    get_system_status, get_tdp_config, get_wifi_signal_strength, is_bluetooth_available, kill_game, launch_game,
+    list_directory, log_message, logout_pc, pair_bluetooth_device, remove_game, restart_pc, scan_bluetooth_devices,
+    scan_games, scan_wifi_networks, set_bluetooth_enabled, set_brightness, set_refresh_rate, set_tdp, set_volume,
+    shutdown_pc, supports_brightness_control, supports_tdp_control, unpair_bluetooth_device,
 };
 use crate::application::DIContainer;
 use tauri::{Emitter, Manager};
@@ -85,6 +87,9 @@ pub fn run() {
                         } else if shortcut.key == Code::KeyW && shortcut.mods.contains(Modifiers::CONTROL) {
                             // WiFi Panel toggle
                             let _ = app.emit("toggle-wifi-panel", true);
+                        } else if shortcut.key == Code::KeyB && shortcut.mods.contains(Modifiers::CONTROL) {
+                            // Bluetooth Panel toggle
+                            let _ = app.emit("toggle-bluetooth-panel", true);
                         }
                     }
                 })
@@ -104,6 +109,9 @@ pub fn run() {
                 let _ = app
                     .global_shortcut()
                     .register(Shortcut::new(Some(Modifiers::CONTROL), Code::KeyW)); // WiFi Panel
+                let _ = app
+                    .global_shortcut()
+                    .register(Shortcut::new(Some(Modifiers::CONTROL), Code::KeyB)); // Bluetooth Panel
                 let _ = app.global_shortcut().register(Shortcut::new(None, Code::AudioVolumeUp));
                 let _ = app
                     .global_shortcut()
@@ -185,7 +193,17 @@ pub fn run() {
             disconnect_wifi,
             forget_wifi,
             get_saved_networks,
-            get_wifi_signal_strength
+            get_wifi_signal_strength,
+            // Bluetooth commands
+            is_bluetooth_available,
+            set_bluetooth_enabled,
+            get_paired_bluetooth_devices,
+            scan_bluetooth_devices,
+            get_connected_bluetooth_devices,
+            pair_bluetooth_device,
+            unpair_bluetooth_device,
+            connect_bluetooth_device,
+            disconnect_bluetooth_device
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

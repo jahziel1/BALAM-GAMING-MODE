@@ -1,4 +1,5 @@
 use crate::adapters;
+use crate::adapters::bluetooth::WindowsBluetoothAdapter;
 use crate::adapters::display::WindowsDisplayAdapter;
 use crate::adapters::identity_engine::IdentityEngine;
 use crate::adapters::metadata_adapter::MetadataAdapter;
@@ -7,6 +8,7 @@ use crate::adapters::wifi::WindowsWiFiAdapter;
 use crate::adapters::windows_system_adapter::WindowsSystemAdapter;
 use crate::application::{ActiveGame, ActiveGameInfo, DIContainer};
 use crate::domain::{BrightnessConfig, Game, GameSource, PerformanceProfile, RefreshRateConfig, TDPConfig};
+use crate::ports::bluetooth_port::{BluetoothDevice, BluetoothPairingConfig, BluetoothPort};
 use crate::ports::display_port::DisplayPort;
 use crate::ports::performance_port::PerformancePort;
 use crate::ports::system_port::{SystemPort, SystemStatus};
@@ -677,4 +679,100 @@ pub fn get_saved_networks() -> Result<Vec<String>, String> {
 pub fn get_wifi_signal_strength() -> Result<Option<u32>, String> {
     let adapter = WindowsWiFiAdapter::new()?;
     adapter.get_signal_strength()
+}
+
+// ============================================================================
+// Bluetooth Management Commands
+// ============================================================================
+
+/// Checks if Bluetooth is available and enabled.
+///
+/// # Returns
+/// - `Ok(true)` if Bluetooth is available and enabled
+/// - `Ok(false)` if Bluetooth is disabled or no adapter
+#[tauri::command]
+pub async fn is_bluetooth_available() -> Result<bool, String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.is_bluetooth_available().await
+}
+
+/// Enables or disables Bluetooth radio.
+///
+/// # Parameters
+/// - `enabled`: true to enable, false to disable
+#[tauri::command]
+pub async fn set_bluetooth_enabled(enabled: bool) -> Result<(), String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.set_bluetooth_enabled(enabled).await
+}
+
+/// Gets the list of paired Bluetooth devices.
+///
+/// # Returns
+/// List of devices that have been paired with this computer.
+#[tauri::command]
+pub async fn get_paired_bluetooth_devices() -> Result<Vec<BluetoothDevice>, String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.get_paired_devices().await
+}
+
+/// Scans for available Bluetooth devices nearby.
+///
+/// # Returns
+/// List of discovered devices, including paired and unpaired.
+#[tauri::command]
+pub async fn scan_bluetooth_devices() -> Result<Vec<BluetoothDevice>, String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.scan_devices().await
+}
+
+/// Gets the currently connected Bluetooth devices.
+///
+/// # Returns
+/// List of devices currently connected to this computer.
+#[tauri::command]
+pub async fn get_connected_bluetooth_devices() -> Result<Vec<BluetoothDevice>, String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.get_connected_devices().await
+}
+
+/// Pairs with a Bluetooth device.
+///
+/// # Parameters
+/// - `address`: Device MAC address
+/// - `pin`: PIN/passkey (empty for SSP)
+#[tauri::command]
+pub async fn pair_bluetooth_device(address: String, pin: String) -> Result<(), String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.pair_device(BluetoothPairingConfig { address, pin }).await
+}
+
+/// Removes pairing with a Bluetooth device.
+///
+/// # Parameters
+/// - `address`: Device MAC address to unpair
+#[tauri::command]
+pub async fn unpair_bluetooth_device(address: String) -> Result<(), String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.unpair_device(&address).await
+}
+
+/// Connects to a paired Bluetooth device.
+///
+/// # Parameters
+/// - `address`: Device MAC address to connect
+#[tauri::command]
+pub async fn connect_bluetooth_device(address: String) -> Result<(), String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.connect_device(&address).await
+}
+
+/// Disconnects from a Bluetooth device.
+///
+/// # Parameters
+/// - `address`: Device MAC address to disconnect
+#[tauri::command]
+pub async fn disconnect_bluetooth_device(address: String) -> Result<(), String> {
+    let adapter = WindowsBluetoothAdapter::new();
+    adapter.disconnect_device(&address).await
 }

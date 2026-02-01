@@ -1,0 +1,146 @@
+/* Bluetooth Panel Styles */
+.bluetooth-devices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bluetooth-device {
+  padding: var(--spacing-md);
+  background: var(--card-bg);
+  border: 2px solid transparent;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.bluetooth-device.focused {
+  border-color: var(--color-primary);
+  background: rgba(45, 115, 255, 0.1);
+}
+
+.bluetooth-device.connected {
+  border-color: var(--color-success);
+  background: rgba(var(--color-success-rgb, 76, 175, 80), 0.05);
+}
+
+.bluetooth-device-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.bluetooth-device-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text-primary, #fff);
+}
+
+.bluetooth-badge {
+  background: var(--color-success, #4caf50);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bluetooth-badge.paired {
+  background: var(--color-info, #2196f3);
+}
+
+.bluetooth-device-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #aaa);
+  padding-left: 32px;
+}
+
+.bluetooth-address {
+  font-family: monospace;
+}
+
+.bluetooth-type {
+  text-transform: capitalize;
+}
+
+.bluetooth-action {
+  margin-left: auto;
+  color: var(--color-primary, #2d73ff);
+  font-weight: 600;
+}
+
+/* Loading, Empty, Error States */
+.bluetooth-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-text-secondary, #aaa);
+}
+
+.bluetooth-icon-spin {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary, #2d73ff);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bluetooth-button {
+  padding: 12px 24px;
+  background: var(--color-primary, #2d73ff);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.bluetooth-button:hover {
+  background: var(--color-primary-dark, #1e5bdb);
+  transform: translateY(-2px);
+}
+
+.bluetooth-error {
+  color: var(--color-error, #f44336);
+}
+
+.bluetooth-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bluetooth-hint {
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary, #888);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bluetooth-device-name {
+    font-size: 0.9rem;
+  }
+
+  .bluetooth-device-meta {
+    padding-left: 20px;
+    flex-wrap: wrap;
+  }
+}

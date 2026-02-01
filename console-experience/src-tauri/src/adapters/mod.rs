@@ -1,3 +1,4 @@
+pub mod bluetooth;
 pub mod display;
 pub mod epic_scanner;
 pub mod gamepad_adapter;

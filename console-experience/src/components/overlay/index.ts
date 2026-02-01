@@ -2,6 +2,7 @@
  * Overlay Components Barrel Export
  */
 
+export { BluetoothPanel } from './BluetoothPanel';
 export { default as FileExplorer } from './FileExplorer';
 export { InGameMenuOptimized } from './InGameMenuOptimized';
 export { OverlayPanel } from './OverlayPanel/OverlayPanel';

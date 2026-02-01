@@ -13,6 +13,7 @@ import { useMemo } from 'react';
 
 import type { VirtualKeyboardHook } from '../../hooks/useVirtualKeyboard';
 import type { Game } from '../../types/game';
+import { BluetoothPanel } from '../overlay/BluetoothPanel';
 import FileExplorer from '../overlay/FileExplorer';
 import { InGameMenuOptimized } from '../overlay/InGameMenuOptimized';
 import { QuickSettings } from '../overlay/QuickSettings';
@@ -47,6 +48,10 @@ interface OverlayManagerProps {
   // WiFi Panel
   isWiFiPanelOpen: boolean;
   onCloseWiFiPanel: () => void;
+
+  // Bluetooth Panel
+  isBluetoothPanelOpen: boolean;
+  onCloseBluetoothPanel: () => void;
 
   // Virtual Keyboard
   virtualKeyboard: VirtualKeyboardHook;
@@ -120,6 +125,8 @@ export function OverlayManager({
   onRegisterQuickSettingsAdjustHandler,
   isWiFiPanelOpen,
   onCloseWiFiPanel,
+  isBluetoothPanelOpen,
+  onCloseBluetoothPanel,
   virtualKeyboard,
   controllerType,
 }: OverlayManagerProps) {
@@ -203,6 +210,13 @@ export function OverlayManager({
       <WiFiPanel
         isOpen={isWiFiPanelOpen}
         onClose={onCloseWiFiPanel}
+        controllerType={controllerType}
+      />
+
+      {/* Bluetooth Panel */}
+      <BluetoothPanel
+        isOpen={isBluetoothPanelOpen}
+        onClose={onCloseBluetoothPanel}
         controllerType={controllerType}
       />
     </>
