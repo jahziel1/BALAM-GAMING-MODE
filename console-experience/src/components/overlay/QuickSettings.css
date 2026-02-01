@@ -2,6 +2,52 @@
 /* Base layout is handled by OverlayPanel component */
 /* Button hints are handled by ButtonHint component (same as Footer) */
 
+/* Quick Actions Section */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 0;
+}
+
+.quick-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--card-bg, rgba(255, 255, 255, 0.05));
+  border: 2px solid transparent;
+  border-radius: var(--card-radius, 12px);
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.2s ease);
+  color: var(--color-text-primary, #fff);
+  min-height: 80px;
+}
+
+.quick-action-button:hover {
+  background: rgba(45, 115, 255, 0.1);
+  border-color: var(--color-primary, #2d73ff);
+  transform: translateY(-2px);
+}
+
+.quick-action-button:active {
+  transform: translateY(0);
+}
+
+.quick-action-button svg {
+  color: var(--color-primary, #2d73ff);
+  flex-shrink: 0;
+}
+
+.quick-action-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* Uses same prompts-container as Footer for consistency */
 .prompts-container {
   display: flex;
@@ -13,5 +59,20 @@
 @media (max-width: 768px) {
   .prompts-container {
     gap: 15px;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .quick-action-button {
+    min-height: 70px;
+    padding: 12px;
+  }
+
+  .quick-action-label {
+    font-size: 0.8rem;
   }
 }

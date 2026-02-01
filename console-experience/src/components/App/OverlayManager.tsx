@@ -44,6 +44,8 @@ interface OverlayManagerProps {
   quickSettingsSliderIndex: number;
   onQuickSettingsFocusChange: (index: number) => void;
   onRegisterQuickSettingsAdjustHandler: (handler: (direction: number) => void) => void;
+  onOpenWiFiPanel?: () => void;
+  onOpenBluetoothPanel?: () => void;
 
   // WiFi Panel
   isWiFiPanelOpen: boolean;
@@ -123,6 +125,8 @@ export function OverlayManager({
   quickSettingsSliderIndex,
   onQuickSettingsFocusChange,
   onRegisterQuickSettingsAdjustHandler,
+  onOpenWiFiPanel,
+  onOpenBluetoothPanel,
   isWiFiPanelOpen,
   onCloseWiFiPanel,
   isBluetoothPanelOpen,
@@ -204,6 +208,8 @@ export function OverlayManager({
         onFocusChange={onQuickSettingsFocusChange}
         controllerType={controllerType}
         onRegisterAdjustHandler={onRegisterQuickSettingsAdjustHandler}
+        onOpenWiFiPanel={onOpenWiFiPanel}
+        onOpenBluetoothPanel={onOpenBluetoothPanel}
       />
 
       {/* WiFi Panel */}

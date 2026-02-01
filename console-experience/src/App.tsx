@@ -518,6 +518,8 @@ function App() {
         onRegisterQuickSettingsAdjustHandler={(handler) => {
           quickSettingsAdjustRef.current = handler;
         }}
+        onOpenWiFiPanel={() => setIsWiFiPanelOpen(true)}
+        onOpenBluetoothPanel={() => setIsBluetoothPanelOpen(true)}
         isWiFiPanelOpen={isWiFiPanelOpen}
         onCloseWiFiPanel={() => setIsWiFiPanelOpen(false)}
         isBluetoothPanelOpen={isBluetoothPanelOpen}

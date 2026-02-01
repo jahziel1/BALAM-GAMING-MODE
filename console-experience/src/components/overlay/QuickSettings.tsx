@@ -1,6 +1,7 @@
 import './QuickSettings.css';
 
 import { invoke } from '@tauri-apps/api/core';
+import { Bluetooth, Wifi } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import ButtonHint from '../ui/ButtonHint/ButtonHint';
@@ -14,6 +15,8 @@ interface QuickSettingsProps {
   onFocusChange: (index: number) => void;
   controllerType?: 'XBOX' | 'PLAYSTATION' | 'SWITCH' | 'KEYBOARD' | 'GENERIC';
   onRegisterAdjustHandler?: (handler: (direction: number) => void) => void;
+  onOpenWiFiPanel?: () => void;
+  onOpenBluetoothPanel?: () => void;
 }
 
 interface TDPConfig {
@@ -38,6 +41,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   onFocusChange,
   controllerType = 'KEYBOARD',
   onRegisterAdjustHandler,
+  onOpenWiFiPanel,
+  onOpenBluetoothPanel,
 }) => {
   // State
   const [volume, setVolume] = useState(50);
@@ -255,6 +260,28 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
       side="right"
       footer={footer}
     >
+      {/* Quick Actions */}
+      <div className="quick-actions">
+        <button
+          className="quick-action-button"
+          onClick={onOpenWiFiPanel}
+          aria-label="Open WiFi settings"
+          title="WiFi Settings (Ctrl+W)"
+        >
+          <Wifi size={24} />
+          <span className="quick-action-label">WiFi</span>
+        </button>
+        <button
+          className="quick-action-button"
+          onClick={onOpenBluetoothPanel}
+          aria-label="Open Bluetooth settings"
+          title="Bluetooth Settings (Ctrl+B)"
+        >
+          <Bluetooth size={24} />
+          <span className="quick-action-label">Bluetooth</span>
+        </button>
+      </div>
+
       <RadixSlider
         label="Volume"
         value={volume}
