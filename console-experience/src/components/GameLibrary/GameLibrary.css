@@ -1,0 +1,25 @@
+/**
+ * Game Library Styles
+ */
+
+.game-library-virtualized {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-grid {
+  outline: none;
+}
+
+.game-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+}
+
+/* Performance optimization */
+.game-grid * {
+  will-change: transform;
+}

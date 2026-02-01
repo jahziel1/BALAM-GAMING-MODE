@@ -1,0 +1,14 @@
+# Cargo Configuration
+# Provides convenient aliases for common commands
+
+[alias]
+# Quality checks
+lint = "clippy -- -D warnings -A clippy::too_many_lines -A clippy::must_use_candidate -A clippy::unused_self"
+fmt-check = "fmt -- --check"
+quality = "run --bin quality-check"
+
+# Quick validation (used by pre-commit)
+validate = "clippy -- -W clippy::unwrap_used -W clippy::expect_used -W clippy::panic -W clippy::todo"
+
+# Full CI check
+ci = "check && test && clippy -- -D warnings"

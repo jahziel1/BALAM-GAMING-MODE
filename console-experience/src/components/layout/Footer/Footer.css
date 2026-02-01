@@ -1,9 +1,10 @@
 .footer-bar {
   position: fixed;
-  bottom: 0; left: 0;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 60px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
   display: flex;
   justify-content: flex-end; /* Prompts usually on right */
   align-items: center;
@@ -21,9 +22,15 @@
 
 /* Responsive Footer */
 @media (max-width: 768px) {
-  .prompts-container { gap: 15px; }
-  .label { display: none; } /* Hide text labels (SELECT, BACK), show only icons */
-  .footer-bar { justify-content: center; } /* Center icons on mobile */
+  .prompts-container {
+    gap: 15px;
+  }
+  .label {
+    display: none;
+  } /* Hide text labels (SELECT, BACK), show only icons */
+  .footer-bar {
+    justify-content: center;
+  } /* Center icons on mobile */
 }
 
 .prompt-item {
@@ -43,8 +50,8 @@
 
 /* Keyboard Icons */
 .key-icon {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 4px;
   padding: 2px 8px;
   font-size: 0.8rem;
@@ -55,7 +62,8 @@
 
 /* Gamepad Icons (Xbox Style) */
 .btn-icon {
-  width: 24px; height: 24px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -63,23 +71,73 @@
   font-weight: 800;
   font-size: 0.9rem;
   color: #000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-.xbox-a { background: #107C10; color: #fff; }
-.xbox-b { background: #d93025; color: #fff; }
-.xbox-x { background: #0050b5; color: #fff; }
-.xbox-y { background: #f9c02e; color: #000; }
-.xbox-menu { background: #333; color: #fff; font-size: 0.7rem; }
+.xbox-a {
+  background: #107c10;
+  color: #fff;
+}
+.xbox-b {
+  background: #d93025;
+  color: #fff;
+}
+.xbox-x {
+  background: #0050b5;
+  color: #fff;
+}
+.xbox-y {
+  background: #f9c02e;
+  color: #000;
+}
+.xbox-menu {
+  background: #333;
+  color: #fff;
+  font-size: 0.7rem;
+}
 
 /* PlayStation Style */
-.ps-cross { background: #333; color: #8DA9E4; border: 1px solid #8DA9E4; }
-.ps-circle { background: #333; color: #E78D95; border: 1px solid #E78D95; }
-.ps-triangle { background: #333; color: #64C59E; border: 1px solid #64C59E; }
-.ps-options { width: auto; padding: 0 8px; border-radius: 10px; font-size: 0.6rem; background: #333; color: #fff; border: 1px solid #666; }
+.ps-cross {
+  background: #333;
+  color: #8da9e4;
+  border: 1px solid #8da9e4;
+}
+.ps-circle {
+  background: #333;
+  color: #e78d95;
+  border: 1px solid #e78d95;
+}
+.ps-triangle {
+  background: #333;
+  color: #64c59e;
+  border: 1px solid #64c59e;
+}
+.ps-options {
+  width: auto;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 0.6rem;
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+}
 
 /* Nintendo Style */
-.ns-a { background: #d93025; color: #fff; }
-.ns-b { background: #f9c02e; color: #000; }
-.ns-x { background: #333; color: #fff; border: 1px solid #666; }
-.ns-plus { background: #333; color: #fff; font-size: 1rem; }
+.ns-a {
+  background: #d93025;
+  color: #fff;
+}
+.ns-b {
+  background: #f9c02e;
+  color: #000;
+}
+.ns-x {
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+}
+.ns-plus {
+  background: #333;
+  color: #fff;
+  font-size: 1rem;
+}

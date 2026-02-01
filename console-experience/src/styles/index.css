@@ -1,0 +1,17 @@
+/**
+ * Main Stylesheet
+ *
+ * Imports all CSS modules in correct layer order.
+ * PostCSS will optimize and purge unused styles.
+ */
+
+/* Define layer order */
+@layer tokens, reset, base, components, utilities, overrides;
+
+/* Import layers */
+@import './tokens.css';
+@import './reset.css';
+@import './base.css';
+@import './utilities.css';
+
+/* Component styles will be imported by components */

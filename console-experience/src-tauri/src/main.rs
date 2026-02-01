@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    console_experience_lib::run()
+    console_experience_lib::run();
 }

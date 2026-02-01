@@ -1,5 +1,6 @@
-import React from 'react';
 import './Sidebar.css';
+
+import React, { memo } from 'react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,16 +10,17 @@ interface SidebarProps {
   onFocusItem: (index: number) => void;
 }
 
-const MENU_ITEMS = [
+export const MENU_ITEMS = [
   { id: 'home', icon: '🏠', label: 'INICIO' },
   { id: 'library', icon: '📚', label: 'BIBLIOTECA' },
+  { id: 'add-game', icon: '➕', label: 'AÑADIR JUEGO' },
   { id: 'search', icon: '🔍', label: 'BUSCAR' },
   { id: 'settings', icon: '⚙️', label: 'AJUSTES' },
   { id: 'desktop', icon: '💻', label: 'ESCRITORIO' },
   { id: 'power', icon: '⭕', label: 'APAGAR', danger: true },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, focusedIndex, onAction, onFocusItem }) => {
+const Sidebar: React.FC<SidebarProps> = memo(({ isOpen, focusedIndex, onAction, onFocusItem }) => {
   return (
     <div className={`sidebar ${isOpen ? 'expanded' : ''}`} data-testid="sidebar">
       <div className="sidebar-header">
@@ -46,6 +48,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, focusedIndex, onAction, onFoc
       </div>
     </div>
   );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

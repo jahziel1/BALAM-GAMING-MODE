@@ -1,109 +1,577 @@
+/**
+ * SearchOverlay Styles - Complete Refactor
+ *
+ * Steam Big Picture-inspired command palette with all visual improvements.
+ *
+ * Fixes Applied:
+ * - ✅ #12: Consistent z-index (15000)
+ * - ✅ #18: Backdrop blur animation
+ * - ✅ #24: CSS variables for magic numbers
+ * - ✅ #3: Enter/exit animations
+ * - ✅ #5: Loading spinner styles
+ * - ✅ #10: Search hints styles
+ * - ✅ #11: Recent searches styles
+ * - ✅ #15: Grouped results styles
+ * - ✅ #16: Metadata display
+ * - ✅ #17: Enhanced empty state
+ * - ✅ #19: Responsive design
+ */
+
+/* CSS Variables (Fix #24) */
+:root {
+  --search-overlay-z-index: 15000; /* Fix #12: Consistent with app z-index scale */
+  --search-padding-top: 15vh;
+  --search-max-width: 800px;
+  --search-border-radius: 16px;
+  --search-animation-duration: 0.2s;
+  --search-backdrop-blur: 10px;
+}
+
+/* Overlay Container */
 .search-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.92);
-    backdrop-filter: blur(10px);
-    z-index: 12000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 15vh;
-    animation: fadeIn 0.2s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(0px); /* Start with no blur */
+  z-index: var(--search-overlay-z-index);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--search-padding-top);
+  animation: overlayEnter var(--search-animation-duration) ease-out forwards;
 }
 
-.search-container {
-    width: 60%;
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+/* Fix #3: Exit animation */
+.search-overlay.closing {
+  animation: overlayExit var(--search-animation-duration) ease-in forwards;
 }
 
+/* Command Palette Container */
+.search-command {
+  width: 60%;
+  max-width: var(--search-max-width);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--search-border-radius);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: commandEnter calc(var(--search-animation-duration) * 1.2) ease-out;
+}
+
+.search-overlay.closing .search-command {
+  animation: commandExit var(--search-animation-duration) ease-in forwards;
+}
+
+/* Search Input */
 .search-input-wrapper {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
 }
 
 .search-icon {
-    position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 1.5rem;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .search-input {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    padding: 20px 20px 20px 60px;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
-    outline: none;
-    transition: all 0.2s;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 20px 60px 20px 60px; /* Space for icon and spinner */
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .search-input:focus {
-    border-color: #2D73FF;
-    background: rgba(45, 115, 255, 0.1);
-    box-shadow: 0 0 30px rgba(45, 115, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
 }
 
+/* Fix #5: Loading Spinner */
+.search-spinner {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Fix #10: Search Hints */
+.search-hints {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.hint-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-shortcut {
+  font-family: 'Rajdhani', monospace;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Results List */
 .search-results {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-height: 50vh;
-    overflow-y: auto;
-    padding: 0 10px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 10px;
 }
 
+/* Fix #5: Loading State */
+.search-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Fix #17: Enhanced Empty State */
+.search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.empty-hint {
+  font-size: 0.9rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Fix #15: Grouped Results */
+.search-group {
+  margin-bottom: 16px;
+}
+
+.search-group [cmdk-group-heading] {
+  padding: 12px 10px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+  user-select: none;
+}
+
+/* Fix #11: Recent Searches */
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 6px;
+}
+
+.recent-item:hover,
+.recent-item[aria-selected='true'] {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.recent-icon {
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.recent-query {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+/* Result Items */
 .result-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 12px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+  margin-bottom: 6px;
 }
 
 .result-item:hover,
-.result-item.focused {
-    background: #fff;
-    color: #000;
-    transform: scale(1.02);
+.result-item[aria-selected='true'] {
+  background: #fff;
+  color: #000;
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+  border-color: var(--color-primary, #2d73ff);
 }
 
+/* Thumbnail */
 .result-thumbnail {
-    width: 80px;
-    height: 45px;
-    object-fit: cover;
-    border-radius: 4px;
-    background: #000;
+  width: 80px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
 }
 
-.result-info h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+.result-item:hover .result-thumbnail,
+.result-item[aria-selected='true'] .result-thumbnail {
+  transform: scale(1.05);
 }
 
-.result-info span {
-    font-size: 0.8rem;
-    opacity: 0.7;
+/* Result Info */
+.result-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.result-item:hover .result-info span,
-.result-item.focused .result-info span {
+.result-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fix #16: Metadata Display */
+.result-metadata {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.result-source {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+/* Source-specific colors */
+.result-source[data-source='steam'] {
+  background: rgba(23, 26, 33, 0.8);
+  color: #66c0f4;
+}
+
+.result-source[data-source='Epic'] {
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.result-source[data-source='Xbox'] {
+  background: rgba(16, 124, 16, 0.8);
+  color: #fff;
+}
+
+.result-source[data-source='Manual'] {
+  background: rgba(255, 87, 34, 0.8);
+  color: #fff;
+}
+
+.result-item:hover .result-source,
+.result-item[aria-selected='true'] .result-source {
+  opacity: 1;
+}
+
+.result-last-played {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.result-item:hover .result-last-played,
+.result-item[aria-selected='true'] .result-last-played {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Result Action Hint */
+.result-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.result-item:hover .result-action,
+.result-item[aria-selected='true'] .result-action {
+  opacity: 1;
+}
+
+.result-action kbd {
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: 'Rajdhani', monospace;
+  font-weight: 600;
+}
+
+/* Footer */
+.search-footer {
+  padding: 12px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar Styling */
+.search-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Fix #18: Backdrop Blur Animation */
+@keyframes overlayEnter {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
     opacity: 1;
-    color: #444;
+    backdrop-filter: blur(var(--search-backdrop-blur));
+  }
+}
+
+@keyframes overlayExit {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(var(--search-backdrop-blur));
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes commandEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes commandExit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fix #19: Responsive Design */
+@media (max-width: 1024px) {
+  .search-command {
+    width: 80%;
+  }
+
+  .result-thumbnail {
+    width: 70px;
+    height: 105px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --search-padding-top: 10vh;
+  }
+
+  .search-overlay {
+    padding-top: var(--search-padding-top);
+  }
+
+  .search-command {
+    width: 90%;
+  }
+
+  .search-input {
+    font-size: 1.2rem;
+    padding: 16px 50px 16px 50px;
+  }
+
+  .search-icon {
+    left: 16px;
+  }
+
+  .search-spinner {
+    right: 16px;
+  }
+
+  .search-hints {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .result-item {
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .result-thumbnail {
+    width: 60px;
+    height: 90px;
+  }
+
+  .result-title {
+    font-size: 1rem;
+  }
+
+  .result-metadata {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .result-source {
+    font-size: 0.7rem;
+  }
+
+  .result-last-played {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-command {
+    width: 95%;
+  }
+
+  .search-input {
+    font-size: 1rem;
+    padding: 14px 45px 14px 45px;
+  }
+
+  .search-icon {
+    left: 12px;
+  }
+
+  .search-spinner {
+    right: 12px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .result-thumbnail {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3;
+  }
+
+  .empty-icon {
+    font-size: 2rem;
+  }
+
+  .empty-title {
+    font-size: 1rem;
+  }
+
+  .empty-hint {
+    font-size: 0.8rem;
+  }
 }

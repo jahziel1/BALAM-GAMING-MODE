@@ -1,10 +1,12 @@
-use serde::{Serialize, Deserialize};
+pub mod display;
+pub mod entities;
+pub mod errors;
+pub mod performance;
+pub mod services;
+pub mod value_objects;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Game {
-    pub id: String,
-    pub title: String,
-    pub path: String,
-    pub image: Option<String>, // URL or Base64
-    pub last_played: Option<u64>, // Timestamp
-}
+pub use display::{BrightnessConfig, RefreshRateConfig};
+pub use entities::Game;
+pub use errors::{GameLaunchError, LaunchFailureReason, ScanError, SystemError};
+pub use performance::{PerformanceProfile, TDPConfig};
+pub use value_objects::GameSource;

@@ -1,0 +1,63 @@
+/* Base Selectable Item - Used by ALL interactive items */
+/* Ensures consistent design across menus, sliders, buttons */
+
+.selectable-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 25px;
+  background: var(--color-background-elevated);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.selectable-item:hover:not(.disabled) {
+  background: rgba(var(--color-primary-rgb), 0.08);
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  color: var(--color-text-primary);
+}
+
+.selectable-item.focused {
+  background: var(--focus-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+  transform: translateX(8px);
+  box-shadow: var(--focus-shadow), var(--focus-glow);
+}
+
+.selectable-item.danger.focused {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: var(--color-danger);
+  box-shadow:
+    0 8px 32px rgba(239, 68, 68, 0.4),
+    0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+.selectable-item.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .selectable-item {
+    padding: 15px 20px;
+    gap: 15px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .selectable-item {
+    padding: 12px 15px;
+    gap: 12px;
+    font-size: 0.95rem;
+  }
+}

@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# E2E Testing
+e2e/screenshots/actual/
+e2e/screenshots/diff/
+e2e/reports/
+*.wdio-*
+wdio-*.log
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

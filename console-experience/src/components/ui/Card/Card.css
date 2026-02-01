@@ -1,20 +1,19 @@
 .card {
+  box-sizing: border-box; /* Include border in dimensions */
   width: var(--card-width);
   height: var(--card-height);
-  background: #1e1e24;
-  /* Slightly lighter background */
-  border-radius: 12px;
+  background: var(--color-background-card);
+  border-radius: var(--radius-md);
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition-bounce);
+  box-shadow: var(--shadow-md);
   transform-origin: center center;
   filter: brightness(0.8);
-  /* Increased base brightness */
   will-change: transform, filter, box-shadow;
   backface-visibility: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  scroll-snap-align: start;
+  border: 2px solid var(--color-border);
+  scroll-snap-align: start; /* Align to start for more predictable scrolling */
 }
 
 .card-image-container {
@@ -93,7 +92,12 @@
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
   transform: skewX(-25deg);
   transition: left 0.5s;
   pointer-events: none;
@@ -102,13 +106,48 @@
 
 .card.focused {
   transform: scale(1.08) translateY(-10px);
-  /* Reduced scale from 1.15 to 1.08 */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  border: 2px solid #fff;
+  /* Use !important to override carousel's box-shadow with higher specificity */
+  box-shadow: var(--focus-shadow), var(--focus-glow) !important;
+  border-color: var(--color-primary);
+  filter: brightness(1);
   z-index: 10;
 }
 
 .card.focused::after {
   left: 150%;
   transition: left 1s ease-in-out;
+}
+
+/* Placeholder Image Specific Styles */
+.card img.placeholder-image {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
+  padding: 1px;
+}
+
+.card.focused img.placeholder-image {
+  animation: placeholderPulse 2s ease-in-out infinite;
+}
+
+@keyframes placeholderPulse {
+  0%,
+  100% {
+    filter: brightness(1) saturate(1);
+  }
+
+  50% {
+    filter: brightness(1.1) saturate(1.2);
+  }
+}
+
+/* Improve loading transition for placeholders */
+.card img.fallback-image {
+  opacity: 1 !important;
+  transition: all 0.3s ease;
+}
+
+/* Add subtle hover effect to all cards */
+.card:hover:not(.focused) {
+  transform: scale(1.02);
+  filter: brightness(0.9);
+  cursor: pointer;
 }

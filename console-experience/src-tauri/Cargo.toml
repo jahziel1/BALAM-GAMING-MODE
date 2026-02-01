@@ -19,7 +19,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -30,6 +30,12 @@ sysinfo = "0.30"
 walkdir = "2.5.0"
 steamlocate = "2.0.1"
 winreg = "0.55.0"
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+pelite = "0.10"
+path-clean = "1.0"
+base64 = "0.22"
+libloading = "0.8"
 windows = { version = "0.52", features = [
     "Win32_Foundation",
     "Win32_System_Com",
@@ -52,7 +58,18 @@ windows = { version = "0.52", features = [
     "Gaming_Input",
     "Win32_UI_WindowsAndMessaging",
     "Win32_UI_Input_XboxController",
+    "Win32_Graphics_Gdi",
+    "Win32_Devices_Display",
+    "Win32_UI_Accessibility",
 ] }
+
+# Refactor dependencies (only what we use)
+tracing-appender = "0.2"
+wmi = "0.18.1"
+
+[dev-dependencies]
+proptest = "1.0"
+tokio = { version = "1", features = ["test-util"] }
 
 [[bin]]
 name = "console-experience"

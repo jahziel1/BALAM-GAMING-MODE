@@ -1,0 +1,6 @@
+{
+  "steam_app_ids": ["228980", "1070560", "1391110", "1493710", "1826330"],
+  "epic_patterns": ["UE_", "UnrealEngine"],
+  "xbox_patterns": ["Microsoft.Gaming", "Xbox.TCUI"],
+  "registry_excludes": ["DirectX", "VCRedist", "Microsoft Visual C++", "Redistributable"]
+}

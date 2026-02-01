@@ -1,0 +1,17 @@
+/* QuickSettings-specific styles */
+/* Base layout is handled by OverlayPanel component */
+/* Button hints are handled by ButtonHint component (same as Footer) */
+
+/* Uses same prompts-container as Footer for consistency */
+.prompts-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* Responsive for handhelds */
+@media (max-width: 768px) {
+  .prompts-container {
+    gap: 15px;
+  }
+}

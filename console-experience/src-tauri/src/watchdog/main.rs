@@ -12,16 +12,15 @@ fn main() {
     }
 
     let game_pid_res = args[1].parse::<u32>();
-    let game_pid = match game_pid_res {
-        Ok(pid) => pid,
-        Err(_) => {
-            eprintln!("Invalid PID provided");
-            return;
-        }
+    let game_pid = if let Ok(pid) = game_pid_res {
+        pid
+    } else {
+        eprintln!("Invalid PID provided");
+        return;
     };
 
     let mut sys = System::new_all();
-    println!("Watchdog started monitoring PID: {}", game_pid);
+    println!("Watchdog started monitoring PID: {game_pid}");
 
     loop {
         // Polling de bajo coste (cada 2 segundos)
@@ -31,10 +30,7 @@ fn main() {
         sys.refresh_all();
 
         // Verificamos si el proceso del juego sigue vivo
-        let is_running = sys
-            .processes()
-            .values()
-            .any(|p| p.pid().as_u32() == game_pid);
+        let is_running = sys.processes().values().any(|p| p.pid().as_u32() == game_pid);
 
         if !is_running {
             println!("Game exited. Restoring Shell...");

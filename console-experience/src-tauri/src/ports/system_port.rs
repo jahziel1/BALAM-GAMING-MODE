@@ -24,19 +24,88 @@ pub enum ConnectionType {
 }
 
 /// Port defining the system information acquisition and control capabilities.
+///
+/// This trait provides a hardware abstraction layer for system-level operations
+/// including battery monitoring, network status, audio control, and power management.
+///
+/// # Thread Safety
+/// All implementations must be `Send + Sync` to allow concurrent access.
+///
+/// # Examples
+/// ```rust
+/// use console_experience::ports::system_port::{SystemPort, ConnectionType};
+/// use console_experience::adapters::windows_system_adapter::WindowsSystemAdapter;
+///
+/// let adapter = WindowsSystemAdapter::new();
+/// let status = adapter.get_status();
+/// println!("Battery: {:?}%, Volume: {}%", status.battery_level, status.volume);
+/// ```
 pub trait SystemPort {
     /// Gets the current status of the platform (Battery, Network, Sound).
+    ///
+    /// # Returns
+    /// A `SystemStatus` struct containing:
+    /// - **`battery_level`**: Battery percentage (0-100) or None for desktop PCs
+    /// - **`is_charging`**: Whether device is plugged in
+    /// - **`network_name`**: Current `WiFi` SSID or None
+    /// - **volume**: Master system volume (0-100)
+    /// - **`connection_type`**: `WiFi`, Ethernet, or None
+    ///
+    /// # Performance
+    /// Should complete within 50ms. Called frequently by UI (250ms polling).
     fn get_status(&self) -> SystemStatus;
 
     /// Sets the master volume (0-100).
+    ///
+    /// # Arguments
+    /// * `level` - Volume percentage (0 = mute, 100 = maximum)
+    ///
+    /// # Errors
+    /// Returns `Err` if audio device access fails or platform API errors.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # use console_experience::ports::system_port::SystemPort;
+    /// # use console_experience::adapters::windows_system_adapter::WindowsSystemAdapter;
+    /// let adapter = WindowsSystemAdapter::new();
+    /// adapter.set_volume(75)?; // Set to 75%
+    /// # Ok::<(), String>(())
+    /// ```
     fn set_volume(&self, level: u32) -> Result<(), String>;
 
     /// Initiates a system shutdown.
+    ///
+    /// # Errors
+    /// Returns `Err` if insufficient privileges or platform API fails.
+    ///
+    /// # Platform Notes
+    /// - **Windows**: Uses `ExitWindowsEx` with `EWX_SHUTDOWN` flag
+    /// - **Linux**: Calls `systemctl poweroff`
+    /// - **macOS**: Calls `shutdown -h now`
+    ///
+    /// # Security
+    /// Requires administrator/root privileges on most platforms.
     fn shutdown(&self) -> Result<(), String>;
 
     /// Initiates a system restart.
+    ///
+    /// # Errors
+    /// Returns `Err` if insufficient privileges or platform API fails.
+    ///
+    /// # Platform Notes
+    /// - **Windows**: Uses `ExitWindowsEx` with `EWX_REBOOT` flag
+    /// - **Linux**: Calls `systemctl reboot`
+    /// - **macOS**: Calls `shutdown -r now`
     fn restart(&self) -> Result<(), String>;
 
     /// Logs out the current user.
+    ///
+    /// # Errors
+    /// Returns `Err` if platform API fails.
+    ///
+    /// # Platform Notes
+    /// - **Windows**: Uses `ExitWindowsEx` with `EWX_LOGOFF` flag
+    /// - **Linux**: Calls `loginctl terminate-user`
+    /// - **macOS**: Calls `osascript` with logout command
     fn logout(&self) -> Result<(), String>;
 }

@@ -5,9 +5,10 @@ use walkdir::WalkDir;
 pub struct LocalGameScanner;
 
 impl LocalGameScanner {
+    #[must_use]
     pub fn scan_directory(dir: &str) -> Vec<String> {
         let mut games = Vec::new();
-        
+
         for entry in WalkDir::new(dir).min_depth(1).max_depth(3) {
             let entry = match entry {
                 Ok(e) => e,

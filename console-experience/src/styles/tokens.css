@@ -1,0 +1,148 @@
+/**
+ * Design Tokens
+ *
+ * CSS custom properties organized as primitive → semantic → component.
+ * All design decisions centralized for consistency and maintainability.
+ *
+ * Structure:
+ * - Primitive: Raw values (colors, sizes, spacing)
+ * - Semantic: Purpose-based tokens
+ * - Component: Component-specific tokens
+ */
+
+@layer tokens {
+  :root {
+    /* ===== PRIMITIVE TOKENS ===== */
+    /* Colors */
+    --primitive-blue-400: #4a90ff;
+    --primitive-blue-500: #2d73ff;
+    --primitive-blue-600: #1a5fe5;
+    --primitive-gray-50: #f8f9fa;
+    --primitive-gray-100: #e9ecef;
+    --primitive-gray-200: #dee2e6;
+    --primitive-gray-700: #495057;
+    --primitive-gray-800: #343a40;
+    --primitive-gray-900: #212529;
+    --primitive-black: #000000;
+    --primitive-white: #ffffff;
+    --primitive-red-500: #dc3545;
+    --primitive-green-500: #28a745;
+    --primitive-yellow-500: #ffc107;
+
+    /* Spacing */
+    --space-1: 0.25rem; /* 4px */
+    --space-2: 0.5rem; /* 8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem; /* 16px */
+    --space-6: 1.5rem; /* 24px */
+    --space-8: 2rem; /* 32px */
+    --space-12: 3rem; /* 48px */
+
+    /* Font Sizes */
+    --font-xs: 0.75rem; /* 12px */
+    --font-sm: 0.875rem; /* 14px */
+    --font-base: 1rem; /* 16px */
+    --font-lg: 1.125rem; /* 18px */
+    --font-xl: 1.25rem; /* 20px */
+    --font-2xl: 1.5rem; /* 24px */
+    --font-3xl: 1.875rem; /* 30px */
+
+    /* Line Heights */
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.75;
+
+    /* Border Radius */
+    --radius-sm: 0.25rem; /* 4px */
+    --radius-md: 0.5rem; /* 8px */
+    --radius-lg: 0.75rem; /* 12px */
+    --radius-xl: 1rem; /* 16px */
+
+    /* ===== SEMANTIC TOKENS ===== */
+    /* Colors */
+    --color-primary: var(--primitive-blue-500);
+    --color-primary-hover: var(--primitive-blue-600);
+    --color-surface: var(--primitive-gray-900);
+    --color-surface-secondary: var(--primitive-gray-800);
+    --color-text: var(--primitive-white);
+    --color-text-secondary: var(--primitive-gray-200);
+    --color-text-muted: var(--primitive-gray-700);
+    --color-border: var(--primitive-gray-700);
+    --color-success: var(--primitive-green-500);
+    --color-error: var(--primitive-red-500);
+    --color-warning: var(--primitive-yellow-500);
+
+    /* Spacing */
+    --spacing-xs: var(--space-2);
+    --spacing-sm: var(--space-3);
+    --spacing-md: var(--space-4);
+    --spacing-lg: var(--space-6);
+    --spacing-xl: var(--space-8);
+
+    /* Typography */
+    --text-body: var(--font-base);
+    --text-heading: var(--font-2xl);
+    --text-caption: var(--font-sm);
+
+    /* Effects */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Focus */
+    --focus-ring: 0 0 0 3px var(--color-primary);
+    --focus-border: 2px solid var(--color-primary);
+
+    /* ===== COMPONENT TOKENS ===== */
+    /* Card */
+    --card-bg: var(--color-surface-secondary);
+    --card-padding: var(--spacing-md);
+    --card-radius: var(--radius-lg);
+    --card-shadow: var(--shadow-md);
+
+    /* Button */
+    --button-padding-x: var(--spacing-md);
+    --button-padding-y: var(--spacing-sm);
+    --button-radius: var(--radius-md);
+    --button-primary-bg: var(--color-primary);
+    --button-primary-hover: var(--color-primary-hover);
+
+    /* Sidebar */
+    --sidebar-width: 240px;
+    --sidebar-bg: var(--color-surface);
+
+    /* TopBar */
+    --topbar-height: 60px;
+    --topbar-bg: var(--color-surface);
+
+    /* Footer */
+    --footer-height: 50px;
+    --footer-bg: var(--color-surface);
+
+    /* Overlay */
+    --overlay-bg: rgba(0, 0, 0, 0.8);
+    --overlay-panel-bg: var(--color-surface);
+    --overlay-panel-width: 500px;
+
+    /* Game Card */
+    --game-card-width: 180px;
+    --game-card-aspect: 3 / 4;
+    --game-card-gap: var(--spacing-md);
+
+    /* Steam-inspired additions */
+    --accent-primary: #3b82f6;
+    --accent-primary-hover: #2563eb;
+    --bg-primary: #1b2838;
+    --bg-secondary: #16202d;
+    --text-primary: #ffffff;
+    --text-secondary: #b8bcbf;
+
+    /* Shadows for depth */
+    --shadow-focus: 0 0 0 4px rgba(59, 130, 246, 0.4), 0 8px 24px rgba(59, 130, 246, 0.5);
+  }
+}

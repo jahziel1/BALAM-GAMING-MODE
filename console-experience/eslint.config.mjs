@@ -8,7 +8,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', '.next', 'coverage', 'src-tauri'] },
+  { ignores: ['dist', 'node_modules', '.next', 'coverage', 'src-tauri', '*.config.ts', '*.config.mjs', 'e2e', 'wdio.conf.ts', 'wdio-fix-snippet.ts'] },
   {
     extends: [
       js.configs.recommended,
@@ -34,24 +34,47 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
-      
+
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
 
+      // ========== CRITICAL RULES (Block Commits) ==========
+      // Similar to Clippy's unwrap_used / expect_used / panic
+      'no-debugger': 'error',
+      'no-alert': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error', // Avoid x! assertions
+
       // TypeScript Best Practices
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true
+      }],
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
-      '@typescript-eslint/no-misused-promises': 'off',
-      '@typescript-eslint/no-floating-promises': 'off', 
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+
+      // React Best Practices
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react/jsx-no-bind': ['warn', { allowArrowFunctions: true }],
+      'react/jsx-no-leaked-render': 'error',
 
       // Auto-Sort Imports (Critical for Clean Code)
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
-      
+
+      // Code Quality
       'react/prop-types': 'off',
-      'no-console': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'eqeqeq': ['error', 'always'],
     },
     settings: {
       react: {

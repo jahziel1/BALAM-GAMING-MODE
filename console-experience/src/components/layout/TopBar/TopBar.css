@@ -47,7 +47,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #2D73FF;
+  background: #2d73ff;
   border: 2px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 10px rgba(45, 115, 255, 0.5);
 }
@@ -65,7 +65,7 @@
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #FFD700;
+  color: #ffd700;
   border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
@@ -116,7 +116,6 @@
 }
 
 @keyframes pulse-glow {
-
   0%,
   100% {
     opacity: 1;

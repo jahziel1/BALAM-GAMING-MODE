@@ -1,9 +1,0 @@
-    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
-error[E0425]: cannot find value `volume` in this scope
-  --> src\adapters\windows_system_adapter.rs:49:16
-   |
-49 |             Ok(volume)
-   |                ^^^^^^ not found in this scope
-
-For more information about this error, try `rustc --explain E0425`.
-error: could not compile `console-experience` (lib) due to 1 previous error

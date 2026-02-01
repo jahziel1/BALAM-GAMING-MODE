@@ -1,15 +1,22 @@
-use crate::ports::system_port::{SystemPort, SystemStatus, ConnectionType};
-use windows::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
-use windows::Win32::Media::Audio::{IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole, IMMDevice};
-use windows::Win32::System::Com::{CoInitializeEx, COINIT_APARTMENTTHREADED, CoCreateInstance, CLSCTX_ALL};
-use windows::Win32::Media::Audio::Endpoints::IAudioEndpointVolume;
+use crate::ports::system_port::{ConnectionType, SystemPort, SystemStatus};
 use std::process::Command;
+use windows::Win32::Media::Audio::Endpoints::IAudioEndpointVolume;
+use windows::Win32::Media::Audio::{eConsole, eRender, IMMDevice, IMMDeviceEnumerator, MMDeviceEnumerator};
+use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CLSCTX_ALL, COINIT_APARTMENTTHREADED};
+use windows::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
 
-/// Implementation of the SystemPort for Windows utilizing strictly native CoreAudio APIs.
+/// Implementation of the `SystemPort` for Windows utilizing strictly native `CoreAudio` APIs.
 /// This approach avoids shell-outs and keystroke emulation.
 pub struct WindowsSystemAdapter;
 
+impl Default for WindowsSystemAdapter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl WindowsSystemAdapter {
+    #[must_use]
     pub fn new() -> Self {
         Self
     }
@@ -17,7 +24,7 @@ impl WindowsSystemAdapter {
     fn get_battery_info(&self) -> (Option<u8>, bool) {
         unsafe {
             let mut status = SYSTEM_POWER_STATUS::default();
-            if GetSystemPowerStatus(&mut status).is_ok() {
+            if GetSystemPowerStatus(&raw mut status).is_ok() {
                 let level = if status.BatteryLifePercent == 255 {
                     None
                 } else {
@@ -36,16 +43,18 @@ impl WindowsSystemAdapter {
         unsafe {
             // Ensure COM is initialized for this thread
             let _ = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
-            
-            let enumerator: IMMDeviceEnumerator = CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_ALL)
-                .map_err(|e| format!("COM Enumerator Error: {}", e))?;
 
-            let device: IMMDevice = enumerator.GetDefaultAudioEndpoint(eRender, eConsole)
-                .map_err(|e| format!("Default Audio Endpoint Error: {}", e))?;
+            let enumerator: IMMDeviceEnumerator = CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_ALL)
+                .map_err(|e| format!("COM Enumerator Error: {e}"))?;
+
+            let device: IMMDevice = enumerator
+                .GetDefaultAudioEndpoint(eRender, eConsole)
+                .map_err(|e| format!("Default Audio Endpoint Error: {e}"))?;
 
             // Activate the Volume control interface
-            let volume: IAudioEndpointVolume = device.Activate(CLSCTX_ALL, None)
-                .map_err(|e| format!("Audio Interface Activation Error: {}", e))?;
+            let volume: IAudioEndpointVolume = device
+                .Activate(CLSCTX_ALL, None)
+                .map_err(|e| format!("Audio Interface Activation Error: {e}"))?;
 
             Ok(volume)
         }
@@ -68,7 +77,7 @@ impl WindowsSystemAdapter {
         let vol = self.get_volume_interface()?;
         unsafe {
             vol.SetMasterVolumeLevelScalar(normalized, std::ptr::null())
-                .map_err(|e| format!("Hardware SetVolume Error: {}", e))?;
+                .map_err(|e| format!("Hardware SetVolume Error: {e}"))?;
         }
         Ok(())
     }
@@ -79,7 +88,7 @@ impl WindowsSystemAdapter {
     }
 
     fn get_network_info(&self) -> (ConnectionType, Option<String>) {
-        // netsh is a standard system utility for network management, 
+        // netsh is a standard system utility for network management,
         // fallback to native Wlan API if user requires full C++-like integration.
         let output = Command::new("netsh").args(["wlan", "show", "interfaces"]).output();
         if let Ok(out) = output {
@@ -101,7 +110,7 @@ impl SystemPort for WindowsSystemAdapter {
         let (battery_level, is_charging) = self.get_battery_info();
         let volume = self.get_master_volume();
         let (connection_type, network_name) = self.get_network_info();
-        
+
         SystemStatus {
             battery_level,
             is_charging,

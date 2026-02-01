@@ -1,0 +1,78 @@
+/**
+ * Base Styles
+ *
+ * Foundation styles applied to all elements.
+ * Uses design tokens for consistency.
+ */
+
+@layer base {
+  body {
+    font-family:
+      'Inter',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+    font-size: var(--text-body);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    background-color: var(--color-surface);
+  }
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    line-height: var(--leading-tight);
+  }
+
+  h1 {
+    font-size: var(--font-3xl);
+  }
+
+  h2 {
+    font-size: var(--font-2xl);
+  }
+
+  h3 {
+    font-size: var(--font-xl);
+  }
+
+  /* Links */
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  /* Buttons */
+  button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: var(--focus-border);
+    outline-offset: 2px;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+  }
+}

@@ -1,49 +1,115 @@
-import { useRef, useCallback, createRef, useMemo, useState, useEffect } from 'react';
 import './App.css';
-import Sidebar, { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
-import TopBar from './components/layout/TopBar/TopBar';
-import Footer from './components/layout/Footer/Footer';
-import Card from './components/ui/Card/Card';
-import Badge from './components/ui/Badge/Badge';
-import { Play, RotateCcw } from 'lucide-react';
-import { getCurrentWindow } from '@tauri-apps/api/window';
-import { convertFileSrc } from '@tauri-apps/api/core';
-import InGameMenu from './components/overlay/InGameMenu';
-import SystemOSD from './components/overlay/SystemOSD';
-import { QuickSettings } from './components/overlay/QuickSettings';
-import { useGames } from './hooks/useGames';
-import { useNavigation } from './hooks/useNavigation';
-import { useInputDevice } from './hooks/useInputDevice';
-import { useVirtualKeyboard } from './hooks/useVirtualKeyboard';
-import defaultCover from './assets/default_cover.png';
+
 import { listen } from '@tauri-apps/api/event';
-import FileExplorer from './components/overlay/FileExplorer';
-import VirtualKeyboard from './components/overlay/VirtualKeyboard/VirtualKeyboard';
-import SearchOverlay from './components/overlay/SearchOverlay/SearchOverlay';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+// Zustand stores
+import { useGameStore } from './application/providers/StoreProvider';
+import { useOverlayStore } from './application/stores/overlay-store';
+import defaultCover from './assets/default_cover.png';
+// Modular Components
+import {
+  ConfirmationModal,
+  ErrorBoundary,
+  HeroSection,
+  LibrarySection,
+  OverlayManager,
+} from './components/App';
+import { Footer, Sidebar, TopBar } from './components/layout';
+import { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
+import { SystemOSD } from './components/overlay';
+import { InputDeviceType } from './domain/input/InputDevice';
+import { useInputDevice } from './hooks/useInputDevice';
+// Hooks
+import { useNavigation } from './hooks/useNavigation';
+import { useVirtualKeyboard } from './hooks/useVirtualKeyboard';
+import { getCachedAssetSrc } from './utils/image-cache';
 
 function App() {
+  // ============================================================================
+  // STORES & DATA
+  // ============================================================================
   const {
     games,
     isLaunching,
     activeRunningGame,
-    launchGame,
-    killGame,
-    addManualGame,
-    removeGame
-  } = useGames();
+    launchGame: launchGameById,
+    killGame: killGameByPid,
+    addManualGame: addManualGameStore,
+    removeGame,
+    loadGames,
+  } = useGameStore();
 
+  const { showOverlay, hideOverlay, currentOverlay } = useOverlayStore();
+
+  // Load games on mount
+  useEffect(() => {
+    void loadGames();
+  }, [loadGames]);
+
+  // ============================================================================
+  // LOCAL STATE
+  // ============================================================================
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [pendingLaunchIndex, setPendingLaunchIndex] = useState<number | null>(null);
   const [osdValue, setOsdValue] = useState(75);
   const [isOsdVisible, setIsOsdVisible] = useState(false);
   const osdTimeout = useRef<number | null>(null);
 
-  // Input device detection (refactored to clean hook)
-  const { deviceType } = useInputDevice();
+  // Fix #8: Global keyboard shortcuts for search (Ctrl+K, Ctrl+F)
+  useEffect(() => {
+    const handleGlobalKeyboard = (e: KeyboardEvent) => {
+      // Ctrl+K or Cmd+K (Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+      // Ctrl+F or Cmd+F (Mac) - only if not in an input
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        const target = e.target as HTMLElement;
+        const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+        if (!isInput) {
+          e.preventDefault();
+          setIsSearchOpen(true);
+        }
+      }
+    };
 
-  // Map deviceType to legacy controllerType format (temporary compatibility)
+    window.addEventListener('keydown', handleGlobalKeyboard);
+    return () => window.removeEventListener('keydown', handleGlobalKeyboard);
+  }, []);
+
+  // ============================================================================
+  // INPUT DEVICE DETECTION
+  // ============================================================================
+  const { deviceType } = useInputDevice();
   const controllerType: 'XBOX' | 'PLAYSTATION' | 'SWITCH' | 'KEYBOARD' | 'GENERIC' =
-    deviceType === 'GAMEPAD' ? 'GENERIC' : 'KEYBOARD'; // Mouse and Keyboard both map to KEYBOARD for legacy components
+    deviceType === InputDeviceType.GAMEPAD ? 'GENERIC' : 'KEYBOARD';
+
+  // ============================================================================
+  // CALLBACKS
+  // ============================================================================
+  const launchGame = useCallback(
+    (game: { id: string }) => {
+      void launchGameById(game.id);
+    },
+    [launchGameById]
+  );
+
+  const killGame = useCallback(() => {
+    if (activeRunningGame?.pid) {
+      void killGameByPid(activeRunningGame.pid);
+    }
+  }, [killGameByPid, activeRunningGame]);
+
+  const addManualGame = useCallback(
+    (path: string, title: string) => {
+      return addManualGameStore(title, path); // Reversed parameters
+    },
+    [addManualGameStore]
+  );
 
   const handleVolumeChange = useCallback((newVolume: number) => {
     setOsdValue(newVolume);
@@ -52,48 +118,16 @@ function App() {
     osdTimeout.current = window.setTimeout(() => setIsOsdVisible(false), 2000);
   }, []);
 
-  useEffect(() => {
-    const setupListener = async () => {
-      const unlisten = await listen<number>('volume-changed', (event) => {
-        handleVolumeChange(event.payload);
-      });
-      return unlisten;
-    };
-    const unlistenPromise = setupListener();
-    return () => { unlistenPromise.then(unlisten => unlisten()); };
-  }, [handleVolumeChange]);
-
-  // Confirmation Modal State
-  const [pendingLaunchIndex, setPendingLaunchIndex] = useState<number | null>(null);
-
-  const handleLaunchRaw = useCallback((index: number) => {
-    const gameToLaunch = games[index];
-    if (!gameToLaunch) return;
-
-    // GUARD: If user clicks "PLAY" on the CURRENTLY RUNNING game, treat it as RESUME.
-    // This catches UI state mismatches where the button didn't switch to Resume.
-    if (activeRunningGame && String(activeRunningGame.id) === String(gameToLaunch.id)) {
-      console.warn("Launch requested for running game -> Resuming instead.");
-      setInGameMenuOpen(false);
-      getCurrentWindow().hide();
-      return;
-    }
-
-    // IF switching games, ask confirmation first
-    if (activeRunningGame && activeRunningGame.id !== gameToLaunch.id) {
-      setPendingLaunchIndex(index);
-      return;
-    }
-
-    // Otherwise launch immediately
-    launchGame(gameToLaunch);
-    getCurrentWindow().hide();
-  }, [games, launchGame, activeRunningGame]);
-
-  const handleQuitRef = useRef<() => void>(() => { });
-
-  // Quick Settings slider adjustment handler
+  // ============================================================================
+  // NAVIGATION HOOK - Declared first to get setInGameMenuOpen
+  // ============================================================================
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const handleQuitRef = useRef<() => void>(() => {});
   const quickSettingsAdjustRef = useRef<((direction: number) => void) | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const handleLaunchRawRef = useRef<(index: number) => void>(() => {});
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const handleSidebarActionRef = useRef<(id: string) => void>(() => {});
 
   const {
     focusArea,
@@ -108,49 +142,103 @@ function App() {
     setActiveIndex,
     sidebarIndex,
     setSidebarIndex,
-    gameMenuIndex,
     quickSettingsSliderIndex,
-    setQuickSettingsSliderIndex
+    setQuickSettingsSliderIndex,
   } = useNavigation(
     games.length,
     MENU_ITEMS.length,
-    handleLaunchRaw, // Launch callback
+    (index) => handleLaunchRawRef.current(index),
     (index) => {
       const item = MENU_ITEMS[index];
-      if (item) handleSidebarAction(item.id);
+      if (item) {
+        void handleSidebarActionRef.current(item.id);
+      }
     },
     () => handleQuitRef.current(),
     activeRunningGame,
-    isExplorerOpen || isSearchOpen, // Disable navigation when any overlay is open
-    (direction: number) => quickSettingsAdjustRef.current?.(direction) // Quick Settings adjust callback
+    isExplorerOpen, // Search overlay has its own focus area, no need to disable navigation
+    (direction: number) => {
+      if (quickSettingsAdjustRef.current) {
+        quickSettingsAdjustRef.current(direction);
+      }
+    }
   );
 
-  // Stable callbacks for virtual keyboard (prevent re-renders)
-  const handleKeyboardOpen = useCallback(() => {
-    setFocusArea('VIRTUAL_KEYBOARD');
-  }, [setFocusArea]);
-
-  const handleKeyboardClose = useCallback(() => {
+  // ============================================================================
+  // SEARCH CALLBACKS - Declared after useNavigation to access setFocusArea
+  // ============================================================================
+  // Fix #23: Memoized search callbacks to prevent re-renders
+  const handleCloseSearch = useCallback(() => {
+    setIsSearchOpen(false);
     setFocusArea('HERO');
   }, [setFocusArea]);
 
-  const handleKeyboardTextChange = useCallback((text: string) => {
-    // Dispatch custom event for real-time search (works with React controlled inputs)
-    window.dispatchEvent(new CustomEvent('virtual-keyboard-text-change', { detail: text }));
-  }, []);
+  const handleLaunchFromSearch = useCallback(
+    (game: { id: string }) => {
+      launchGame(game);
+      setIsSearchOpen(false);
+      setFocusArea('HERO');
+      void getCurrentWindow().hide();
+    },
+    [launchGame, setFocusArea]
+  );
 
-  // Virtual keyboard management with focusArea synchronization
-  const virtualKeyboard = useVirtualKeyboard({
-    onOpen: handleKeyboardOpen,
-    onClose: handleKeyboardClose,
-    onTextChange: handleKeyboardTextChange
-  });
+  // ============================================================================
+  // GAME LAUNCH LOGIC - Now has access to setInGameMenuOpen
+  // ============================================================================
+  const handleLaunchRaw = useCallback(
+    (index: number) => {
+      const gameToLaunch = games[index];
+      if (!gameToLaunch) return;
 
-  // Define actual handleQuit and keep useNavigation in sync via another useEffect if needed
-  // But actually, we can just define handleQuit and use navigation's setter.
+      // If clicking on currently running game, resume instead
+      if (activeRunningGame && String(activeRunningGame.game.id) === String(gameToLaunch.id)) {
+        console.warn('Launch requested for running game -> Resuming instead.');
+        setInGameMenuOpen(false);
+        void getCurrentWindow().hide();
+        return;
+      }
+
+      // If switching games, ask for confirmation
+      if (activeRunningGame && activeRunningGame.game.id !== gameToLaunch.id) {
+        setPendingLaunchIndex(index);
+        return;
+      }
+
+      // Otherwise launch immediately
+      launchGame(gameToLaunch);
+      void getCurrentWindow().hide();
+    },
+    [games, launchGame, activeRunningGame, setInGameMenuOpen]
+  );
+
+  // Update ref
+  useEffect(() => {
+    handleLaunchRawRef.current = handleLaunchRaw;
+  }, [handleLaunchRaw]);
+
+  // Sync overlay-store with navigation state
+  useEffect(() => {
+    if (isInGameMenuOpen) {
+      showOverlay('inGameMenu');
+    } else if (currentOverlay === 'inGameMenu') {
+      hideOverlay();
+    }
+  }, [isInGameMenuOpen, showOverlay, hideOverlay, currentOverlay]);
+
+  // Sync search overlay with focus area
+  useEffect(() => {
+    if (isSearchOpen) {
+      setFocusArea('SEARCH');
+    }
+  }, [isSearchOpen, setFocusArea]);
+
+  // ============================================================================
+  // QUIT HANDLER
+  // ============================================================================
   const handleQuit = useCallback(() => {
     if (activeRunningGame) {
-      killGame(activeRunningGame);
+      killGame();
       setInGameMenuOpen(false);
       setFocusArea('HERO');
     }
@@ -160,138 +248,177 @@ function App() {
     handleQuitRef.current = handleQuit;
   }, [handleQuit]);
 
-  // Sync navigation callback (useNavigation should accept it or we use refs)
-  // Actually, handleQuit is used by InGameMenu directly too.
-
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  const cardRefs = useMemo(() =>
-    Array(games.length).fill(0).map(() => createRef<HTMLDivElement>()),
-    [games.length]
+  // ============================================================================
+  // SIDEBAR ACTIONS
+  // ============================================================================
+  const handleSidebarAction = useCallback(
+    async (id: string) => {
+      switch (id) {
+        case 'home':
+          setFocusArea('HERO');
+          setSidebarOpen(false);
+          break;
+        case 'library':
+          setFocusArea('LIBRARY');
+          setSidebarOpen(false);
+          break;
+        case 'add-game':
+          setIsExplorerOpen(true);
+          setSidebarOpen(false);
+          break;
+        case 'search':
+          setIsSearchOpen(true);
+          setSidebarOpen(false);
+          break;
+        case 'settings':
+          setSidebarOpen(false);
+          break;
+        case 'desktop':
+          await getCurrentWindow().minimize();
+          setSidebarOpen(false);
+          break;
+        case 'power':
+          setSidebarOpen(false);
+          break;
+        default:
+          setSidebarOpen(false);
+      }
+    },
+    [setSidebarOpen, setFocusArea]
   );
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (trackRef.current) {
-      const sensitivity = 50;
-      if (Math.abs(e.deltaY) > sensitivity) {
-        if (e.deltaY > 0) {
-          setActiveIndex(Math.min(games.length - 1, activeIndex + 1));
-        } else {
-          setActiveIndex(Math.max(0, activeIndex - 1));
-        }
-        setFocusArea('LIBRARY');
-      }
-    }
-  }, [activeIndex, games.length, setActiveIndex, setFocusArea]);
-
-  const handleSidebarAction = useCallback(async (id: string) => {
-    switch (id) {
-      case 'home':
-        setFocusArea('HERO');
-        setSidebarOpen(false);
-        break;
-      case 'library':
-        setFocusArea('LIBRARY');
-        setSidebarOpen(false);
-        break;
-      case 'add-game':
-        setIsExplorerOpen(true);
-        setSidebarOpen(false);
-        break;
-      case 'search':
-        setIsSearchOpen(true);
-        setSidebarOpen(false);
-        break;
-      case 'settings':
-        // TODO: Trigger Settings (Sprint 3)
-        setSidebarOpen(false);
-        break;
-      case 'desktop':
-        await getCurrentWindow().minimize();
-        setSidebarOpen(false);
-        break;
-      case 'power':
-        // TODO: Trigger Power Menu (Sprint 1)
-        // For now, allow closing app via standard method or just visual feedback
-        setSidebarOpen(false);
-        break;
-      default:
-        setSidebarOpen(false);
-    }
-  }, [setSidebarOpen, setFocusArea]);
-
-  const handleSelectManualGame = useCallback(async (path: string, title: string) => {
-    try {
-      await addManualGame(path, title);
-      setIsExplorerOpen(false);
-    } catch (err) {
-      console.error("Manual add failed:", err);
-    }
-  }, [addManualGame]);
-
-  // Simplification: We remove complex visibility states.
-  // The library is ALWAYS rendered. 
-  // The Game Overlay just sits on top when needed.
-
-  // Listen for 'toggle-overlay' from Rust (Global Shortcut)
-  // Listen for 'toggle-overlay' from Rust (Global Shortcut)
+  // Update ref
   useEffect(() => {
-    const unlisten = listen('toggle-overlay', async () => {
-      // Toggle logic: If already open, close it. If closed, open it.
-      // Getting current state in event listener is tricky with closures. 
-      // We rely on functional update, but for window visibility we need to know.
-      // Simpler: ALWAYS Open and Focus on shortcut, let internal UI handle closing.
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    handleSidebarActionRef.current = handleSidebarAction;
+  }, [handleSidebarAction]);
 
-      const win = getCurrentWindow();
-      if (await win.isVisible()) {
-        // If visible, maybe we want to close? 
-        // For now, let's enforce "Summon Blade" behavior.
-        await win.setFocus();
-        setInGameMenuOpen(true);
-      } else {
-        await win.show();
-        await win.setFocus();
-        setInGameMenuOpen(true);
+  // ============================================================================
+  // MANUAL GAME ADD
+  // ============================================================================
+  const handleSelectManualGame = useCallback(
+    async (path: string, title: string) => {
+      try {
+        await addManualGame(path, title);
+        setIsExplorerOpen(false);
+      } catch (err) {
+        console.error('Manual add failed:', err);
       }
+    },
+    [addManualGame]
+  );
+
+  // ============================================================================
+  // VIRTUAL KEYBOARD
+  // ============================================================================
+  const handleKeyboardOpen = useCallback(() => {
+    setFocusArea('VIRTUAL_KEYBOARD');
+  }, [setFocusArea]);
+
+  const handleKeyboardClose = useCallback(() => {
+    setFocusArea('HERO');
+  }, [setFocusArea]);
+
+  const handleKeyboardTextChange = useCallback((text: string) => {
+    window.dispatchEvent(new CustomEvent('virtual-keyboard-text-change', { detail: text }));
+  }, []);
+
+  // Ref for SearchOverlay input (for virtual keyboard integration)
+  const searchInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+
+  const handleRegisterSearchInput = useCallback((ref: React.RefObject<HTMLInputElement>) => {
+    searchInputRef.current = ref.current;
+  }, []);
+
+  const virtualKeyboard = useVirtualKeyboard({
+    onOpen: handleKeyboardOpen,
+    onClose: handleKeyboardClose,
+    onTextChange: handleKeyboardTextChange,
+    targetInputRef: searchInputRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  });
+
+  // Sync: Close virtual keyboard when SearchOverlay closes
+  useEffect(() => {
+    if (!isSearchOpen && virtualKeyboard.isOpen) {
+      // Clear the input ref when search closes
+      searchInputRef.current = null;
+      virtualKeyboard.close();
+    }
+  }, [isSearchOpen, virtualKeyboard]);
+
+  // ============================================================================
+  // GLOBAL SHORTCUT LISTENER
+  // ============================================================================
+  useEffect(() => {
+    const unlisten = listen('toggle-overlay', () => {
+      void (async () => {
+        const win = getCurrentWindow();
+        if (await win.isVisible()) {
+          await win.setFocus();
+          showOverlay('inGameMenu');
+        } else {
+          await win.show();
+          await win.setFocus();
+          showOverlay('inGameMenu');
+        }
+      })();
     });
-    return () => { unlisten.then(f => f()); };
-  }, [setInGameMenuOpen]);
+    return () => {
+      void unlisten.then((f) => f());
+    };
+  }, [showOverlay]);
 
-  const activeGame = games[activeIndex] || games[0];
+  // Volume change listener
+  useEffect(() => {
+    const setupListener = async () => {
+      const unlisten = await listen<number>('volume-changed', (event) => {
+        handleVolumeChange(event.payload);
+      });
+      return unlisten;
+    };
+    const unlistenPromise = setupListener();
+    return () => {
+      void unlistenPromise.then((unlisten) => unlisten());
+    };
+  }, [handleVolumeChange]);
 
-  const getAssetSrc = (path: string | null | undefined) => {
-    if (!path) return defaultCover;
-    if (path.startsWith('http')) return path;
-    return convertFileSrc(path);
-  };
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
+  const activeGame = games[activeIndex] ?? games[0];
+  const backgroundImage = getCachedAssetSrc(
+    activeGame?.hero_image ?? activeGame?.image,
+    defaultCover
+  );
 
-  const BG = getAssetSrc(activeGame?.hero_image || activeGame?.image);
-
-  // LOGIC: UNIFIED RENDER TREE
-  // We remove the early 'return null' hibernation because it causes "Grey Screen" issues with Tauri/WebView2.
-  // Instead, we always render the App structure, and just conditionally act based on state.
-
+  // ============================================================================
+  // RENDER
+  // ============================================================================
   return (
-    <>
-      <div className="app-background" style={{ backgroundImage: `url(${BG})` }} />
+    <ErrorBoundary>
+      <div className="app-background" style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className="app-overlay" />
       <SystemOSD type="volume" value={osdValue} isVisible={isOsdVisible} />
 
       {!isSidebarOpen && (
-        <div className="menu-hint-area"
+        <div
+          className="menu-hint-area"
           onMouseEnter={() => setSidebarOpen(true)}
-          onClick={() => setSidebarOpen(true)}>
+          onClick={() => setSidebarOpen(true)}
+        >
           <div className="menu-glow-line" />
         </div>
       )}
 
-      {isSidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
+      {isSidebarOpen ? (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      ) : null}
 
       <Sidebar
         isOpen={isSidebarOpen}
         focusedIndex={sidebarIndex}
         onToggle={() => setSidebarOpen(!isSidebarOpen)}
-        onAction={handleSidebarAction}
+        onAction={(id) => void handleSidebarAction(id)}
         onFocusItem={setSidebarIndex}
       />
 
@@ -299,194 +426,69 @@ function App() {
         <TopBar onVolumeChange={handleVolumeChange} />
 
         <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-          {/* ALWAYS RENDER DASHBOARD (Hero + Library) */}
-          <>
-            <div className="hero-section" onMouseEnter={() => setFocusArea('HERO')}>
-              <div className="hero-content">
-                {/* Badge logic */}
+          <HeroSection
+            activeGame={activeGame}
+            activeRunningGame={activeRunningGame}
+            focusArea={focusArea}
+            isLaunching={isLaunching}
+            onSetFocusArea={setFocusArea}
+            onSetInGameMenuOpen={setInGameMenuOpen}
+            onLaunchGame={() => void handleLaunchRaw(activeIndex)}
+            onRemoveGame={(id) => void removeGame(id)}
+          />
 
-                {activeGame?.logo ? (
-                  <img src={getAssetSrc(activeGame.logo)} alt={activeGame.title} className="hero-logo" />
-                ) : (
-                  <h1 className="hero-title">{activeGame?.title || 'Balam'}</h1>
-                )}
-
-                <Badge label={activeGame?.source || "INSTALLED"} variant="default" />
-
-                <div className="hero-actions">
-                  {/* DEBUG VISUAL: Remove after fix */}
-                  {activeRunningGame && (
-                    <div style={{ position: 'absolute', top: -20, fontSize: 10, color: 'yellow' }}>
-                      Running: {activeRunningGame.id} | Selected: {activeGame?.id} | Match: {String(activeRunningGame.id) === String(activeGame?.id) ? 'YES' : 'NO'}
-                    </div>
-                  )}
-
-                  {activeRunningGame?.id && activeGame?.id && String(activeRunningGame.id) === String(activeGame.id) ? (
-                    <button
-                      className={`btn-play ${focusArea === 'HERO' ? 'focused' : ''}`}
-                      onClick={() => {
-                        setInGameMenuOpen(false);
-                        getCurrentWindow().hide(); // Resume Game
-                      }}
-                    >
-                      <RotateCcw /> RESUME
-                    </button>
-                  ) : (
-                    <div className="hero-btns-row">
-                      <button className={`btn-play ${focusArea === 'HERO' ? 'focused' : ''}`} onClick={() => handleLaunchRaw(activeIndex)}>
-                        <Play fill="currentColor" /> {isLaunching ? '...' : (activeRunningGame ? 'SWITCH' : 'PLAY')}
-                      </button>
-                      {activeGame?.source === 'Manual' && (
-                        <button className="btn-remove-manual" onClick={() => removeGame(activeGame.id)}>
-                          DELETE
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="library-section" onMouseEnter={() => setFocusArea('LIBRARY')}>
-              <div className="games-grid-viewport" ref={trackRef} onWheel={handleWheel}>
-                <div className="games-track">
-                  {games.map((game, index) => (
-                    <Card
-                      key={game.id}
-                      ref={cardRefs[index]}
-                      title={game.title}
-                      image={getAssetSrc(game.image)}
-                      isFocused={focusArea === 'LIBRARY' && index === activeIndex}
-                      onClick={() => { setActiveIndex(index); setFocusArea('LIBRARY'); handleLaunchRaw(index); }}
-                      style={{
-                        opacity: (focusArea === 'HERO' && index !== activeIndex) ? 0.6 : 1,
-                        transform: (focusArea === 'LIBRARY' && activeIndex === index) ? 'scale(1.05)' : 'scale(1)',
-                        filter: 'none',
-                        border: (activeIndex === index && focusArea !== 'LIBRARY') ? '2px solid rgba(255,255,255,0.3)' : 'none'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </>
-
-          {/* OVERLAY: Rendered on top when active */}
-          {activeRunningGame && isInGameMenuOpen && (
-            <div className="ingame-overlay-wrapper" style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
-              <InGameMenu
-                game={activeRunningGame}
-                posterSrc={getAssetSrc(activeRunningGame.image)}
-                activeIndex={gameMenuIndex}
-                onResume={() => {
-                  setInGameMenuOpen(false);
-                  getCurrentWindow().hide();
-                }}
-                onQuitGame={() => {
-                  handleQuit();
-                  // Quit keeps window open, so we see library naturally
-                }}
-                onGoHome={() => {
-                  setInGameMenuOpen(false);
-                  setFocusArea('HERO');
-                  const win = getCurrentWindow();
-                  win.show();
-                  win.setFocus();
-                }}
-                systemVolume={osdValue}
-                controllerType={controllerType}
-              />
-            </div>
-          )}
+          <LibrarySection
+            games={games}
+            activeIndex={activeIndex}
+            focusArea={focusArea}
+            onLaunchGame={(_game, index) => handleLaunchRaw(index)}
+            onSetActiveIndex={setActiveIndex}
+            onSetFocusArea={setFocusArea}
+          />
         </main>
+
         <Footer controllerType={controllerType} />
       </div>
+
       <div className="gamepad-status-tag">Input: {deviceType}</div>
 
-      {isExplorerOpen && (
-        <FileExplorer
-          onClose={() => setIsExplorerOpen(false)}
-          onSelectGame={handleSelectManualGame}
-          controllerType={controllerType}
-        />
-      )}
-
-      {/* CONFIRMATION MODAL FOR GAME SWITCH */}
-      {pendingLaunchIndex !== null && (
-        <div className="system-modal-backdrop">
-          <div className="system-modal">
-            <h2>Switch Game?</h2>
-            <p>
-              Launching <strong>{games[pendingLaunchIndex]?.title}</strong> will close
-              <br />
-              <span style={{ color: '#ff4444' }}>{activeRunningGame?.title}</span>.
-              <br /><br />
-              Any unsaved progress will be lost.
-            </p>
-            <div className="modal-actions">
-              <button className="btn-modal cancel" onClick={() => setPendingLaunchIndex(null)}>
-                Cancel
-              </button>
-              <button
-                className="btn-modal confirm"
-                onClick={() => {
-                  const game = games[pendingLaunchIndex];
-                  if (game) {
-                    launchGame(game);
-                    getCurrentWindow().hide();
-                  }
-                  setPendingLaunchIndex(null);
-                }}
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* VIRTUAL KEYBOARD INTEGRATION (Refactored) */}
-      <VirtualKeyboard
-        isOpen={virtualKeyboard.isOpen}
-        onClose={virtualKeyboard.close}
-        onSubmit={virtualKeyboard.handleSubmit}
-        onTextChange={handleKeyboardTextChange}
-        initialValue={virtualKeyboard.getInitialValue()}
-        inputType={virtualKeyboard.getInputType()}
-        placeholder={
-          document.activeElement instanceof HTMLInputElement
-            ? document.activeElement.placeholder || 'Type here...'
-            : 'Type here...'
-        }
-        maxLength={
-          document.activeElement instanceof HTMLInputElement && document.activeElement.maxLength > 0
-            ? document.activeElement.maxLength
-            : undefined
-        }
-      />
-
-      {/* SEARCH OVERLAY */}
-      <SearchOverlay
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        games={games}
-        onLaunch={(game) => {
-          launchGame(game);
-          setIsSearchOpen(false);
-          getCurrentWindow().hide();
+      <ConfirmationModal
+        pendingGame={pendingLaunchIndex !== null ? games[pendingLaunchIndex] : null}
+        activeRunningGame={activeRunningGame}
+        onConfirm={() => {
+          if (pendingLaunchIndex !== null) {
+            const game = games[pendingLaunchIndex];
+            if (game) {
+              launchGame(game);
+              void getCurrentWindow().hide();
+            }
+            setPendingLaunchIndex(null);
+          }
         }}
+        onCancel={() => setPendingLaunchIndex(null)}
       />
 
-      {/* QUICK SETTINGS */}
-      <QuickSettings
-        isOpen={isQuickSettingsOpen}
-        onClose={() => setQuickSettingsOpen(false)}
-        focusedSliderIndex={quickSettingsSliderIndex}
-        onFocusChange={setQuickSettingsSliderIndex}
+      <OverlayManager
+        isExplorerOpen={isExplorerOpen}
+        onCloseExplorer={() => setIsExplorerOpen(false)}
+        onSelectManualGame={handleSelectManualGame}
+        isSearchOpen={isSearchOpen}
+        onCloseSearch={handleCloseSearch}
+        games={games}
+        onLaunchFromSearch={handleLaunchFromSearch}
+        onRegisterSearchInput={handleRegisterSearchInput}
+        onOpenVirtualKeyboard={virtualKeyboard.open}
+        isQuickSettingsOpen={isQuickSettingsOpen}
+        onCloseQuickSettings={() => setQuickSettingsOpen(false)}
+        quickSettingsSliderIndex={quickSettingsSliderIndex}
+        onQuickSettingsFocusChange={setQuickSettingsSliderIndex}
+        onRegisterQuickSettingsAdjustHandler={(handler) => {
+          quickSettingsAdjustRef.current = handler;
+        }}
+        virtualKeyboard={virtualKeyboard}
         controllerType={controllerType}
-        onRegisterAdjustHandler={(handler) => { quickSettingsAdjustRef.current = handler; }}
       />
-    </>
+    </ErrorBoundary>
   );
 }
 

@@ -7,18 +7,18 @@
  */
 
 export enum InputDeviceType {
-    GAMEPAD = 'GAMEPAD',
-    KEYBOARD = 'KEYBOARD',
-    MOUSE = 'MOUSE',
-    UNKNOWN = 'UNKNOWN'
+  GAMEPAD = 'GAMEPAD',
+  KEYBOARD = 'KEYBOARD',
+  MOUSE = 'MOUSE',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export interface InputDevice {
-    type: InputDeviceType;
-    lastActivity: number;
+  type: InputDeviceType;
+  lastActivity: number;
 }
 
 export const createInputDevice = (type: InputDeviceType): InputDevice => ({
-    type,
-    lastActivity: Date.now()
+  type,
+  lastActivity: Date.now(),
 });

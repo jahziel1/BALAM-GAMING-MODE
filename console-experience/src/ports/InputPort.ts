@@ -12,15 +12,15 @@ import { NavigationEvent } from '../domain/input/NavigationEvent';
  * Port for detecting which input device is currently active
  */
 export interface InputDeviceDetector {
-    getCurrentDevice(): InputDeviceType;
-    onDeviceChange(callback: (device: InputDeviceType) => void): () => void;
+  getCurrentDevice(): InputDeviceType;
+  onDeviceChange(callback: (device: InputDeviceType) => void): () => void;
 }
 
 /**
  * Port for listening to navigation events from any input device
  */
 export interface NavigationEventListener {
-    onNavigationEvent(callback: (event: NavigationEvent) => void): () => void;
+  onNavigationEvent(callback: (event: NavigationEvent) => void): () => void;
 }
 
 /**
@@ -28,13 +28,14 @@ export interface NavigationEventListener {
  * Used to convert gamepad inputs to keyboard events for virtual keyboard
  */
 export interface KeyboardEventDispatcher {
-    dispatchKeyEvent(key: string): void;
+  dispatchKeyEvent(key: string): void;
 }
 
 /**
  * Combined port for all input-related operations
  */
-export interface InputPort extends InputDeviceDetector, NavigationEventListener, KeyboardEventDispatcher {
-    initialize(): void;
-    cleanup(): void;
+export interface InputPort
+  extends InputDeviceDetector, NavigationEventListener, KeyboardEventDispatcher {
+  initialize(): void;
+  cleanup(): void;
 }

@@ -1,32 +1,35 @@
 .sidebar {
   position: fixed;
-  top: 0; left: 0;
-  z-index: 200;
+  top: 0;
+  left: 0;
+  z-index: 5000;
   width: 320px;
   height: 100%;
-  
+
   /* Estado por defecto (Oculto/Invisible) */
-  background: transparent; 
+  background: transparent;
   border-right: none;
   box-shadow: none;
-  
+
   display: flex;
   flex-direction: column;
   padding: 40px 0;
-  
+
   /* Movemos fuera de pantalla totalmente */
-  transform: translateX(-100%); 
-  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), background 0.3s ease;
+  transform: translateX(-100%);
+  transition:
+    transform 0.25s cubic-bezier(0.19, 1, 0.22, 1),
+    background 0.2s ease;
 }
 
 .sidebar.expanded {
   transform: translateX(0);
-  
+
   /* Estado Expandido (Visible y bonito) */
-  background: rgba(15, 17, 21, 0.85); /* Oscuro, no blanco */
-  backdrop-filter: blur(40px); /* Glassmorphism fuerte */
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 10px 0 50px rgba(0,0,0,0.6);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-right: var(--glass-border);
+  box-shadow: var(--shadow-lg);
 }
 
 .sidebar-header {
@@ -35,9 +38,10 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  opacity: 0; /* Invisible cuando cerrado */
+  opacity: 0;
+  /* Invisible cuando cerrado */
   transform: translateX(-20px);
-  transition: all 0.3s ease 0.1s;
+  transition: all 0.2s ease 0.05s;
 }
 
 .sidebar.expanded .sidebar-header {
@@ -46,38 +50,53 @@
 }
 
 .avatar-large {
-  width: 64px; height: 64px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #06BFFF 0%, #2D73FF 100%);
-  box-shadow: 0 0 20px rgba(13, 141, 239, 0.4);
-  border: 2px solid #fff;
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.5);
+  border: 2px solid var(--color-text-primary);
 }
 
-.user-info h2 { margin: 0; font-size: 1.2rem; font-weight: 600; letter-spacing: 0.5px; color: #fff; }
-.user-info span { font-size: 0.85rem; color: #1a9fff; font-weight: 500; text-transform: uppercase; }
+.user-info h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--color-text-primary);
+}
+
+.user-info span {
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-transform: uppercase;
+}
 
 .menu-list {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 0; /* Remove gaps so mouse transition is seamless */
+  gap: 0;
+  /* Remove gaps so mouse transition is seamless */
 }
 
 .menu-item {
   width: 100%;
-  height: 60px; /* Taller hit area */
+  height: 60px;
   display: flex;
   align-items: center;
   padding: 0 30px;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.5);
-  transition: all 0.1s ease-out; /* Faster transition */
+  color: var(--color-text-tertiary);
+  transition: all var(--transition-fast);
   font-size: 1.1rem;
   font-weight: 500;
   position: relative;
-  z-index: 10; /* Ensure it catches mouse events */
-  pointer-events: auto; /* Force events */
-  
+  z-index: 10;
+  pointer-events: auto;
+  border-left: 4px solid transparent;
+
   /* Animación de entrada escalonada */
   opacity: 0;
   transform: translateX(-20px);
@@ -86,7 +105,8 @@
 .sidebar.expanded .menu-item {
   opacity: 1;
   transform: translateX(0);
-  transition-delay: 0.1s; /* Espera a que el panel se abra un poco */
+  transition-delay: 0.05s;
+  /* Espera a que el panel se abra un poco */
 }
 
 .menu-item .icon {
@@ -98,16 +118,22 @@
   justify-content: center;
 }
 
-.menu-item:hover, .menu-item.focused {
-  background: rgba(255, 255, 255, 0.15); /* Subtle highlight */
-  color: #fff !important;
-  border-left: 4px solid #2D73FF;
-  padding-left: 26px;
-  transform: translateX(5px); /* Gentle movement */
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+.menu-item:hover {
+  background: rgba(var(--color-primary-rgb), 0.08);
+  color: var(--color-text-primary);
+  border-left-color: rgba(var(--color-primary-rgb), 0.5);
 }
 
-.menu-item.focused .icon { 
-  color: #2D73FF;
-  filter: drop-shadow(0 0 5px rgba(45, 115, 255, 0.5));
+.menu-item.focused {
+  background: var(--focus-bg);
+  color: var(--color-text-primary) !important;
+  border-left-color: var(--color-primary);
+  padding-left: 26px;
+  transform: translateX(5px);
+  box-shadow: var(--shadow-sm);
+}
+
+.menu-item.focused .icon {
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 5px rgba(var(--color-primary-rgb), 0.6));
 }

@@ -1,0 +1,12 @@
+# E2E tests (have their own tsconfig)
+e2e/
+
+# Build artifacts
+dist/
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+
+# Generated files
+*.config.js
+wdio-fix-snippet.ts

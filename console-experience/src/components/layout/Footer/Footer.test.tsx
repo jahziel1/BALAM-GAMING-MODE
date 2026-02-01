@@ -1,19 +1,18 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import Footer from './Footer';
 
 describe('Footer Component', () => {
   it('renders default prompts (keyboard)', () => {
-    render(<Footer />);
-    expect(screen.getByText('SELECT')).toBeInTheDocument();
-    expect(screen.getByText('MENU')).toBeInTheDocument();
+    render(<Footer controllerType="KEYBOARD" />);
+    // ButtonHint upper-cases labels often, so checking case-insensitive or exact text based on implementation
+    expect(screen.getByText('Select')).toBeInTheDocument();
+    expect(screen.getByText('Menu')).toBeInTheDocument();
   });
 
   it('switches to gamepad prompts when gamepad is active', () => {
-    // This is hard to test without mocking the hook, but we can test if the component renders
-    render(<Footer isGamepad={true} />);
-    // Assuming we pass props for testing or mock the hook
-    // For now, let's just verify it renders without crashing
+    render(<Footer controllerType="XBOX" />);
     expect(screen.getByTestId('footer-prompts')).toBeInTheDocument();
   });
 });

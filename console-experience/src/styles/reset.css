@@ -1,0 +1,72 @@
+/**
+ * CSS Reset
+ *
+ * Modern CSS reset for consistent cross-browser rendering.
+ * Based on modern reset best practices.
+ */
+
+@layer reset {
+  /* Box sizing */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Remove default margins */
+  * {
+    margin: 0;
+  }
+
+  /* Root defaults */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  /* Body defaults */
+  body {
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Media defaults */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Form defaults */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  /* Text overflow */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Root stacking context */
+  #root {
+    isolation: isolate;
+    height: 100%;
+  }
+}

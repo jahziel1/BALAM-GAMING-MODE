@@ -1,0 +1,14 @@
+# Clippy Configuration
+# Controls which lints are enabled/disabled
+
+# Allow some pedantic lints that are too noisy
+# but keep critical ones enabled
+
+# Maximum allowed cognitive complexity
+cognitive-complexity-threshold = 50
+
+# Maximum allowed function lines
+too-many-lines-threshold = 150
+
+# Avoid needless lifetime annotations
+avoid-breaking-exported-api = true

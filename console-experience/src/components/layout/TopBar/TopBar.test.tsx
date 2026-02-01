@@ -1,5 +1,6 @@
-import { render, screen, act } from '@testing-library/react';
-import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import TopBar from './TopBar';
 
 describe('TopBar Component', () => {
@@ -21,11 +22,11 @@ describe('TopBar Component', () => {
   it('updates time periodically', () => {
     render(<TopBar />);
     const initialTime = screen.getByTestId('clock').textContent;
-    
+
     act(() => {
       vi.advanceTimersByTime(60000); // Advance 1 minute
     });
-    
+
     const newTime = screen.getByTestId('clock').textContent;
     expect(newTime).not.toBe(initialTime);
   });
