@@ -53,6 +53,7 @@ function App() {
   // ============================================================================
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isWiFiPanelOpen, setIsWiFiPanelOpen] = useState(false);
   const [pendingLaunchIndex, setPendingLaunchIndex] = useState<number | null>(null);
   const [osdValue, setOsdValue] = useState(75);
   const [isOsdVisible, setIsOsdVisible] = useState(false);
@@ -382,6 +383,20 @@ function App() {
     };
   }, [handleVolumeChange]);
 
+  // WiFi Panel toggle listener (Ctrl+W)
+  useEffect(() => {
+    const setupListener = async () => {
+      const unlisten = await listen('toggle-wifi-panel', () => {
+        setIsWiFiPanelOpen((prev) => !prev);
+      });
+      return unlisten;
+    };
+    const unlistenPromise = setupListener();
+    return () => {
+      void unlistenPromise.then((unlisten) => unlisten());
+    };
+  }, []);
+
   // ============================================================================
   // DERIVED STATE
   // ============================================================================
@@ -423,7 +438,10 @@ function App() {
       />
 
       <div className="app-container" data-focus-area={focusArea}>
-        <TopBar onVolumeChange={handleVolumeChange} />
+        <TopBar
+          onVolumeChange={handleVolumeChange}
+          onOpenWiFiPanel={() => setIsWiFiPanelOpen(true)}
+        />
 
         <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
           <HeroSection
@@ -485,6 +503,8 @@ function App() {
         onRegisterQuickSettingsAdjustHandler={(handler) => {
           quickSettingsAdjustRef.current = handler;
         }}
+        isWiFiPanelOpen={isWiFiPanelOpen}
+        onCloseWiFiPanel={() => setIsWiFiPanelOpen(false)}
         virtualKeyboard={virtualKeyboard}
         controllerType={controllerType}
       />

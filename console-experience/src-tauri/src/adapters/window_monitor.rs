@@ -69,6 +69,7 @@ struct ProcessStartTrace {
 struct ProcessStopTrace {
     #[serde(rename = "ProcessID")]
     process_id: u32,
+    #[allow(dead_code)]
     process_name: String,
 }
 

@@ -57,6 +57,8 @@ windows = { version = "0.52", features = [
     "Foundation_Collections",
     "Gaming_Input",
     "Win32_UI_WindowsAndMessaging",
+    "Win32_NetworkManagement_WiFi",
+    "Win32_System_Memory",
     "Win32_UI_Input_XboxController",
     "Win32_Graphics_Gdi",
     "Win32_Devices_Display",

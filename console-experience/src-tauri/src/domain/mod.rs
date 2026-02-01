@@ -4,6 +4,7 @@ pub mod errors;
 pub mod performance;
 pub mod services;
 pub mod value_objects;
+pub mod wifi;
 
 pub use display::{BrightnessConfig, RefreshRateConfig};
 pub use entities::Game;

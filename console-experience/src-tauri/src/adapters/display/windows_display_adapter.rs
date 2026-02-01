@@ -24,6 +24,7 @@ impl WindowsDisplayAdapter {
 
     /// Gets brightness using WMI (Windows Management Instrumentation).
     /// Works on laptops with integrated displays.
+    #[allow(clippy::unused_self, clippy::unnecessary_wraps)]
     fn get_brightness_wmi(&self) -> Result<Option<u32>, String> {
         // WMI query: root\WMI\WmiMonitorBrightness
         // For MVP: Return None if not laptop (requires wmi-rs crate or COM)
@@ -34,6 +35,7 @@ impl WindowsDisplayAdapter {
 
     /// Sets brightness using WMI.
     /// Only works on devices with `WmiMonitorBrightnessMethods` support.
+    #[allow(clippy::unused_self)]
     fn set_brightness_wmi(&self, level: u32) -> Result<(), String> {
         // WMI method: WmiSetBrightness(level, timeout)
         // TODO: Implement full WMI integration
@@ -43,6 +45,7 @@ impl WindowsDisplayAdapter {
 
     /// Gets brightness using DDC/CI protocol for external monitors.
     /// This is a workaround for desktop setups.
+    #[allow(clippy::unused_self, clippy::unnecessary_wraps)]
     fn get_brightness_ddcci(&self) -> Result<Option<u32>, String> {
         // DDC/CI requires:
         // 1. Enumerate monitors via SetupAPI
@@ -54,6 +57,7 @@ impl WindowsDisplayAdapter {
     }
 
     /// Sets brightness using DDC/CI for external monitors.
+    #[allow(clippy::unused_self)]
     fn set_brightness_ddcci(&self, level: u32) -> Result<(), String> {
         // DDC/CI VCP code 0x10 (brightness)
         // TODO: Implement DDC/CI control

@@ -1,0 +1,169 @@
+/* WiFi Panel - Following design system tokens */
+
+.wifi-footer {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.wifi-hint {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.wifi-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--space-12);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.wifi-error {
+  color: var(--color-error);
+}
+
+.wifi-icon-spin {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wifi-button {
+  padding: var(--button-padding-y) var(--button-padding-x);
+  background: var(--button-primary-bg);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.wifi-button:hover {
+  background: var(--button-primary-hover);
+  transform: translateY(-2px);
+}
+
+.wifi-networks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.wifi-network {
+  padding: var(--spacing-md);
+  background: var(--card-bg);
+  border: 2px solid transparent;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.wifi-network:hover {
+  background: var(--color-surface);
+}
+
+.wifi-network.focused {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.wifi-network.connected {
+  border-color: var(--color-success);
+  background: rgba(40, 167, 69, 0.1);
+}
+
+.wifi-network-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.wifi-icon {
+  flex-shrink: 0;
+}
+
+.wifi-ssid {
+  flex: 1;
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: var(--font-base);
+}
+
+.wifi-lock {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.wifi-badge {
+  background: var(--color-success);
+  color: var(--color-text);
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.wifi-network-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-left: calc(20px + var(--spacing-sm)); /* Icon size + gap */
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.wifi-signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+
+.wifi-bar {
+  width: 4px;
+  border-radius: 2px;
+  transition: background-color var(--transition-fast);
+}
+
+.wifi-bar:nth-child(1) {
+  height: 4px;
+}
+.wifi-bar:nth-child(2) {
+  height: 8px;
+}
+.wifi-bar:nth-child(3) {
+  height: 12px;
+}
+.wifi-bar:nth-child(4) {
+  height: 16px;
+}
+
+.wifi-security {
+  text-transform: uppercase;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wifi-ssid {
+    font-size: var(--font-sm);
+  }
+
+  .wifi-network-meta {
+    padding-left: calc(16px + var(--spacing-xs));
+  }
+}

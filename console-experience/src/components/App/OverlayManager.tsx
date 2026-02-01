@@ -18,6 +18,7 @@ import { InGameMenuOptimized } from '../overlay/InGameMenuOptimized';
 import { QuickSettings } from '../overlay/QuickSettings';
 import SearchOverlay from '../overlay/SearchOverlay/SearchOverlay';
 import VirtualKeyboard from '../overlay/VirtualKeyboard/VirtualKeyboard';
+import { WiFiPanel } from '../overlay/WiFiPanel';
 
 /**
  * Props for OverlayManager component
@@ -42,6 +43,10 @@ interface OverlayManagerProps {
   quickSettingsSliderIndex: number;
   onQuickSettingsFocusChange: (index: number) => void;
   onRegisterQuickSettingsAdjustHandler: (handler: (direction: number) => void) => void;
+
+  // WiFi Panel
+  isWiFiPanelOpen: boolean;
+  onCloseWiFiPanel: () => void;
 
   // Virtual Keyboard
   virtualKeyboard: VirtualKeyboardHook;
@@ -113,6 +118,8 @@ export function OverlayManager({
   quickSettingsSliderIndex,
   onQuickSettingsFocusChange,
   onRegisterQuickSettingsAdjustHandler,
+  isWiFiPanelOpen,
+  onCloseWiFiPanel,
   virtualKeyboard,
   controllerType,
 }: OverlayManagerProps) {
@@ -190,6 +197,13 @@ export function OverlayManager({
         onFocusChange={onQuickSettingsFocusChange}
         controllerType={controllerType}
         onRegisterAdjustHandler={onRegisterQuickSettingsAdjustHandler}
+      />
+
+      {/* WiFi Panel */}
+      <WiFiPanel
+        isOpen={isWiFiPanelOpen}
+        onClose={onCloseWiFiPanel}
+        controllerType={controllerType}
       />
     </>
   );

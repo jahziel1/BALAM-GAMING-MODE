@@ -8,6 +8,7 @@ pub mod performance;
 pub mod process_launcher;
 pub mod registry_scanner;
 pub mod steam_scanner;
+pub mod wifi;
 pub mod window_monitor;
 pub mod windows_system_adapter;
 pub mod xbox_scanner;

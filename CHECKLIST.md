@@ -88,21 +88,31 @@
 ## 🔥 FASE 1: CRÍTICA - SHELL SURVIVAL (Prioridad Máxima)
 **Sin estos, Balam NO puede reemplazar Explorer.exe**
 
-### 1. 🌐 WiFi Manager ⭐⭐⭐⭐⭐ [CRÍTICO] ⚠️ PARCIAL
-- [x] **Backend: Read-only SSID Detection (Implementado)**
-  - [x] `get_current_ssid()` - via `netsh wlan show interfaces`
-  - [x] Network type detection (WiFi vs Ethernet)
-  - [x] Expuesto en `get_system_status()` command
-- [ ] **Backend: Full WlanAPI Integration (Pendiente)**
-  - [ ] `scan_networks()` - WlanGetAvailableNetworkList
-  - [ ] `connect_to_wifi(ssid, password)` - WlanConnect
-  - [ ] `disconnect_wifi()` - WlanDisconnect
-  - [ ] `get_signal_strength()` - Nivel de señal
-- [ ] Frontend: Panel en Sidebar
-  - [ ] Lista de redes + iconos de señal (📶/📡/📻)
-  - [ ] Input de contraseña (auto-invocar Virtual Keyboard)
-  - [ ] Toast notifications (conexión exitosa/error)
-- **Archivo:** `src-tauri/src/adapters/windows_system_adapter.rs` (SSID detection working)
+### 1. 🌐 WiFi Manager ⭐⭐⭐⭐⭐ [CRÍTICO] ✅ COMPLETADO (MVP)
+- [x] **Backend: Full WiFi Management (Implementado 2026-02-01)**
+  - [x] `scan_wifi_networks()` - netsh wlan show networks
+  - [x] `get_current_wifi()` - Estado de conexión actual
+  - [x] `connect_wifi(ssid, password)` - Conexión a redes
+  - [x] `disconnect_wifi()` - Desconectar
+  - [x] `forget_wifi(ssid)` - Olvidar red guardada
+  - [x] `get_saved_networks()` - Listar perfiles guardados
+  - [x] `get_wifi_signal_strength()` - Nivel de señal (0-100%)
+- [x] **Frontend: WiFi Panel (Implementado)**
+  - [x] Panel overlay con OverlayPanel component
+  - [x] Lista de redes con signal strength bars (📶)
+  - [x] Navegación con D-Pad/Arrow keys
+  - [x] Conexión a redes abiertas (Enter)
+  - [x] Refresh con tecla R
+  - [x] Ctrl+W global shortcut
+  - [x] Click en ícono WiFi del TopBar
+- [ ] **Pendiente: Password Input (Phase 2)**
+  - [ ] Virtual Keyboard integration para redes seguras
+  - [ ] Actualmente muestra error: "Use Windows Settings"
+- **Archivos:**
+  - `src-tauri/src/domain/wifi.rs`
+  - `src-tauri/src/ports/wifi_port.rs`
+  - `src-tauri/src/adapters/wifi/windows_wifi_adapter.rs`
+  - `src/components/overlay/WiFiPanel/WiFiPanel.tsx`
 
 ### 2. 📡 Bluetooth Manager ⭐⭐⭐⭐⭐ [CRÍTICO]
 - [ ] Backend: btleplug + windows::Devices::Bluetooth

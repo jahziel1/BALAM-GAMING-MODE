@@ -94,8 +94,8 @@ mod tests {
         );
 
         let service = GameDeduplicationService::new();
-        let games = vec![game1.clone(), game2];
-        let unique = service.deduplicate(games);
+        let input_games = vec![game1.clone(), game2];
+        let unique = service.deduplicate(input_games);
 
         // Should keep only the first one (Steam has priority)
         assert_eq!(unique.len(), 1);
@@ -121,8 +121,8 @@ mod tests {
         );
 
         let service = GameDeduplicationService::new();
-        let games = vec![game1, game2];
-        let unique = service.deduplicate(games);
+        let input_games = vec![game1, game2];
+        let unique = service.deduplicate(input_games);
 
         assert_eq!(unique.len(), 2);
     }

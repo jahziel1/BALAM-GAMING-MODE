@@ -15,9 +15,10 @@ interface SystemStatus {
 
 interface TopBarProps {
   onVolumeChange?: (newVolume: number) => void;
+  onOpenWiFiPanel?: () => void; // TEMP: For testing WiFi panel
 }
 
-const TopBar: React.FC<TopBarProps> = ({ onVolumeChange }) => {
+const TopBar: React.FC<TopBarProps> = ({ onVolumeChange, onOpenWiFiPanel }) => {
   const [time, setTime] = useState(new Date());
   const [status, setStatus] = useState<SystemStatus | null>(null);
 
@@ -106,8 +107,12 @@ const TopBar: React.FC<TopBarProps> = ({ onVolumeChange }) => {
             <span className="status-label">{status?.volume ?? '--'}%</span>
           </div>
 
-          {/* Network Indicator */}
-          <div className="status-item">
+          {/* Network Indicator - TEMP: Clickable to open WiFi panel */}
+          <div
+            className="status-item clickable"
+            onClick={() => onOpenWiFiPanel?.()}
+            title="Click to open WiFi settings (TEST)"
+          >
             {status?.connection_type === 'WiFi' ? (
               <span title={status.network_name ?? 'WiFi'}>
                 <Wifi size={20} className="icon active" />

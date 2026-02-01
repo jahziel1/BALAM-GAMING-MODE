@@ -18,7 +18,7 @@ pub struct RyzenAdjAdapter {
 /// RAII wrapper for libryzenadj.dll handle
 struct RyzenAdjHandle {
     _lib: libloading::Library,
-    init_fn: libloading::Symbol<'static, unsafe extern "C" fn() -> *mut std::ffi::c_void>,
+    _init_fn: libloading::Symbol<'static, unsafe extern "C" fn() -> *mut std::ffi::c_void>,
     cleanup_fn: libloading::Symbol<'static, unsafe extern "C" fn(*mut std::ffi::c_void)>,
     set_stapm_fn: libloading::Symbol<'static, unsafe extern "C" fn(*mut std::ffi::c_void, u32) -> i32>,
     set_fast_fn: libloading::Symbol<'static, unsafe extern "C" fn(*mut std::ffi::c_void, u32) -> i32>,
@@ -104,7 +104,7 @@ impl RyzenAdjAdapter {
 
                 *handle = Some(RyzenAdjHandle {
                     _lib: lib,
-                    init_fn,
+                    _init_fn: init_fn,
                     cleanup_fn,
                     set_stapm_fn,
                     set_fast_fn,

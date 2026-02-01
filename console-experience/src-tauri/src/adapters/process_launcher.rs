@@ -58,6 +58,7 @@ fn emit_launch_error(app_handle: &AppHandle, error: GameLaunchError) {
 
 /// Global System instance for process checking (performance optimization)
 /// Keeping the same instance is much faster than recreating it
+#[allow(dead_code)]
 static SYSTEM_INSTANCE: OnceLock<Mutex<System>> = OnceLock::new();
 
 /// Check if a Steam game is already running via registry
@@ -83,6 +84,7 @@ fn steam_game_is_running(app_id: &str) -> bool {
 ///
 /// Performance: 50-200ms (process scan)
 /// Uses cached System instance for better performance
+#[allow(dead_code)]
 fn game_process_exists(exe_name: &str) -> bool {
     let sys = SYSTEM_INSTANCE.get_or_init(|| Mutex::new(System::new_all()));
 

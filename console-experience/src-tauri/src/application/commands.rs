@@ -3,12 +3,14 @@ use crate::adapters::display::WindowsDisplayAdapter;
 use crate::adapters::identity_engine::IdentityEngine;
 use crate::adapters::metadata_adapter::MetadataAdapter;
 use crate::adapters::performance::RyzenAdjAdapter;
+use crate::adapters::wifi::WindowsWiFiAdapter;
 use crate::adapters::windows_system_adapter::WindowsSystemAdapter;
 use crate::application::{ActiveGame, ActiveGameInfo, DIContainer};
 use crate::domain::{BrightnessConfig, Game, GameSource, PerformanceProfile, RefreshRateConfig, TDPConfig};
 use crate::ports::display_port::DisplayPort;
 use crate::ports::performance_port::PerformancePort;
 use crate::ports::system_port::{SystemPort, SystemStatus};
+use crate::ports::wifi_port::{WiFiConfig, WiFiNetwork, WiFiPort};
 use serde::Serialize;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -597,4 +599,82 @@ pub fn apply_performance_profile(profile: String) -> Result<(), String> {
 #[must_use]
 pub fn supports_tdp_control() -> bool {
     RyzenAdjAdapter::new().supports_tdp_control()
+}
+
+// ============================================================================
+// WiFi Management Commands
+// ============================================================================
+
+/// Scans for available WiFi networks.
+///
+/// # Returns
+/// List of networks sorted by signal strength (strongest first).
+#[tauri::command]
+pub fn scan_wifi_networks() -> Result<Vec<WiFiNetwork>, String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.scan_networks()
+}
+
+/// Gets the currently connected WiFi network.
+///
+/// # Returns
+/// - `Ok(Some(network))` if connected to WiFi
+/// - `Ok(None)` if not connected
+#[tauri::command]
+pub fn get_current_wifi() -> Result<Option<WiFiNetwork>, String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.get_current_network()
+}
+
+/// Connects to a WiFi network.
+///
+/// # Parameters
+/// - `ssid`: Network name
+/// - `password`: WPA/WPA2 password (empty string for open networks)
+#[tauri::command]
+pub fn connect_wifi(ssid: String, password: String) -> Result<(), String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.connect_network(WiFiConfig {
+        ssid,
+        password,
+        auto_connect: true,
+    })
+}
+
+/// Disconnects from the current WiFi network.
+#[tauri::command]
+pub fn disconnect_wifi() -> Result<(), String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.disconnect()
+}
+
+/// Forgets a saved WiFi network profile.
+///
+/// # Parameters
+/// - `ssid`: Network name to forget
+#[tauri::command]
+pub fn forget_wifi(ssid: String) -> Result<(), String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.forget_network(&ssid)
+}
+
+/// Gets the list of saved WiFi network profiles.
+///
+/// # Returns
+/// List of saved network SSIDs.
+#[tauri::command]
+pub fn get_saved_networks() -> Result<Vec<String>, String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.get_saved_networks()
+}
+
+/// Gets the signal strength of the currently connected network.
+///
+/// # Returns
+/// - `Ok(Some(strength))` if connected (0-100%)
+/// - `Ok(None)` if not connected
+#[tauri::command]
+pub fn get_wifi_signal_strength() -> Result<Option<u32>, String> {
+    let adapter = WindowsWiFiAdapter::new()?;
+    adapter.get_signal_strength()
 }
