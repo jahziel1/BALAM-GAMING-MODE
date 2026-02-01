@@ -2,7 +2,16 @@ import './TopBar.css';
 
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
-import { Battery, BatteryCharging, Bell, Gamepad2, Volume2, Wifi, WifiOff } from 'lucide-react';
+import {
+  Battery,
+  BatteryCharging,
+  Bell,
+  Bluetooth,
+  Gamepad2,
+  Volume2,
+  Wifi,
+  WifiOff,
+} from 'lucide-react';
 import React, { memo, useEffect, useState } from 'react';
 
 interface SystemStatus {
@@ -15,10 +24,15 @@ interface SystemStatus {
 
 interface TopBarProps {
   onVolumeChange?: (newVolume: number) => void;
-  onOpenWiFiPanel?: () => void; // TEMP: For testing WiFi panel
+  onOpenWiFiPanel?: () => void;
+  onOpenBluetoothPanel?: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ onVolumeChange, onOpenWiFiPanel }) => {
+const TopBar: React.FC<TopBarProps> = ({
+  onVolumeChange,
+  onOpenWiFiPanel,
+  onOpenBluetoothPanel,
+}) => {
   const [time, setTime] = useState(new Date());
   const [status, setStatus] = useState<SystemStatus | null>(null);
 
@@ -107,11 +121,11 @@ const TopBar: React.FC<TopBarProps> = ({ onVolumeChange, onOpenWiFiPanel }) => {
             <span className="status-label">{status?.volume ?? '--'}%</span>
           </div>
 
-          {/* Network Indicator - TEMP: Clickable to open WiFi panel */}
+          {/* Network Indicator - Clickable to open WiFi panel */}
           <div
             className="status-item clickable"
             onClick={() => onOpenWiFiPanel?.()}
-            title="Click to open WiFi settings (TEST)"
+            title="WiFi Settings (Ctrl+W)"
           >
             {status?.connection_type === 'WiFi' ? (
               <span title={status.network_name ?? 'WiFi'}>
@@ -126,6 +140,15 @@ const TopBar: React.FC<TopBarProps> = ({ onVolumeChange, onOpenWiFiPanel }) => {
                 <WifiOff size={20} className="icon disabled" />
               </span>
             )}
+          </div>
+
+          {/* Bluetooth Indicator - Clickable to open Bluetooth panel */}
+          <div
+            className="status-item clickable"
+            onClick={() => onOpenBluetoothPanel?.()}
+            title="Bluetooth Settings (Ctrl+B)"
+          >
+            <Bluetooth size={20} className="icon active" />
           </div>
 
           {/* Battery Indicator */}

@@ -456,6 +456,7 @@ function App() {
         <TopBar
           onVolumeChange={handleVolumeChange}
           onOpenWiFiPanel={() => setIsWiFiPanelOpen(true)}
+          onOpenBluetoothPanel={() => setIsBluetoothPanelOpen(true)}
         />
 
         <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
