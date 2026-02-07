@@ -12,8 +12,8 @@ fn test_di_container_initialization() {
     // THEN: All services should be initialized
     assert_eq!(
         container.game_discovery_service.scanner_count(),
-        4,
-        "Should have 4 scanners registered (Steam, Epic, Xbox, Registry)"
+        5,
+        "Should have 5 scanners registered (Steam, Epic, Xbox, BattleNet, Registry)"
     );
 }
 
@@ -28,12 +28,8 @@ fn test_full_game_discovery_flow() {
         .discover()
         .expect("Discovery should not fail");
 
-    // THEN: Should return games (may be empty if no games installed)
-    // This test validates the flow works, not that games exist
-    assert!(
-        discovered.len() >= 0,
-        "Discovery should return a valid list (empty or with games)"
-    );
+    // THEN: Should return a vector (may be empty if no games installed)
+    let _ = discovered.len();
 }
 
 #[test]
@@ -84,10 +80,10 @@ fn test_deduplication_removes_exact_duplicates() {
         GameSource::Steam,
     );
 
-    let games = vec![game1, game2, game3];
+    let input_games = vec![game1, game2, game3];
 
     // WHEN: Deduplicate
-    let unique = container.game_deduplication_service.deduplicate(games);
+    let unique = container.game_deduplication_service.deduplicate(input_games);
 
     // THEN: Should have 2 unique games (test.exe counted once + another.exe)
     assert_eq!(unique.len(), 2, "Should remove duplicate game at same path");
@@ -109,8 +105,8 @@ fn test_scanner_priority_order() {
     // THEN: Scanner count should be correct
     assert_eq!(
         service.scanner_count(),
-        4,
-        "Should have Steam, Epic, Xbox, Registry scanners"
+        5,
+        "Should have Steam, Epic, Xbox, BattleNet, Registry scanners"
     );
 
     // Note: Priority is tested implicitly through deduplication order
@@ -161,8 +157,8 @@ fn test_multiple_container_instances_independent() {
     let result2 = container2.game_discovery_service.scanner_count();
 
     // THEN: Both should work independently
-    assert_eq!(result1, 4);
-    assert_eq!(result2, 4);
+    assert_eq!(result1, 5);
+    assert_eq!(result2, 5);
 }
 
 #[test]

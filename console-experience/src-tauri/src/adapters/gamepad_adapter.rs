@@ -187,7 +187,7 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
                 }
             }
 
-            thread::sleep(Duration::from_millis(33));
+            thread::sleep(Duration::from_millis(8));
         }
     });
 }
