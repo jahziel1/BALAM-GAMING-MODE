@@ -9,8 +9,10 @@ import './LibrarySection.css';
 
 import { useMemo } from 'react';
 
+import { getSourceConfig, getSourcesByPriority } from '@/config/game-sources';
+
+import type { Game } from '../../domain/entities/game';
 import type { FocusArea } from '../../hooks/useNavigation';
-import type { Game } from '../../types/game';
 import { GameCarousel } from '../GameLibrary/GameCarousel';
 
 /**
@@ -48,23 +50,22 @@ export function LibrarySection({
   onSetActiveIndex,
   onSetFocusArea,
 }: LibrarySectionProps) {
-  // Categorize games
-  const { recentGames, steamGames, epicGames, xboxGames, manualGames, allGames } = useMemo(() => {
+  // Categorize games dynamically by source
+  const { recentGames, gamesBySource, allGames } = useMemo(() => {
     // Recent games (last played - for now just first 10)
     const recent = games.slice(0, Math.min(10, games.length));
 
-    // By source
-    const steam = games.filter((g) => g.source === 'Steam');
-    const epic = games.filter((g) => g.source === 'Epic');
-    const xbox = games.filter((g) => g.source === 'Xbox');
-    const manual = games.filter((g) => g.source === 'Manual');
+    // Group by source dynamically
+    const bySource = new Map<string, Game[]>();
+    for (const game of games) {
+      const existing = bySource.get(game.source) ?? [];
+      existing.push(game);
+      bySource.set(game.source, existing);
+    }
 
     return {
       recentGames: recent,
-      steamGames: steam,
-      epicGames: epic,
-      xboxGames: xbox,
-      manualGames: manual,
+      gamesBySource: bySource,
       allGames: games,
     };
   }, [games]);
@@ -74,16 +75,32 @@ export function LibrarySection({
   // Build carousel list dynamically
   const carousels = useMemo(() => {
     const result = [];
-    if (recentGames.length > 0) result.push({ title: 'Recently Played', games: recentGames });
-    if (steamGames.length > 0) result.push({ title: 'Steam Library', games: steamGames });
-    if (epicGames.length > 0) result.push({ title: 'Epic Games', games: epicGames });
-    if (xboxGames.length > 0) result.push({ title: 'Xbox Game Pass', games: xboxGames });
-    if (manualGames.length > 0) result.push({ title: 'Custom Games', games: manualGames });
+
+    // Recent games carousel
+    if (recentGames.length > 0) {
+      result.push({ title: 'Recently Played', games: recentGames });
+    }
+
+    // Source carousels (dynamically generated, sorted by priority)
+    const sources = getSourcesByPriority();
+    for (const source of sources) {
+      const sourceGames = gamesBySource.get(source);
+      if (sourceGames && sourceGames.length > 0) {
+        const config = getSourceConfig(source);
+        result.push({
+          title: config.carouselTitle,
+          games: sourceGames,
+        });
+      }
+    }
+
     // Only show "All Games" if no other carousels exist
-    if (result.length === 0 && allGames.length > 0)
+    if (result.length === 0 && allGames.length > 0) {
       result.push({ title: 'All Games', games: allGames });
+    }
+
     return result;
-  }, [recentGames, steamGames, epicGames, xboxGames, manualGames, allGames]);
+  }, [recentGames, gamesBySource, allGames]);
 
   // FIX: Only focus the FIRST carousel to prevent shared focus across all carousels
   // This ensures each carousel shows focus only when it's the active one

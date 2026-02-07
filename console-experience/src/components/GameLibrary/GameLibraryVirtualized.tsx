@@ -29,7 +29,7 @@
 import './GameLibrary.css';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { CSSProperties, memo, useRef } from 'react';
+import { CSSProperties, memo, useCallback, useRef } from 'react';
 
 import defaultCover from '../../assets/default_cover.png';
 import type { Game } from '../../domain/entities/game';
@@ -178,6 +178,21 @@ export const GameLibraryVirtualized = memo(function GameLibraryVirtualized({
     overscan: 2,
   });
 
+  /**
+   * Memoized click handler for cards
+   *
+   * Prevents recreation on every render, improving Card re-render performance.
+   * Best practice: useCallback for functions passed to memoized components.
+   */
+  const handleCardClick = useCallback(
+    (game: Game, gameIndex: number) => {
+      onSetActiveIndex(gameIndex);
+      onSetFocusArea('LIBRARY');
+      onLaunchGame(game, gameIndex);
+    },
+    [onSetActiveIndex, onSetFocusArea, onLaunchGame]
+  );
+
   return (
     <div
       ref={parentRef}
@@ -277,11 +292,8 @@ export const GameLibraryVirtualized = memo(function GameLibraryVirtualized({
                         title={game.title}
                         image={getCachedAssetSrc(game.image, defaultCover)}
                         isFocused={isFocused}
-                        onClick={() => {
-                          onSetActiveIndex(gameIndex);
-                          onSetFocusArea('LIBRARY');
-                          onLaunchGame(game, gameIndex);
-                        }}
+                        isFavorite={game.is_favorite === 1}
+                        onClick={() => handleCardClick(game, gameIndex)}
                         style={cardStyle}
                       />
                     </div>

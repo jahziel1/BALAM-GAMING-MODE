@@ -36,10 +36,24 @@ const TopBar: React.FC<TopBarProps> = ({
   const [time, setTime] = useState(new Date());
   const [status, setStatus] = useState<SystemStatus | null>(null);
 
-  // Clock Ticker
+  // Clock Ticker (updates every minute to save CPU)
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    // Calculate milliseconds until next minute
+    const now = new Date();
+    const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+    let interval: NodeJS.Timeout | null = null;
+
+    // Wait until next minute, then update every 60 seconds
+    const timeout = setTimeout(() => {
+      setTime(new Date());
+      interval = setInterval(() => setTime(new Date()), 60000);
+    }, msUntilNextMinute);
+
+    return () => {
+      clearTimeout(timeout);
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   // System Status Poller (Lightweight, every 10 seconds)
@@ -92,6 +106,14 @@ const TopBar: React.FC<TopBarProps> = ({
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
     });
   };
 
@@ -169,7 +191,7 @@ const TopBar: React.FC<TopBarProps> = ({
           <Bell size={20} className="icon" />
         </div>
         <div className="clock" data-testid="clock">
-          {formatTime(time)}
+          {formatTime(time)} | {formatDate(time)}
         </div>
       </div>
     </div>

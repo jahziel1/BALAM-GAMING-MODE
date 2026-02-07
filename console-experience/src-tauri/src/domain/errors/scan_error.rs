@@ -51,9 +51,9 @@ mod tests {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "file not found");
         let scan_err: ScanError = io_err.into();
 
-        match scan_err {
-            ScanError::IoError(msg) => assert!(msg.contains("file not found")),
-            _ => panic!("Expected IoError variant"),
-        }
+        assert!(
+            matches!(scan_err, ScanError::IoError(ref msg) if msg.contains("file not found")),
+            "Expected IoError variant with 'file not found' message"
+        );
     }
 }

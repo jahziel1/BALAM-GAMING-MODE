@@ -49,7 +49,7 @@ import { Search } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import defaultCover from '../../../assets/default_cover.png';
-import type { Game } from '../../../types/game';
+import type { Game } from '../../../domain/entities/game';
 import { getCachedAssetSrc } from '../../../utils/image-cache';
 
 /**

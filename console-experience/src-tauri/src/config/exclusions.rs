@@ -57,6 +57,7 @@ impl ExclusionConfig {
             GameSource::Steam => self.steam_app_ids.contains(&game.raw_id),
             GameSource::Epic => self.epic_patterns.iter().any(|pattern| game.title.contains(pattern)),
             GameSource::Xbox => self.xbox_patterns.iter().any(|pattern| game.id.contains(pattern)),
+            GameSource::BattleNet => false, // No Battle.net exclusions yet
             GameSource::Manual => self
                 .registry_excludes
                 .iter()

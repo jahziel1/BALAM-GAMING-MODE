@@ -5,10 +5,12 @@
  * Handles keyboard/gamepad navigation across all UI areas.
  */
 
+import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 
 import { inputAdapter } from '../adapters/input/InputAdapter';
+import { useAppStore } from '../application/providers/StoreProvider';
 import type { ActiveGame } from '../domain/entities/game';
 import { NavigationAction } from '../domain/input/NavigationEvent';
 
@@ -96,26 +98,30 @@ function navReducer(state: NavState, action: Action): NavState {
     case 'MOVE': {
       const { direction, itemCount, sidebarItemCount, quickSettingsSliderCount } = action;
 
-      // Quick Settings navigation
-      if (state.isQuickSettingsOpen) {
-        if (direction === NavigationAction.UP)
-          return {
-            ...state,
-            quickSettingsSliderIndex: Math.max(0, state.quickSettingsSliderIndex - 1),
-          };
-        if (direction === NavigationAction.DOWN)
-          return {
-            ...state,
-            quickSettingsSliderIndex: Math.min(
-              quickSettingsSliderCount - 1,
-              state.quickSettingsSliderIndex + 1
-            ),
-          };
-        return state;
+      // Quick Settings navigation (NOTE: rightSidebarOpen state comes from app-store, but slider index managed here)
+      // The actual check happens in handleAction, this just handles UP/DOWN for slider navigation
+      if (direction === NavigationAction.UP || direction === NavigationAction.DOWN) {
+        // Check if we should handle this as Quick Settings navigation
+        // (This will be skipped if Quick Settings is closed, handled by earlier logic in handleAction)
+        if (state.focusArea === 'QUICK_SETTINGS') {
+          if (direction === NavigationAction.UP)
+            return {
+              ...state,
+              quickSettingsSliderIndex: Math.max(0, state.quickSettingsSliderIndex - 1),
+            };
+          if (direction === NavigationAction.DOWN)
+            return {
+              ...state,
+              quickSettingsSliderIndex: Math.min(
+                quickSettingsSliderCount - 1,
+                state.quickSettingsSliderIndex + 1
+              ),
+            };
+        }
       }
 
-      // In-Game Menu navigation
-      if (state.isInGameMenuOpen) {
+      // In-Game Menu navigation (NOTE: leftSidebarOpen state comes from app-store, but menu index managed here)
+      if (state.focusArea === 'INGAME_MENU') {
         if (direction === NavigationAction.UP)
           return { ...state, gameMenuIndex: Math.max(0, state.gameMenuIndex - 1) };
         if (direction === NavigationAction.DOWN)
@@ -228,6 +234,10 @@ export const useNavigation = (
   const [state, dispatch] = useReducer(navReducer, initialState);
   const lastActionTime = useRef(0);
 
+  // Get sidebar states and actions from app-store
+  const { overlay, openLeftSidebar, closeLeftSidebar, openRightSidebar, closeRightSidebar } =
+    useAppStore();
+
   const callbacks = useRef({ onLaunch, onSidebarSelect, onQuit });
   useEffect(() => {
     callbacks.current = { onLaunch, onSidebarSelect, onQuit };
@@ -252,16 +262,37 @@ export const useNavigation = (
 
       // Handle CONFIRM action
       if (navAction === NavigationAction.CONFIRM) {
-        if (currentState.isQuickSettingsOpen) return;
-        if (currentState.isInGameMenuOpen) {
+        const logMsg = `🎮 CONFIRM action - Left:${overlay.leftSidebarOpen} Right:${overlay.rightSidebarOpen} MenuIdx:${currentState.gameMenuIndex}`;
+        console.log(logMsg);
+        void invoke('log_message', { message: logMsg });
+
+        if (overlay.rightSidebarOpen) {
+          const blockMsg = '⚠️ QuickSettings open - blocking CONFIRM';
+          console.log(blockMsg);
+          void invoke('log_message', { message: blockMsg });
+          return; // Quick Settings open - block confirms
+        }
+        if (overlay.leftSidebarOpen) {
+          // InGameMenu open - handle menu item selection
+          // IMPORTANT: Don't handle if QuickSettings is open (user is interacting with it)
+          if (overlay.rightSidebarOpen) {
+            return; // Ignore navigation when QuickSettings is open
+          }
+
           if (currentState.gameMenuIndex === 0) {
-            dispatch({ type: 'CLOSE_INGAME_MENU' });
+            // Resume Game
+            const resumeMsg = '🔴 RESUME GAME - Hiding window from CONFIRM action';
+            console.log(resumeMsg);
+            void invoke('log_message', { message: resumeMsg });
+            closeLeftSidebar();
             void getCurrentWindow().hide();
           } else if (currentState.gameMenuIndex === 1) {
-            dispatch({ type: 'CLOSE_INGAME_MENU' });
+            // Return to Dashboard
+            closeLeftSidebar();
             dispatch({ type: 'SET_FOCUS', area: 'LIBRARY' });
             void getCurrentWindow().show();
           } else if (currentState.gameMenuIndex === 2) {
+            // Close Game
             callbacks.current.onQuit();
           }
         } else if (currentState.focusArea === 'SEARCH') {
@@ -285,8 +316,13 @@ export const useNavigation = (
         navAction === NavigationAction.BACK ||
         (navAction === NavigationAction.MENU && activeRunningGame)
       ) {
-        if (currentState.isQuickSettingsOpen) {
-          dispatch({ type: 'CLOSE_QUICK_SETTINGS' });
+        const backMsg = `🎮 ${navAction} action - Left:${overlay.leftSidebarOpen} Right:${overlay.rightSidebarOpen}`;
+        console.log(backMsg);
+        void invoke('log_message', { message: backMsg });
+
+        if (overlay.rightSidebarOpen) {
+          closeRightSidebar();
+          dispatch({ type: 'SET_FOCUS', area: 'HERO' });
         } else if (currentState.focusArea === 'SEARCH') {
           inputAdapter.dispatchKeyEvent('Escape');
           dispatch({ type: 'SET_FOCUS', area: 'HERO' });
@@ -295,11 +331,26 @@ export const useNavigation = (
           dispatch({ type: 'SET_FOCUS', area: 'HERO' });
         } else if (currentState.isSidebarOpen) {
           dispatch({ type: 'SET_SIDEBAR', open: false });
-        } else if (currentState.isInGameMenuOpen) {
-          dispatch({ type: 'CLOSE_INGAME_MENU' });
-          void getCurrentWindow().hide();
+        } else if (overlay.leftSidebarOpen) {
+          // InGameMenu open - close it and hide window
+          // IMPORTANT: Don't hide window if QuickSettings is open
+          const closeMsg = '🔴 Closing InGameMenu from BACK';
+          console.log(closeMsg);
+          void invoke('log_message', { message: closeMsg });
+          closeLeftSidebar();
+          if (!overlay.rightSidebarOpen) {
+            const hideMsg = '🔴 HIDING WINDOW from BACK (QuickSettings not open)';
+            console.log(hideMsg);
+            void invoke('log_message', { message: hideMsg });
+            void getCurrentWindow().hide();
+          } else {
+            const skipMsg = '⚠️ NOT hiding window - QuickSettings is open';
+            console.log(skipMsg);
+            void invoke('log_message', { message: skipMsg });
+          }
         } else if (activeRunningGame) {
-          dispatch({ type: 'OPEN_INGAME_MENU' });
+          // No menu open but game running - open InGameMenu
+          openLeftSidebar();
         } else {
           dispatch({ type: 'SET_FOCUS', area: 'HERO' });
         }
@@ -308,17 +359,21 @@ export const useNavigation = (
 
       // Handle QUICK_SETTINGS toggle
       if (navAction === NavigationAction.QUICK_SETTINGS) {
-        if (currentState.isQuickSettingsOpen) {
-          dispatch({ type: 'CLOSE_QUICK_SETTINGS' });
-        } else if (!currentState.isInGameMenuOpen) {
-          dispatch({ type: 'OPEN_QUICK_SETTINGS' });
+        if (overlay.rightSidebarOpen) {
+          closeRightSidebar();
+          dispatch({ type: 'SET_FOCUS', area: 'HERO' });
+        } else if (!overlay.leftSidebarOpen) {
+          // Only open Quick Settings if InGameMenu is NOT open
+          openRightSidebar();
+          dispatch({ type: 'SET_FOCUS', area: 'QUICK_SETTINGS' });
+          dispatch({ type: 'SET_QUICK_SETTINGS_SLIDER_INDEX', index: 0 });
         }
         return;
       }
 
       // Handle MENU action
       if (navAction === NavigationAction.MENU && !activeRunningGame) {
-        if (currentState.isQuickSettingsOpen) return;
+        if (overlay.rightSidebarOpen) return; // Block menu if Quick Settings open
         if (currentState.focusArea === 'VIRTUAL_KEYBOARD') return;
         if (currentState.focusArea === 'SEARCH') return;
         dispatch({ type: 'SET_SIDEBAR', open: !currentState.isSidebarOpen });
@@ -363,7 +418,7 @@ export const useNavigation = (
 
       // Quick Settings slider adjustment
       if (
-        currentState.isQuickSettingsOpen &&
+        overlay.rightSidebarOpen &&
         (navAction === NavigationAction.LEFT || navAction === NavigationAction.RIGHT)
       ) {
         const direction = navAction === NavigationAction.LEFT ? -1 : 1;
@@ -379,7 +434,18 @@ export const useNavigation = (
         quickSettingsSliderCount: 4,
       });
     },
-    [itemCount, sidebarItemCount, activeRunningGame, isDisabled, onQuickSettingsAdjust]
+    [
+      itemCount,
+      sidebarItemCount,
+      activeRunningGame,
+      isDisabled,
+      onQuickSettingsAdjust,
+      overlay,
+      openLeftSidebar,
+      closeLeftSidebar,
+      openRightSidebar,
+      closeRightSidebar,
+    ]
   );
 
   // Listen to navigation events from input adapter
@@ -392,24 +458,58 @@ export const useNavigation = (
   }, [handleAction]);
 
   // Listen for window focus to open in-game menu
+  // ROBUST: Only open menu if window is BOTH focused AND visible
   useEffect(() => {
-    const unlisten = getCurrentWindow().listen('tauri://focus', () => {
-      if (activeRunningGame) dispatch({ type: 'OPEN_INGAME_MENU' });
+    const unlistenPromise = getCurrentWindow().listen('tauri://focus', () => {
+      void (async () => {
+        if (!activeRunningGame) return;
+
+        // CRITICAL: Check if window is actually visible before opening sidebar
+        // This prevents opening menu when window is hidden during game launch
+        const isVisible = await getCurrentWindow().isVisible();
+        if (!isVisible) {
+          console.log('⚠️ Window focused but not visible - skipping InGameMenu open');
+          return;
+        }
+
+        console.log('✅ Window focused and visible - opening InGameMenu');
+        openLeftSidebar();
+        dispatch({ type: 'SET_FOCUS', area: 'INGAME_MENU' });
+      })();
     });
 
     return () => {
-      void unlisten.then((f) => f());
+      void unlistenPromise.then((unlisten) => unlisten());
     };
-  }, [activeRunningGame]);
+  }, [activeRunningGame, openLeftSidebar]);
 
   return {
     ...state,
+    // Override sidebar states with app-store values (for backward compatibility)
+    isInGameMenuOpen: overlay.leftSidebarOpen,
+    isQuickSettingsOpen: overlay.rightSidebarOpen,
     setFocusArea: (area: FocusArea) => dispatch({ type: 'SET_FOCUS', area }),
     setSidebarOpen: (open: boolean) => dispatch({ type: 'SET_SIDEBAR', open }),
-    setInGameMenuOpen: (open: boolean) =>
-      dispatch(open ? { type: 'OPEN_INGAME_MENU' } : { type: 'CLOSE_INGAME_MENU' }),
-    setQuickSettingsOpen: (open: boolean) =>
-      dispatch(open ? { type: 'OPEN_QUICK_SETTINGS' } : { type: 'CLOSE_QUICK_SETTINGS' }),
+    setInGameMenuOpen: (open: boolean) => {
+      if (open) {
+        openLeftSidebar();
+        dispatch({ type: 'SET_FOCUS', area: 'INGAME_MENU' });
+        dispatch({ type: 'SET_GAME_MENU_INDEX', index: 0 });
+      } else {
+        closeLeftSidebar();
+        dispatch({ type: 'SET_FOCUS', area: 'HERO' });
+      }
+    },
+    setQuickSettingsOpen: (open: boolean) => {
+      if (open) {
+        openRightSidebar();
+        dispatch({ type: 'SET_FOCUS', area: 'QUICK_SETTINGS' });
+        dispatch({ type: 'SET_QUICK_SETTINGS_SLIDER_INDEX', index: 0 });
+      } else {
+        closeRightSidebar();
+        dispatch({ type: 'SET_FOCUS', area: 'HERO' });
+      }
+    },
     setActiveIndex: (index: number) => dispatch({ type: 'SET_INDEX', index }),
     setSidebarIndex: (index: number) => dispatch({ type: 'SET_SIDEBAR_INDEX', index }),
     setQuickSettingsSliderIndex: (index: number) =>

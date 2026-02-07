@@ -2,7 +2,7 @@
 import { render } from '@testing-library/react';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import type { Game } from '../../../types/game';
+import type { Game } from '../../../domain/entities/game';
 import SearchOverlay from './SearchOverlay';
 
 // Mock ResizeObserver for cmdk

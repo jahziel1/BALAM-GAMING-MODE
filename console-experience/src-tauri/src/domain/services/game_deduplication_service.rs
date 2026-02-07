@@ -42,7 +42,8 @@ impl GameDeduplicationService {
             let identity_key = if let Some(ref internal) = identity.internal_name {
                 format!("BIN_{internal}")
             } else {
-                format!("PATH_{}", identity.canonical_path)
+                let canonical_path = &identity.canonical_path;
+                format!("PATH_{canonical_path}")
             };
 
             if seen_identities.contains(&identity_key) {

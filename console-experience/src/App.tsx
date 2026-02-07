@@ -2,11 +2,11 @@ import './App.css';
 
 import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // Zustand stores
-import { useGameStore } from './application/providers/StoreProvider';
-import { useOverlayStore } from './application/stores/overlay-store';
+import { useAppStore, useGameStore } from './application/providers/StoreProvider';
+import { usePerformanceOverlayStore } from './application/stores/performance-overlay-store';
 import defaultCover from './assets/default_cover.png';
 // Modular Components
 import {
@@ -19,11 +19,22 @@ import {
 import { Footer, Sidebar, TopBar } from './components/layout';
 import { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
 import { SystemOSD } from './components/overlay';
+import { FilterChips, type FilterType } from './components/ui/FilterChips';
+
+// Lazy load heavy overlay components
+const PerformanceOverlay = lazy(() => import('./components/overlay/PerformanceOverlay'));
+const PowerModal = lazy(() =>
+  import('./components/overlay/PowerModal/PowerModal').then((m) => ({ default: m.PowerModal }))
+);
 import { InputDeviceType } from './domain/input/InputDevice';
+import { useAudio } from './hooks/useAudio';
+import { useHaptic } from './hooks/useHaptic';
 import { useInputDevice } from './hooks/useInputDevice';
 // Hooks
 import { useNavigation } from './hooks/useNavigation';
 import { useVirtualKeyboard } from './hooks/useVirtualKeyboard';
+// Database
+import { addPlayTime, initDatabase, toggleFavorite } from './services/database';
 import { getCachedAssetSrc } from './utils/image-cache';
 
 function App() {
@@ -35,30 +46,87 @@ function App() {
     isLaunching,
     activeRunningGame,
     launchGame: launchGameById,
+    clearActiveGame,
     killGame: killGameByPid,
     addManualGame: addManualGameStore,
     removeGame,
     loadGames,
   } = useGameStore();
 
-  const { showOverlay, hideOverlay, currentOverlay } = useOverlayStore();
+  const { openRightSidebar, openLeftSidebar } = useAppStore();
+
+  // Haptic feedback
+  const { hapticEvent } = useHaptic();
+
+  // Audio feedback
+  const { audioLaunch } = useAudio();
+
+  // Initialize database on mount
+  useEffect(() => {
+    void initDatabase().catch((error) => {
+      console.error('Failed to initialize database:', error);
+    });
+  }, []);
 
   // Load games on mount
   useEffect(() => {
     void loadGames();
   }, [loadGames]);
 
+  // Listen for game-ended events from backend
+  useEffect(() => {
+    const unlisten = listen<{ game_id: string; play_time_seconds: number }>(
+      'game-ended',
+      (event) => {
+        void (async () => {
+          const { game_id, play_time_seconds } = event.payload;
+          console.warn(
+            `🎮 Game ended: ${game_id} (played ${play_time_seconds}s = ${(play_time_seconds / 60).toFixed(1)}min)`
+          );
+
+          // Find the game in the current games list to get the path
+          const game = games.find((g) => g.id === game_id);
+
+          if (game && play_time_seconds > 0) {
+            try {
+              // Update play time in database
+              await addPlayTime(game.path, play_time_seconds);
+              console.warn(`✅ Play time updated: +${play_time_seconds}s for ${game.title}`);
+
+              // Reload games to reflect updated stats
+              await loadGames();
+            } catch (error) {
+              console.error('Failed to update play time:', error);
+            }
+          }
+
+          clearActiveGame();
+        })();
+      }
+    );
+
+    return () => {
+      void unlisten.then((fn) => fn());
+    };
+  }, [clearActiveGame, games, loadGames]);
+
   // ============================================================================
   // LOCAL STATE
   // ============================================================================
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isWiFiPanelOpen, setIsWiFiPanelOpen] = useState(false);
   const [isBluetoothPanelOpen, setIsBluetoothPanelOpen] = useState(false);
+  const [isPowerModalOpen, setIsPowerModalOpen] = useState(false);
   const [pendingLaunchIndex, setPendingLaunchIndex] = useState<number | null>(null);
   const [osdValue, setOsdValue] = useState(75);
   const [isOsdVisible, setIsOsdVisible] = useState(false);
   const osdTimeout = useRef<number | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+
+  // Performance overlay configuration (persistent via Zustand)
+  const perfOverlayConfig = usePerformanceOverlayStore((state) => state.config);
 
   // Fix #8: Global keyboard shortcuts for search (Ctrl+K, Ctrl+F)
   useEffect(() => {
@@ -136,10 +204,7 @@ function App() {
     setFocusArea,
     isSidebarOpen,
     setSidebarOpen,
-    isInGameMenuOpen,
     setInGameMenuOpen,
-    isQuickSettingsOpen,
-    setQuickSettingsOpen,
     activeIndex,
     setActiveIndex,
     sidebarIndex,
@@ -209,24 +274,49 @@ function App() {
 
       // Otherwise launch immediately
       launchGame(gameToLaunch);
+      void hapticEvent(); // Trigger haptic feedback for game launch
+      audioLaunch(); // Play launch sound effect
       void getCurrentWindow().hide();
     },
-    [games, launchGame, activeRunningGame, setInGameMenuOpen]
+    [games, launchGame, activeRunningGame, setInGameMenuOpen, hapticEvent, audioLaunch]
+  );
+
+  // ============================================================================
+  // FAVORITE TOGGLE LOGIC
+  // ============================================================================
+  const handleToggleFavorite = useCallback(
+    async (gameId: string) => {
+      const game = games.find((g) => g.id === gameId);
+      if (!game) return;
+
+      try {
+        // Toggle favorite in database
+        await toggleFavorite(game.path);
+        // Reload games to reflect the change
+        await loadGames();
+      } catch (error) {
+        console.error('Failed to toggle favorite:', error);
+      }
+    },
+    [games, loadGames]
+  );
+
+  // ============================================================================
+  // FILTER CHANGE LOGIC
+  // ============================================================================
+  const handleFilterChange = useCallback(
+    (filter: FilterType) => {
+      setActiveFilter(filter);
+      // Reset active index when filter changes
+      setActiveIndex(0);
+    },
+    [setActiveIndex]
   );
 
   // Update ref
   useEffect(() => {
     handleLaunchRawRef.current = handleLaunchRaw;
   }, [handleLaunchRaw]);
-
-  // Sync overlay-store with navigation state
-  useEffect(() => {
-    if (isInGameMenuOpen) {
-      showOverlay('inGameMenu');
-    } else if (currentOverlay === 'inGameMenu') {
-      hideOverlay();
-    }
-  }, [isInGameMenuOpen, showOverlay, hideOverlay, currentOverlay]);
 
   // Sync search overlay with focus area
   useEffect(() => {
@@ -273,6 +363,7 @@ function App() {
           setSidebarOpen(false);
           break;
         case 'settings':
+          setIsSettingsOpen(true);
           setSidebarOpen(false);
           break;
         case 'desktop':
@@ -280,6 +371,7 @@ function App() {
           setSidebarOpen(false);
           break;
         case 'power':
+          setIsPowerModalOpen(true);
           setSidebarOpen(false);
           break;
         default:
@@ -357,18 +449,18 @@ function App() {
         const win = getCurrentWindow();
         if (await win.isVisible()) {
           await win.setFocus();
-          showOverlay('inGameMenu');
+          openLeftSidebar();
         } else {
           await win.show();
           await win.setFocus();
-          showOverlay('inGameMenu');
+          openLeftSidebar();
         }
       })();
     });
     return () => {
       void unlisten.then((f) => f());
     };
-  }, [showOverlay]);
+  }, [openLeftSidebar]);
 
   // Volume change listener
   useEffect(() => {
@@ -415,7 +507,33 @@ function App() {
   // ============================================================================
   // DERIVED STATE
   // ============================================================================
-  const activeGame = games[activeIndex] ?? games[0];
+  // Filter games based on active filter
+  const filteredGames = useMemo(() => {
+    switch (activeFilter) {
+      case 'favorites':
+        return games.filter((game) => game.is_favorite === 1);
+      case 'recents':
+        return games
+          .filter((game) => game.last_played !== null)
+          .sort((a, b) => (b.last_played ?? 0) - (a.last_played ?? 0))
+          .slice(0, 20);
+      case 'steam':
+        return games.filter((game) => game.source === 'Steam');
+      case 'epic':
+        return games.filter((game) => game.source === 'Epic');
+      case 'xbox':
+        return games.filter((game) => game.source === 'Xbox');
+      case 'battlenet':
+        return games.filter((game) => game.source === 'BattleNet');
+      case 'manual':
+        return games.filter((game) => game.source === 'Manual');
+      case 'all':
+      default:
+        return games;
+    }
+  }, [games, activeFilter]);
+
+  const activeGame = filteredGames[activeIndex] ?? filteredGames[0];
   const backgroundImage = getCachedAssetSrc(
     activeGame?.hero_image ?? activeGame?.image,
     defaultCover
@@ -429,6 +547,14 @@ function App() {
       <div className="app-background" style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className="app-overlay" />
       <SystemOSD type="volume" value={osdValue} isVisible={isOsdVisible} />
+      <Suspense fallback={null}>
+        <PerformanceOverlay
+          enabled={perfOverlayConfig.enabled}
+          position={perfOverlayConfig.position}
+          mode={perfOverlayConfig.mode}
+          updateInterval={perfOverlayConfig.updateInterval}
+        />
+      </Suspense>
 
       {!isSidebarOpen && (
         <div
@@ -465,14 +591,22 @@ function App() {
             activeRunningGame={activeRunningGame}
             focusArea={focusArea}
             isLaunching={isLaunching}
+            isFavorite={activeGame?.is_favorite === 1}
             onSetFocusArea={setFocusArea}
             onSetInGameMenuOpen={setInGameMenuOpen}
             onLaunchGame={() => void handleLaunchRaw(activeIndex)}
             onRemoveGame={(id) => void removeGame(id)}
+            onToggleFavorite={(id) => void handleToggleFavorite(id)}
+          />
+
+          <FilterChips
+            activeFilter={activeFilter}
+            onFilterChange={handleFilterChange}
+            gameCount={filteredGames.length}
           />
 
           <LibrarySection
-            games={games}
+            games={filteredGames}
             activeIndex={activeIndex}
             focusArea={focusArea}
             onLaunchGame={(_game, index) => handleLaunchRaw(index)}
@@ -512,8 +646,12 @@ function App() {
         onLaunchFromSearch={handleLaunchFromSearch}
         onRegisterSearchInput={handleRegisterSearchInput}
         onOpenVirtualKeyboard={virtualKeyboard.open}
-        isQuickSettingsOpen={isQuickSettingsOpen}
-        onCloseQuickSettings={() => setQuickSettingsOpen(false)}
+        isSettingsOpen={isSettingsOpen}
+        onCloseSettings={() => setIsSettingsOpen(false)}
+        onOpenQuickSettingsFromSettings={() => {
+          setIsSettingsOpen(false);
+          openRightSidebar();
+        }}
         quickSettingsSliderIndex={quickSettingsSliderIndex}
         onQuickSettingsFocusChange={setQuickSettingsSliderIndex}
         onRegisterQuickSettingsAdjustHandler={(handler) => {
@@ -528,6 +666,10 @@ function App() {
         virtualKeyboard={virtualKeyboard}
         controllerType={controllerType}
       />
+
+      <Suspense fallback={null}>
+        <PowerModal isOpen={isPowerModalOpen} onClose={() => setIsPowerModalOpen(false)} />
+      </Suspense>
     </ErrorBoundary>
   );
 }

@@ -1,0 +1,369 @@
+/**
+ * In-Game Menu Styles (Left Sidebar)
+ *
+ * Xbox-style left sidebar overlay for in-game menu.
+ * Features game cover, stats, and improved visual hierarchy.
+ */
+
+/* ===== Backdrop ===== */
+.in-game-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  /* Removed blur - was causing QuickSettings to appear blurry */
+  z-index: 9998;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===== Left Sidebar ===== */
+.in-game-sidebar-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 30%;
+  min-width: 320px;
+  max-width: 480px;
+  background: linear-gradient(135deg, rgba(20, 20, 30, 0.98) 0%, rgba(30, 30, 45, 0.98) 100%);
+  /* Removed blur - was causing QuickSettings to appear blurry */
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 24px;
+  animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ===== Game Header ===== */
+.game-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.game-cover {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.game-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.game-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.game-session {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* ===== Stats Bar ===== */
+.game-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stat-item {
+  font-weight: 500;
+}
+
+.stat-divider {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Menu Actions ===== */
+.menu-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.menu-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+}
+
+.menu-button:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.8);
+  outline-offset: 2px;
+}
+
+.menu-button:active:not(:disabled) {
+  transform: scale(0.98) translateX(4px);
+}
+
+.menu-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary button (Resume Game) */
+.menu-button.primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+.menu-button.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  border-color: rgba(99, 102, 241, 0.8);
+}
+
+/* Danger button (Close Game) */
+.menu-button.danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.menu-button.danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: rgba(239, 68, 68, 0.8);
+}
+
+.button-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.button-label {
+  flex: 1;
+}
+
+/* ===== Confirmation Dialog ===== */
+.confirm-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 48px);
+  max-width: 360px;
+  padding: 24px;
+  background: rgba(20, 20, 30, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.confirm-dialog h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.confirm-dialog p {
+  margin: 0 0 20px 0;
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-button {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.confirm-button:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.8);
+  outline-offset: 2px;
+}
+
+.confirm-button:active {
+  transform: scale(0.98);
+}
+
+.confirm-button.cancel {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.confirm-button.cancel:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.confirm-button.confirm {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ffffff;
+}
+
+.confirm-button.confirm:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: rgba(239, 68, 68, 0.8);
+}
+
+/* ===== Button Hints (Gamepad) ===== */
+.button-hints {
+  display: flex;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: auto;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+  .in-game-sidebar-left {
+    width: 80%;
+    min-width: unset;
+  }
+}
+
+@media (max-height: 600px) {
+  .in-game-sidebar-left {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .game-cover {
+    width: 60px;
+    height: 60px;
+  }
+
+  .game-title {
+    font-size: 1.125rem;
+  }
+
+  .menu-button {
+    padding: 10px 16px;
+  }
+}
+
+/* ===== Scrollbar Styling ===== */
+.in-game-sidebar-left::-webkit-scrollbar {
+  width: 8px;
+}
+
+.in-game-sidebar-left::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.in-game-sidebar-left::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.in-game-sidebar-left::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

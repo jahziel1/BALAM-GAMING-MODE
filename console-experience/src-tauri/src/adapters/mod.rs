@@ -1,11 +1,16 @@
+pub mod battlenet_scanner;
 pub mod bluetooth;
 pub mod display;
 pub mod epic_scanner;
+pub mod game;
 pub mod gamepad_adapter;
+pub mod haptic;
 pub mod identity_engine;
 pub mod local_scanner;
 pub mod metadata_adapter;
+pub mod microsoft_store_adapter;
 pub mod performance;
+pub mod performance_monitoring;
 pub mod process_launcher;
 pub mod registry_scanner;
 pub mod steam_scanner;

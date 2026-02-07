@@ -26,6 +26,12 @@ struct RyzenAdjHandle {
     ryzen_handle: *mut std::ffi::c_void,
 }
 
+impl Default for RyzenAdjAdapter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RyzenAdjAdapter {
     /// Creates a new `RyzenAdj` adapter.
     /// Does not load library until first use (lazy initialization).
@@ -96,19 +102,24 @@ impl RyzenAdjAdapter {
                 info!("RyzenAdj initialized successfully");
 
                 // Leak symbols to 'static lifetime (they live as long as the library)
+                #[allow(clippy::missing_transmute_annotations)]
                 let init_fn = std::mem::transmute(init_fn);
+                #[allow(clippy::missing_transmute_annotations)]
                 let cleanup_fn = std::mem::transmute(cleanup_fn);
+                #[allow(clippy::missing_transmute_annotations)]
                 let set_stapm_fn = std::mem::transmute(set_stapm_fn);
-                let set_fast_fn = std::mem::transmute(set_fast_fn);
-                let set_slow_fn = std::mem::transmute(set_slow_fn);
+                #[allow(clippy::missing_transmute_annotations)]
+                let fast_fn = std::mem::transmute(set_fast_fn);
+                #[allow(clippy::missing_transmute_annotations)]
+                let slow_fn = std::mem::transmute(set_slow_fn);
 
                 *handle = Some(RyzenAdjHandle {
                     _lib: lib,
                     _init_fn: init_fn,
                     cleanup_fn,
                     set_stapm_fn,
-                    set_fast_fn,
-                    set_slow_fn,
+                    set_fast_fn: fast_fn,
+                    set_slow_fn: slow_fn,
                     ryzen_handle,
                 });
             }

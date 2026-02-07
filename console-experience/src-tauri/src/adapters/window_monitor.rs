@@ -8,7 +8,7 @@
 /// Based on industry best practices from:
 /// - Playnite game launcher
 /// - Microsoft WMI Performance Guidelines
-/// - ETW/WMI event-driven monitoring
+/// - `ETW`/WMI event-driven monitoring
 ///
 /// # Performance
 /// - Event-driven (no polling)
@@ -89,6 +89,7 @@ pub struct WindowMonitor {
 
 impl WindowMonitor {
     /// Create new process monitor
+    #[must_use]
     pub fn new(tracker: Arc<ActiveGamesTracker>, app_handle: AppHandle) -> Self {
         Self {
             tracker,

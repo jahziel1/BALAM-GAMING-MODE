@@ -31,16 +31,17 @@ pub enum LaunchFailureReason {
 
 impl LaunchFailureReason {
     /// Get human-readable description
+    #[must_use]
     pub fn description(&self) -> String {
         match self {
             Self::Timeout { timeout_seconds } => {
-                format!("El juego no respondió después de {} segundos", timeout_seconds)
+                format!("El juego no respondió después de {timeout_seconds} segundos")
             },
             Self::QuickExit { runtime_seconds } => {
-                format!("El juego se cerró después de {} segundos", runtime_seconds)
+                format!("El juego se cerró después de {runtime_seconds} segundos")
             },
             Self::ExplicitError { error_message } => {
-                format!("Error del sistema: {}", error_message)
+                format!("Error del sistema: {error_message}")
             },
             Self::NoMonitoring => "No se pudo monitorear el estado del juego".to_string(),
         }
@@ -64,6 +65,7 @@ pub struct GameLaunchError {
 
 impl GameLaunchError {
     /// Create error for Steam timeout
+    #[must_use]
     pub fn steam_timeout(game_id: String, game_title: String, timeout_seconds: u64) -> Self {
         Self {
             game_id,
@@ -79,6 +81,7 @@ impl GameLaunchError {
     }
 
     /// Create error for Xbox/UWP activation failure
+    #[must_use]
     pub fn xbox_activation_failed(game_id: String, game_title: String, error: String) -> Self {
         Self {
             game_id,
@@ -94,6 +97,7 @@ impl GameLaunchError {
     }
 
     /// Create error for Xbox explorer fallback (no monitoring)
+    #[must_use]
     pub fn xbox_explorer_fallback(game_id: String, game_title: String) -> Self {
         Self {
             game_id,
@@ -108,6 +112,7 @@ impl GameLaunchError {
     }
 
     /// Create error for native game quick exit
+    #[must_use]
     pub fn native_quick_exit(game_id: String, game_title: String, runtime_seconds: u64, store: String) -> Self {
         Self {
             game_id,
@@ -124,6 +129,7 @@ impl GameLaunchError {
     }
 
     /// Create error for spawn failure
+    #[must_use]
     pub fn spawn_failed(game_id: String, game_title: String, store: String, error: String) -> Self {
         Self {
             game_id,

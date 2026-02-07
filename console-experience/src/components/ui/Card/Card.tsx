@@ -6,9 +6,10 @@
 
 import './Card.css';
 
+import { Star } from 'lucide-react';
 import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { GameSource } from '../../../types/game';
+import type { GameSource } from '../../../domain/entities/game';
 import { generatePlaceholder } from '../../../utils/game-placeholder';
 
 /**
@@ -25,6 +26,8 @@ interface CardProps {
   isFocused?: boolean;
   /** Whether card is in loading state */
   isLoading?: boolean;
+  /** Whether game is favorited */
+  isFavorite?: boolean;
   /** Additional inline styles */
   style?: React.CSSProperties;
   /** Click handler */
@@ -68,6 +71,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       source = 'Manual',
       isFocused = false,
       isLoading = false,
+      isFavorite = false,
       style,
       onClick,
       onDoubleClick,
@@ -151,6 +155,11 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
             />
           )}
           {!imgLoaded && !imgError ? <div className="card-title-fallback">{title}</div> : null}
+          {isFavorite ? (
+            <div className="card-favorite-badge" aria-label="Favorito">
+              <Star size={16} fill="currentColor" />
+            </div>
+          ) : null}
         </div>
       </div>
     );

@@ -1,0 +1,109 @@
+.power-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.power-modal {
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.power-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.power-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--color-text);
+}
+
+.power-modal-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.power-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.power-action-button:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface-hover);
+}
+
+.power-action-button.shutdown {
+  color: var(--color-error);
+}
+
+.power-action-button.restart {
+  color: var(--color-warning);
+}
+
+.power-modal-message {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-secondary);
+}
+
+.power-modal-countdown {
+  font-size: 4rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.power-modal-cancel {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.power-modal-cancel:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+}
+
+.power-modal-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

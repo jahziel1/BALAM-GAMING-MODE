@@ -42,8 +42,8 @@ struct EpicManifest {
 ///
 /// let scanner = EpicScanner::new();
 /// match scanner.scan() {
-///     Ok(games) => println!("Found {} Epic games", games.len()),
-///     Err(e) => eprintln!("Epic scan failed: {}", e),
+///     `Ok`(games) => println!("Found {} Epic games", games.len()),
+///     `Err`(e) => eprintln!("Epic scan failed: {}", e),
 /// }
 /// ```
 pub struct EpicScanner {
@@ -103,10 +103,11 @@ impl EpicScanner {
 
                             let install_path = Path::new(&manifest.install_location);
                             let full_exe_path = install_path.join(&manifest.launch_executable);
+                            let catalog_item_id = &manifest.catalog_item_id;
 
                             games.push(Game {
-                                id: format!("epic_{}", manifest.catalog_item_id),
-                                raw_id: manifest.catalog_item_id.clone(),
+                                id: format!("epic_{catalog_item_id}"),
+                                raw_id: catalog_item_id.clone(),
                                 title: manifest.display_name,
                                 path: full_exe_path.to_string_lossy().to_string(),
                                 image: None,

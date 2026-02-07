@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-/// Bluetooth device class/type.
+/// `Bluetooth` device class/type.
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum BluetoothDeviceType {
     AudioVideo,
@@ -14,7 +14,7 @@ pub enum BluetoothDeviceType {
     Unknown,
 }
 
-/// Bluetooth device pairing state.
+/// `Bluetooth` device pairing state.
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum BluetoothPairingState {
     Unpaired,
@@ -22,7 +22,7 @@ pub enum BluetoothPairingState {
     PairingInProgress,
 }
 
-/// Domain entity representing a Bluetooth device.
+/// Domain entity representing a `Bluetooth` device.
 #[derive(Debug, Clone, Serialize)]
 pub struct BluetoothDevice {
     /// Device name
@@ -41,7 +41,7 @@ pub struct BluetoothDevice {
     pub is_remembered: bool,
 }
 
-/// Pairing configuration for Bluetooth devices.
+/// Pairing configuration for `Bluetooth` devices.
 #[derive(Debug, Clone)]
 pub struct BluetoothPairingConfig {
     /// Device address to pair with
@@ -50,9 +50,9 @@ pub struct BluetoothPairingConfig {
     pub pin: String,
 }
 
-/// Port defining Bluetooth management capabilities.
+/// Port defining `Bluetooth` management capabilities.
 ///
-/// This trait provides a hardware abstraction layer for Bluetooth operations
+/// This trait provides a hardware abstraction layer for `Bluetooth` operations
 /// including device discovery, pairing, connection management, and status monitoring.
 ///
 /// # Thread Safety
@@ -63,11 +63,11 @@ pub struct BluetoothPairingConfig {
 /// such as device scanning (10+ seconds) or pairing.
 ///
 /// # Platform Support
-/// - Windows: Uses WinRT Bluetooth APIs asynchronously
+/// - Windows: Uses `WinRT` `Bluetooth` APIs asynchronously
 /// - Future: Event-driven notifications via DeviceWatcher
 #[async_trait::async_trait]
 pub trait BluetoothPort: Send + Sync {
-    /// Gets the list of paired (remembered) Bluetooth devices.
+    /// Gets the list of paired (remembered) `Bluetooth` devices.
     ///
     /// # Performance
     /// Fast (<100ms), reads from system cache.
@@ -76,22 +76,22 @@ pub trait BluetoothPort: Send + Sync {
     /// List of devices that have been paired with this computer.
     async fn get_paired_devices(&self) -> Result<Vec<BluetoothDevice>, String>;
 
-    /// Scans for available Bluetooth devices nearby.
+    /// Scans for available `Bluetooth` devices nearby.
     ///
     /// # Performance
-    /// **Slow (2-10 seconds)** - Performs active Bluetooth discovery.
+    /// **Slow (2-10 seconds)** - Performs active `Bluetooth` discovery.
     /// Runs asynchronously to avoid blocking UI thread.
     ///
     /// # Returns
     /// List of discovered devices, including paired and unpaired.
     async fn scan_devices(&self) -> Result<Vec<BluetoothDevice>, String>;
 
-    /// Pairs with a Bluetooth device.
+    /// Pairs with a `Bluetooth` device.
     ///
     /// # Errors
     /// - Device not found
     /// - Incorrect PIN
-    /// - Bluetooth adapter disabled
+    /// - `Bluetooth` adapter disabled
     /// - Device already paired
     async fn pair_device(&self, config: BluetoothPairingConfig) -> Result<(), String>;
 
@@ -101,7 +101,7 @@ pub trait BluetoothPort: Send + Sync {
     /// - Device not found in paired devices
     async fn unpair_device(&self, address: &str) -> Result<(), String>;
 
-    /// Connects to a paired Bluetooth device.
+    /// Connects to a paired `Bluetooth` device.
     ///
     /// # Errors
     /// - Device not paired
@@ -109,32 +109,32 @@ pub trait BluetoothPort: Send + Sync {
     /// - Connection failed
     async fn connect_device(&self, address: &str) -> Result<(), String>;
 
-    /// Disconnects from a Bluetooth device.
+    /// Disconnects from a `Bluetooth` device.
     ///
     /// # Errors
     /// - Device not connected
     async fn disconnect_device(&self, address: &str) -> Result<(), String>;
 
-    /// Gets the currently connected Bluetooth devices.
+    /// Gets the currently connected `Bluetooth` devices.
     ///
     /// # Returns
     /// List of devices currently connected to this computer.
     async fn get_connected_devices(&self) -> Result<Vec<BluetoothDevice>, String>;
 
-    /// Checks if Bluetooth adapter is available and enabled.
+    /// Checks if `Bluetooth` adapter is available and enabled.
     ///
     /// # Returns
     /// - `Ok(true)` if Bluetooth is available and enabled
     /// - `Ok(false)` if Bluetooth is disabled or no adapter
     async fn is_bluetooth_available(&self) -> Result<bool, String>;
 
-    /// Enables or disables Bluetooth radio.
+    /// Enables or disables `Bluetooth` radio.
     ///
     /// # Parameters
     /// - `enabled`: true to enable, false to disable
     ///
     /// # Errors
-    /// - No Bluetooth adapter available
+    /// - No `Bluetooth` adapter available
     /// - Insufficient permissions
     async fn set_bluetooth_enabled(&self, enabled: bool) -> Result<(), String>;
 }

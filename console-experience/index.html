@@ -8,6 +8,52 @@
   </head>
 
   <body>
+    <div id="splash-screen">
+      <div class="splash-content">
+        <h1 class="splash-logo">BALAM</h1>
+        <div class="splash-spinner"></div>
+      </div>
+    </div>
+
+    <style>
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.3s ease-out;
+      }
+
+      #splash-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .splash-logo {
+        font-size: 4rem;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 2rem;
+        letter-spacing: 0.2em;
+      }
+
+      .splash-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(0, 212, 255, 0.1);
+        border-top-color: #00d4ff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

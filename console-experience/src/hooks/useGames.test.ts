@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Game } from '../types/game';
+import type { Game } from '../domain/entities/game';
 import { useGames } from './useGames';
 
 const mockGame: Game = {

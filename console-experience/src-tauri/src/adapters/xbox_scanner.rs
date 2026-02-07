@@ -55,7 +55,9 @@ impl XboxScanner {
                     if is_game {
                         let family_name = if let Some(first_underscore) = name.find('_') {
                             if let Some(last_underscore) = name.rfind('_') {
-                                format!("{}{}", &name[..first_underscore], &name[last_underscore..])
+                                let prefix = &name[..first_underscore];
+                                let suffix = &name[last_underscore..];
+                                format!("{prefix}{suffix}")
                             } else {
                                 name.clone()
                             }

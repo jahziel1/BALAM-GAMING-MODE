@@ -55,6 +55,79 @@
   flex-wrap: wrap;
 }
 
+/* Audio Devices Section */
+.audio-devices-section {
+  margin: 20px 0;
+}
+
+.section-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.audio-devices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.audio-device-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--card-bg, rgba(255, 255, 255, 0.05));
+  border: 2px solid transparent;
+  border-radius: var(--card-radius, 8px);
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.2s ease);
+  color: var(--color-text-primary, #fff);
+  text-align: left;
+  width: 100%;
+}
+
+.audio-device-item:hover {
+  background: rgba(45, 115, 255, 0.1);
+  border-color: var(--color-primary, #2d73ff);
+  transform: translateX(4px);
+}
+
+.audio-device-item.default {
+  background: rgba(45, 115, 255, 0.15);
+  border-color: var(--color-primary, #2d73ff);
+}
+
+.device-icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-primary, #2d73ff);
+  flex-shrink: 0;
+}
+
+.device-name {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.default-badge {
+  background: var(--color-primary, #2d73ff);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
 /* Responsive for handhelds */
 @media (max-width: 768px) {
   .prompts-container {
@@ -74,5 +147,17 @@
 
   .quick-action-label {
     font-size: 0.8rem;
+  }
+
+  .audio-device-item {
+    padding: 10px 12px;
+  }
+
+  .device-name {
+    font-size: 0.85rem;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
   }
 }

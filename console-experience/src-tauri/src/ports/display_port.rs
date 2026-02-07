@@ -29,8 +29,8 @@ pub trait DisplayPort {
     /// Gets the current brightness level (0-100).
     ///
     /// # Returns
-    /// - `Ok(Some(level))` - Current brightness percentage
-    /// - `Ok(None)` - Brightness control not supported (desktop monitors without DDC/CI)
+    /// - `Ok(`Some`(level))` - Current brightness percentage
+    /// - `Ok(`None`)` - Brightness control not supported (desktop monitors without DDC/CI)
     /// - `Err(...)` - Hardware access error
     ///
     /// # Platform Support

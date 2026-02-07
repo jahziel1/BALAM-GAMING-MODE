@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-/// WiFi security protocol type.
+/// `WiFi` security protocol type.
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum WiFiSecurity {
     Open,
@@ -11,7 +11,7 @@ pub enum WiFiSecurity {
     Unknown,
 }
 
-/// Domain entity representing a WiFi network.
+/// Domain entity representing a `WiFi` network.
 #[derive(Debug, Clone, Serialize)]
 pub struct WiFiNetwork {
     /// Network SSID (name)
@@ -28,7 +28,7 @@ pub struct WiFiNetwork {
     pub is_connected: bool,
 }
 
-/// Connection configuration for WiFi networks.
+/// Connection configuration for `WiFi` networks.
 #[derive(Debug, Clone)]
 pub struct WiFiConfig {
     /// Network SSID
@@ -39,9 +39,9 @@ pub struct WiFiConfig {
     pub auto_connect: bool,
 }
 
-/// Port defining WiFi management capabilities.
+/// Port defining `WiFi` management capabilities.
 ///
-/// This trait provides a hardware abstraction layer for WiFi operations
+/// This trait provides a hardware abstraction layer for `WiFi` operations
 /// including network scanning, connection management, and status monitoring.
 ///
 /// # Thread Safety
@@ -49,17 +49,17 @@ pub struct WiFiConfig {
 ///
 /// # Platform Support
 /// - Windows: Uses WLAN API via netsh commands
-/// - Future: Direct WlanAPI integration for event-driven notifications
+/// - Future: Direct `WlanAPI` integration for event-driven notifications
 pub trait WiFiPort: Send + Sync {
-    /// Gets the currently connected WiFi network.
+    /// Gets the currently connected `WiFi` network.
     ///
     /// # Returns
-    /// - `Ok(Some(network))` if connected to WiFi
+    /// - `Ok(Some(network))` if connected to `WiFi`
     /// - `Ok(None)` if not connected or connected to Ethernet
     /// - `Err` if query failed
     fn get_current_network(&self) -> Result<Option<WiFiNetwork>, String>;
 
-    /// Scans for available WiFi networks.
+    /// Scans for available `WiFi` networks.
     ///
     /// # Performance
     /// Typically completes within 2-5 seconds (hardware dependent).
@@ -68,7 +68,7 @@ pub trait WiFiPort: Send + Sync {
     /// List of discovered networks, sorted by signal strength (strongest first).
     fn scan_networks(&self) -> Result<Vec<WiFiNetwork>, String>;
 
-    /// Connects to a WiFi network.
+    /// Connects to a `WiFi` network.
     ///
     /// # Errors
     /// - Network not found
@@ -77,7 +77,7 @@ pub trait WiFiPort: Send + Sync {
     /// - Already connected to another network
     fn connect_network(&self, config: WiFiConfig) -> Result<(), String>;
 
-    /// Disconnects from the current WiFi network.
+    /// Disconnects from the current `WiFi` network.
     fn disconnect(&self) -> Result<(), String>;
 
     /// Forgets a previously connected network (removes saved profile).

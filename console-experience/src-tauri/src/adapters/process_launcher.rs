@@ -19,9 +19,14 @@ use windows::Win32::UI::Shell::{ApplicationActivationManager, IApplicationActiva
 // CONSTANTS
 // =============================================================================
 
-/// Steam registry watchdog timeout (reduced for better UX)
-/// Changed from 30s to 3s - pre-flight checks detect most issues immediately
-const STEAM_TIMEOUT_SECONDS: u64 = 3;
+/// Steam registry watchdog timeout
+/// Industry standard: 15-30s (Playnite, GOG Galaxy)
+/// Research shows:
+/// - Normal launch: 15-20s on modern systems
+/// - With launchers/anti-cheat: 30-60s
+/// - First launch/updates: 60-120s
+/// Source: https://steamcommunity.com/discussions/forum/0/2976275080133332609/
+const STEAM_TIMEOUT_SECONDS: u64 = 30;
 
 /// Xbox explorer fallback timeout
 const XBOX_EXPLORER_TIMEOUT_SECONDS: u64 = 5;
@@ -114,8 +119,7 @@ fn pre_launch_check(id: &str, title: &str) -> Result<(), String> {
         // Check registry (instantaneous)
         if steam_game_is_running(&app_id) {
             return Err(format!(
-                "{} ya está corriendo.\n\n💡 Verifica tu barra de tareas o cierra el juego desde Steam.",
-                title
+                "{title} ya está corriendo.\n\n💡 Verifica tu barra de tareas o cierra el juego desde Steam."
             ));
         }
     }
@@ -136,13 +140,13 @@ fn pre_launch_check(id: &str, title: &str) -> Result<(), String> {
 /// Launch a game and monitor its lifecycle.
 ///
 /// This function handles different launch strategies based on the game ID:
-/// - Steam: Uses the `steam://` protocol (returns None for PID).
-/// - Xbox/UWP: Uses native Windows COM activation to get a real PID (returns Some(pid) or None).
-/// - Native: Standard executable launch (returns Some(pid)).
+/// - Steam: Uses the `steam://` protocol (returns `None` for PID).
+/// - Xbox/UWP: Uses native Windows COM activation to get a real PID (returns `Some`(pid) or `None`).
+/// - Native: Standard executable launch (returns `Some`(pid)).
 ///
 /// # Returns
-/// - `Ok(Some(pid))` - Game launched successfully with a real PID
-/// - `Ok(None)` - Game launched successfully but no PID available (Steam, Xbox fallback)
+/// - `Ok(`Some`(pid))` - Game launched successfully with a real PID
+/// - `Ok(`None`)` - Game launched successfully but no PID available (Steam, Xbox fallback)
 /// - `Err(...)` - Launch failed
 pub fn launch_game_process(
     id: &str,
@@ -242,6 +246,12 @@ fn start_steam_registry_watchdog(
     game_id: String,
 ) {
     thread::spawn(move || {
+        #[derive(serde::Serialize, Clone)]
+        struct GameEndedPayload {
+            game_id: String,
+            play_time_seconds: u64,
+        }
+
         info!(
             ">>> Steam Registry Watchdog STARTED for AppID: {} (timeout: {}s, polling: {}ms) <<<",
             app_id, STEAM_TIMEOUT_SECONDS, POLLING_INTERVAL_MS
@@ -251,6 +261,7 @@ fn start_steam_registry_watchdog(
         let key_path = format!("Software\\Valve\\Steam\\Apps\\{app_id}");
 
         let mut game_has_started = false;
+        let mut start_time: Option<Instant> = None;
         let mut attempts = 0;
         let max_attempts = (STEAM_TIMEOUT_SECONDS * 1000) / POLLING_INTERVAL_MS;
 
@@ -271,11 +282,37 @@ fn start_steam_registry_watchdog(
                 if !game_has_started {
                     info!("Steam reported game running! Monitoring...");
                     game_has_started = true;
+                    start_time = Some(Instant::now()); // Record start time
                 }
             } else if game_has_started {
                 // Game closed normally
                 info!("Steam reported game stopped. Restoring window.");
+
+                // Calculate play time
+                let play_time_seconds = if let Some(start) = start_time {
+                    start.elapsed().as_secs()
+                } else {
+                    0
+                };
+
+                info!(
+                    "⏱️ Game session duration: {}s ({:.1}min)",
+                    play_time_seconds,
+                    play_time_seconds as f64 / 60.0
+                );
+
                 tracker.unregister(&game_id);
+
+                // Emit event to frontend with play time
+                let payload = GameEndedPayload {
+                    game_id: game_id.clone(),
+                    play_time_seconds,
+                };
+
+                if let Err(e) = app_handle.emit("game-ended", &payload) {
+                    error!("Failed to emit game-ended event: {}", e);
+                }
+
                 restore_window(&app_handle);
                 break;
             } else {
@@ -315,6 +352,12 @@ fn restore_window(app_handle: &AppHandle) {
 
 fn start_watchdog(pid: u32, app_handle: AppHandle, tracker: Arc<ActiveGamesTracker>, game_id: String) {
     thread::spawn(move || {
+        #[derive(serde::Serialize, Clone)]
+        struct GameEndedPayload {
+            game_id: String,
+            play_time_seconds: u64,
+        }
+
         let mut sys = System::new_all();
         let target_pid = Pid::from_u32(pid);
         let start_time = Instant::now();
@@ -359,6 +402,16 @@ fn start_watchdog(pid: u32, app_handle: AppHandle, tracker: Arc<ActiveGamesTrack
                     tracker.unregister(&game_id);
                 }
 
+                // Emit event to frontend with play time
+                let payload = GameEndedPayload {
+                    game_id: game_id.clone(),
+                    play_time_seconds: runtime,
+                };
+
+                if let Err(e) = app_handle.emit("game-ended", &payload) {
+                    error!("Failed to emit game-ended event: {}", e);
+                }
+
                 restore_window(&app_handle);
                 break; // Exit watchdog
             }
@@ -377,6 +430,12 @@ fn start_xbox_explorer_watchdog(
     game_id: String,
 ) {
     thread::spawn(move || {
+        #[derive(serde::Serialize, Clone)]
+        struct GameEndedPayload {
+            game_id: String,
+            play_time_seconds: u64,
+        }
+
         info!(
             ">>> Xbox Explorer Watchdog STARTED for: {} (timeout: {}s, polling: {}ms) <<<",
             app_user_model_id, XBOX_EXPLORER_TIMEOUT_SECONDS, POLLING_INTERVAL_MS
@@ -384,6 +443,7 @@ fn start_xbox_explorer_watchdog(
 
         let mut attempts = 0;
         let mut game_detected = false;
+        let mut start_time: Option<Instant> = None;
         let max_attempts = (XBOX_EXPLORER_TIMEOUT_SECONDS * 1000) / POLLING_INTERVAL_MS;
 
         // Extract package family name from AppUserModelId
@@ -416,11 +476,37 @@ fn start_xbox_explorer_watchdog(
                 if !game_detected {
                     info!("Xbox game process detected! Monitoring...");
                     game_detected = true;
+                    start_time = Some(Instant::now()); // Record start time
                 }
             } else if game_detected {
                 // Game was running, now stopped
                 info!("Xbox game process ended. Restoring window.");
+
+                // Calculate play time
+                let play_time_seconds = if let Some(start) = start_time {
+                    start.elapsed().as_secs()
+                } else {
+                    0
+                };
+
+                info!(
+                    "⏱️ Xbox game session duration: {}s ({:.1}min)",
+                    play_time_seconds,
+                    play_time_seconds as f64 / 60.0
+                );
+
                 tracker.unregister(&game_id);
+
+                // Emit event to frontend with play time
+                let payload = GameEndedPayload {
+                    game_id: game_id.clone(),
+                    play_time_seconds,
+                };
+
+                if let Err(e) = app_handle.emit("game-ended", &payload) {
+                    error!("Failed to emit game-ended event: {}", e);
+                }
+
                 restore_window(&app_handle);
                 break;
             } else {

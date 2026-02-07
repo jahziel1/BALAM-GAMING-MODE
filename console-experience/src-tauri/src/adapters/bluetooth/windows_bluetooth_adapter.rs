@@ -6,7 +6,7 @@ use windows::Devices::Bluetooth::BluetoothDevice as WinBluetoothDevice;
 use windows::Devices::Enumeration::DeviceInformation;
 use windows::Devices::Radios::{Radio, RadioAccessStatus, RadioKind, RadioState};
 
-/// Windows implementation of BluetoothPort using native WinRT async APIs.
+/// Windows implementation of `BluetoothPort` using native `WinRT` async APIs.
 ///
 /// # Performance Strategy
 /// - Fast operations (<100ms): `block_in_place` - doesn't consume thread pool
@@ -14,28 +14,27 @@ use windows::Devices::Radios::{Radio, RadioAccessStatus, RadioKind, RadioState};
 /// - Device conversion: Concurrent with async batch processing
 ///
 /// # Async Model
-/// WinRT IAsyncOperation is bridged to Rust async using:
+/// `WinRT` `IAsyncOperation` is bridged to Rust async using:
 /// - Fast sync: `block_in_place` for <100ms operations
 /// - Heavy work: `spawn_blocking` for multi-second scans
 ///
-/// This is the most performant approach given WinRT's async model.
+/// This is the most performant approach given `WinRT`'s async model.
 pub struct WindowsBluetoothAdapter;
 
 impl WindowsBluetoothAdapter {
-    /// Creates a new Windows Bluetooth adapter.
+    /// Creates a new Windows `Bluetooth` adapter.
     #[must_use]
     pub fn new() -> Self {
         Self
     }
 
     /// Converts Windows device class to our enum.
-    fn convert_device_type(class_of_device: &Option<u32>) -> BluetoothDeviceType {
+    fn convert_device_type(class_of_device: Option<u32>) -> BluetoothDeviceType {
         if let Some(cod) = class_of_device {
             let major_class = (cod >> 8) & 0x1F;
             match major_class {
                 0x01 => BluetoothDeviceType::Computer,
                 0x02 => BluetoothDeviceType::Phone,
-                0x03 => BluetoothDeviceType::Unknown,
                 0x04 => BluetoothDeviceType::AudioVideo,
                 0x05 => BluetoothDeviceType::Peripheral,
                 0x06 => BluetoothDeviceType::Imaging,
@@ -49,10 +48,10 @@ impl WindowsBluetoothAdapter {
         }
     }
 
-    /// Converts DeviceInformation to BluetoothDevice.
+    /// Converts `DeviceInformation` to `BluetoothDevice`.
     ///
-    /// Uses block_in_place for fast (<100ms) WinRT calls.
-    async fn convert_device_info(device_info: DeviceInformation) -> Result<BluetoothDevice, String> {
+    /// Uses `block_in_place` for fast (<100ms) `WinRT` calls.
+    fn convert_device_info(device_info: DeviceInformation) -> Result<BluetoothDevice, String> {
         // Fast operation - use block_in_place instead of spawn_blocking
         let result = tokio::task::block_in_place(|| {
             let device_id = device_info.Id().map_err(|e| format!("Failed to get device ID: {e}"))?;
@@ -102,7 +101,7 @@ impl WindowsBluetoothAdapter {
                 name,
                 address: address_str,
                 signal_strength: None,
-                device_type: Self::convert_device_type(&class_of_device),
+                device_type: Self::convert_device_type(class_of_device),
                 pairing_state,
                 is_connected,
                 is_remembered: is_paired,
@@ -224,15 +223,10 @@ impl BluetoothPort for WindowsBluetoothAdapter {
             Ok::<Vec<DeviceInformation>, String>(infos)
         })?;
 
-        // Convert devices concurrently (async parallelism)
-        let mut tasks = Vec::new();
-        for device_info in device_infos {
-            tasks.push(Self::convert_device_info(device_info));
-        }
-
+        // Convert devices (fast synchronous operation)
         let mut converted = Vec::new();
-        for task in tasks {
-            match task.await {
+        for device_info in device_infos {
+            match Self::convert_device_info(device_info) {
                 Ok(device) => converted.push(device),
                 Err(e) => warn!("⚠️ Failed to convert device: {e}"),
             }
@@ -284,15 +278,10 @@ impl BluetoothPort for WindowsBluetoothAdapter {
 
         info!("🔄 Converting {} discovered devices...", device_infos.len());
 
-        // Convert concurrently (async parallelism)
-        let mut tasks = Vec::new();
-        for device_info in device_infos {
-            tasks.push(Self::convert_device_info(device_info));
-        }
-
+        // Convert devices (fast synchronous operation)
         let mut converted = Vec::new();
-        for task in tasks {
-            match task.await {
+        for device_info in device_infos {
+            match Self::convert_device_info(device_info) {
                 Ok(device) => converted.push(device),
                 Err(e) => warn!("⚠️ Failed to convert device: {e}"),
             }
@@ -309,6 +298,8 @@ impl BluetoothPort for WindowsBluetoothAdapter {
 
         // Medium operation - use spawn_blocking
         tokio::task::spawn_blocking(move || {
+            use windows::Devices::Enumeration::DevicePairingResultStatus;
+
             let selector = WinBluetoothDevice::GetDeviceSelectorFromPairingState(false)
                 .map_err(|e| format!("Failed to create selector: {e}"))?;
 
@@ -356,15 +347,13 @@ impl BluetoothPort for WindowsBluetoothAdapter {
 
                     let status = result.Status().map_err(|e| format!("Failed to get status: {e}"))?;
 
-                    use windows::Devices::Enumeration::DevicePairingResultStatus;
                     if status == DevicePairingResultStatus::Paired || status == DevicePairingResultStatus::AlreadyPaired
                     {
                         info!("✅ Paired successfully: {}", address);
                         return Ok(());
-                    } else {
-                        error!("❌ Pairing failed: {:?}", status);
-                        return Err(format!("Pairing failed: {status:?}"));
                     }
+                    error!("❌ Pairing failed: {:?}", status);
+                    return Err(format!("Pairing failed: {status:?}"));
                 }
             }
 
@@ -382,6 +371,8 @@ impl BluetoothPort for WindowsBluetoothAdapter {
 
         // Medium operation - use spawn_blocking
         tokio::task::spawn_blocking(move || {
+            use windows::Devices::Enumeration::DeviceUnpairingResultStatus;
+
             let selector = WinBluetoothDevice::GetDeviceSelectorFromPairingState(true)
                 .map_err(|e| format!("Failed to create selector: {e}"))?;
 
@@ -429,16 +420,14 @@ impl BluetoothPort for WindowsBluetoothAdapter {
 
                     let status = result.Status().map_err(|e| format!("Failed to get status: {e}"))?;
 
-                    use windows::Devices::Enumeration::DeviceUnpairingResultStatus;
                     if status == DeviceUnpairingResultStatus::Unpaired
                         || status == DeviceUnpairingResultStatus::AlreadyUnpaired
                     {
                         info!("✅ Unpaired successfully: {}", address);
                         return Ok(());
-                    } else {
-                        error!("❌ Unpair failed: {:?}", status);
-                        return Err(format!("Unpair failed: {status:?}"));
                     }
+                    error!("❌ Unpair failed: {:?}", status);
+                    return Err(format!("Unpair failed: {status:?}"));
                 }
             }
 

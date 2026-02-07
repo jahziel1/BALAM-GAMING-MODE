@@ -13,27 +13,25 @@ import type { GameLaunchError } from '../../domain';
 import { getFailureDescription } from '../../domain';
 import { TauriGameRepository, TauriSystemRepository } from '../../infrastructure/repositories';
 import { toast } from '../../utils/toast';
-import { createGameStore, type GameStore } from '../stores/game-store';
-import { createSystemStore, type SystemStore } from '../stores/system-store';
+import { type AppStoreHook, createAppStore } from '../stores/app-store';
 
 /**
  * Store context type
  */
 interface StoreContextType {
-  gameStore: GameStore;
-  systemStore: SystemStore;
+  appStore: AppStoreHook;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
 
 /**
- * Initialize stores with Tauri repositories
+ * Initialize consolidated app store with Tauri repositories
+ * Using Slices Pattern for modular state management
  */
 const gameRepository = new TauriGameRepository();
 const systemRepository = new TauriSystemRepository();
 
-const gameStore = createGameStore(gameRepository);
-const systemStore = createSystemStore(systemRepository);
+const appStore = createAppStore(gameRepository, systemRepository);
 
 /**
  * Provider component with event listeners
@@ -55,7 +53,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         toast.gameError(error.game_title, `${description}\n\n💡 ${suggestion}`);
 
         // Clear launching state in store
-        gameStore.setState({ isLaunching: false, activeRunningGame: null });
+        appStore.setState((state) => ({
+          game: { ...state.game, isLaunching: false, activeRunningGame: null },
+        }));
       });
 
       // Listener 2: Launcher process started (WMI Process Monitor)
@@ -78,8 +78,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         console.warn(`[WMI] ${launcher} quick exit detected (<3s) - likely error`);
 
         // User might have cancelled or launcher had error
-        const state = gameStore.getState();
-        if (state.isLaunching && !state.activeRunningGame) {
+        const state = appStore.getState();
+        if (state.game.isLaunching && !state.game.activeRunningGame) {
           console.warn('Quick exit detected but game not running - launcher error');
 
           // Show warning
@@ -89,9 +89,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
           // Clear launching state after short delay
           setTimeout(() => {
-            const currentState = gameStore.getState();
-            if (currentState.isLaunching && !currentState.activeRunningGame) {
-              gameStore.setState({ isLaunching: false });
+            const currentState = appStore.getState();
+            if (currentState.game.isLaunching && !currentState.game.activeRunningGame) {
+              appStore.setState((state) => ({
+                game: { ...state.game, isLaunching: false },
+              }));
             }
           }, 2000);
         }
@@ -112,29 +114,57 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return (
-    <StoreContext.Provider value={{ gameStore, systemStore }}>{children}</StoreContext.Provider>
-  );
+  return <StoreContext.Provider value={{ appStore }}>{children}</StoreContext.Provider>;
 }
 
 /**
- * Hook to access game store
+ * Hook to access app store
+ * Provides access to all slices: overlay, game, performance, system
+ *
+ * @example
+ * ```tsx
+ * const { overlay, game, showOverlay, launchGame } = useAppStore();
+ * ```
+ */
+export function useAppStore() {
+  const context = useContext(StoreContext);
+  if (!context) {
+    throw new Error('useAppStore must be used within StoreProvider');
+  }
+  return context.appStore();
+}
+
+/**
+ * Hook to access game slice (backward compatibility)
+ * @deprecated Use useAppStore() instead and access game slice directly
  */
 export function useGameStore() {
-  const context = useContext(StoreContext);
-  if (!context) {
-    throw new Error('useGameStore must be used within StoreProvider');
-  }
-  return context.gameStore();
+  const store = useAppStore();
+  return {
+    games: store.game.games,
+    activeRunningGame: store.game.activeRunningGame,
+    isLaunching: store.game.isLaunching,
+    error: store.game.error,
+    loadGames: store.loadGames,
+    launchGame: store.launchGame,
+    clearActiveGame: store.clearActiveGame,
+    killGame: store.killGame,
+    addManualGame: store.addManualGame,
+    removeGame: store.removeGame,
+    clearError: store.clearGameError,
+  };
 }
 
 /**
- * Hook to access system store
+ * Hook to access system slice (backward compatibility)
+ * @deprecated Use useAppStore() instead and access system slice directly
  */
 export function useSystemStore() {
-  const context = useContext(StoreContext);
-  if (!context) {
-    throw new Error('useSystemStore must be used within StoreProvider');
-  }
-  return context.systemStore();
+  const store = useAppStore();
+  return {
+    status: store.system.status,
+    error: store.system.error,
+    refreshStatus: store.refreshSystemStatus,
+    clearError: store.clearSystemError,
+  };
 }

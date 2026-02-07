@@ -27,8 +27,8 @@ use crate::domain::value_objects::GameSource;
 ///
 /// let scanner = SteamScanner::new();
 /// match scanner.scan() {
-///     Ok(games) => println!("Found {} Steam games", games.len()),
-///     Err(e) => eprintln!("Steam scan failed: {}", e),
+///     `Ok`(games) => println!("Found {} Steam games", games.len()),
+///     `Err`(e) => eprintln!("Steam scan failed: {}", e),
 /// }
 /// ```
 pub trait GameScanner: Send + Sync {
@@ -101,7 +101,8 @@ pub trait GameScanner: Send + Sync {
             GameSource::Steam => 1, // Highest priority - best metadata
             GameSource::Epic => 2,
             GameSource::Xbox => 3,
-            GameSource::Manual => 4, // Lowest priority
+            GameSource::BattleNet => 4,
+            GameSource::Manual => 5, // Lowest priority
         }
     }
 }

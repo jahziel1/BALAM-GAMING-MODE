@@ -12,7 +12,7 @@ import * as v from 'valibot';
 /**
  * Schema for GameSource enum
  */
-export const GameSourceSchema = v.picklist(['Steam', 'Epic', 'Xbox', 'Manual']);
+export const GameSourceSchema = v.picklist(['Steam', 'Epic', 'Xbox', 'BattleNet', 'Manual']);
 
 /**
  * Schema for Game entity

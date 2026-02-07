@@ -1,3 +1,4 @@
+use crate::adapters::battlenet_scanner::BattleNetScanner;
 use crate::adapters::epic_scanner::EpicScanner;
 use crate::adapters::registry_scanner::RegistryScanner;
 use crate::adapters::steam_scanner::SteamScanner;
@@ -28,6 +29,7 @@ impl DIContainer {
             Arc::new(SteamScanner::new()),
             Arc::new(EpicScanner::new()),
             Arc::new(XboxScanner::new()),
+            Arc::new(BattleNetScanner::new()),
             Arc::new(RegistryScanner::new()),
         ];
 
@@ -54,12 +56,12 @@ mod tests {
     #[test]
     fn test_container_creation() {
         let container = DIContainer::new();
-        assert_eq!(container.game_discovery_service.scanner_count(), 4);
+        assert_eq!(container.game_discovery_service.scanner_count(), 5);
     }
 
     #[test]
     fn test_container_default() {
         let container = DIContainer::default();
-        assert_eq!(container.game_discovery_service.scanner_count(), 4);
+        assert_eq!(container.game_discovery_service.scanner_count(), 5);
     }
 }

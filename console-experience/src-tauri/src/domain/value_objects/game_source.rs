@@ -10,6 +10,8 @@ pub enum GameSource {
     Epic,
     /// Xbox Game Pass / Microsoft Store
     Xbox,
+    /// Battle.net / Blizzard Entertainment
+    BattleNet,
     /// Manually added by user
     Manual,
 }
@@ -22,6 +24,7 @@ impl GameSource {
             Self::Steam => "Steam",
             Self::Epic => "Epic Games",
             Self::Xbox => "Xbox",
+            Self::BattleNet => "Battle.net",
             Self::Manual => "Manual",
         }
     }
@@ -33,6 +36,7 @@ impl GameSource {
             Self::Steam => "steam_",
             Self::Epic => "epic_",
             Self::Xbox => "xbox_",
+            Self::BattleNet => "battlenet_",
             Self::Manual => "manual_",
         }
     }
@@ -40,7 +44,7 @@ impl GameSource {
     /// Checks if this source supports automatic metadata fetching.
     #[must_use]
     pub fn supports_metadata(&self) -> bool {
-        matches!(self, Self::Steam | Self::Epic | Self::Xbox)
+        matches!(self, Self::Steam | Self::Epic | Self::Xbox | Self::BattleNet)
     }
 }
 
@@ -53,6 +57,7 @@ mod tests {
         assert_eq!(GameSource::Steam.display_name(), "Steam");
         assert_eq!(GameSource::Epic.display_name(), "Epic Games");
         assert_eq!(GameSource::Xbox.display_name(), "Xbox");
+        assert_eq!(GameSource::BattleNet.display_name(), "Battle.net");
         assert_eq!(GameSource::Manual.display_name(), "Manual");
     }
 
@@ -61,6 +66,7 @@ mod tests {
         assert_eq!(GameSource::Steam.id_prefix(), "steam_");
         assert_eq!(GameSource::Epic.id_prefix(), "epic_");
         assert_eq!(GameSource::Xbox.id_prefix(), "xbox_");
+        assert_eq!(GameSource::BattleNet.id_prefix(), "battlenet_");
         assert_eq!(GameSource::Manual.id_prefix(), "manual_");
     }
 
@@ -69,10 +75,12 @@ mod tests {
         assert!(GameSource::Steam.supports_metadata());
         assert!(GameSource::Epic.supports_metadata());
         assert!(GameSource::Xbox.supports_metadata());
+        assert!(GameSource::BattleNet.supports_metadata());
         assert!(!GameSource::Manual.supports_metadata());
     }
 
     #[test]
+    #[allow(clippy::unwrap_used)] // Acceptable in tests
     fn test_serialization() {
         let source = GameSource::Steam;
         let json = serde_json::to_string(&source).unwrap();

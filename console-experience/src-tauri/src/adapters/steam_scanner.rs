@@ -20,7 +20,7 @@ use tracing::{info, warn};
 /// - **Title**: From `appmanifest.name`
 /// - **`AppID`**: From manifest filename
 /// - **Executable Path**: From `installdir` + common launch patterns
-/// - **Cover Art**: None (fetched separately via `SteamGridDB`)
+/// - **Cover Art**: `None` (fetched separately via `SteamGridDB`)
 ///
 /// # Performance
 /// Typical scan time: **500-1500ms** for 100-500 games across 3 libraries.
@@ -35,8 +35,8 @@ use tracing::{info, warn};
 ///
 /// let scanner = SteamScanner::new();
 /// match scanner.scan() {
-///     Ok(games) => println!("Found {} Steam games", games.len()),
-///     Err(e) => eprintln!("Steam scan failed: {}", e),
+///     `Ok`(games) => println!("Found {} Steam games", games.len()),
+///     `Err`(e) => eprintln!("Steam scan failed: {}", e),
 /// }
 /// ```
 pub struct SteamScanner {

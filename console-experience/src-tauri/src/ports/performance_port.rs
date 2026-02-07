@@ -1,4 +1,4 @@
-use crate::domain::performance::{PerformanceProfile, TDPConfig};
+use crate::domain::performance::{FPSStats, PerformanceMetrics, PerformanceProfile, TDPConfig};
 
 /// Hardware vendor for TDP control.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -146,4 +146,49 @@ pub trait PerformancePort {
     /// }
     /// ```
     fn supports_tdp_control(&self) -> bool;
+
+    /// Gets current FPS statistics for the active game.
+    ///
+    /// # Returns
+    /// - `Ok(`Some`(FPSStats))` - FPS data available
+    /// - `Ok(`None`)` - No game running or FPS monitoring not started
+    /// - `Err(...)` - Error retrieving FPS data
+    ///
+    /// # Performance
+    /// Fast check (<5ms). Called frequently by overlay (every 500ms).
+    fn get_fps_stats(&self) -> Result<Option<FPSStats>, String> {
+        // Default implementation: FPS monitoring not supported
+        Ok(None)
+    }
+
+    /// Gets complete system performance metrics.
+    ///
+    /// # Returns
+    /// A `PerformanceMetrics` struct containing:
+    /// - **CPU usage**: Percentage (0-100)
+    /// - **GPU usage**: Percentage (0-100)
+    /// - **RAM usage**: Used/Total in GB
+    /// - **Temperatures**: GPU/CPU in Celsius (if available)
+    /// - **GPU power**: Watts (if available)
+    /// - **FPS stats**: Current FPS data (if game running)
+    ///
+    /// # Errors
+    /// Returns `Err` if performance data retrieval fails.
+    ///
+    /// # Performance
+    /// Should complete within 50ms. Called by overlay every 1 second.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # use console_experience::ports::performance_port::PerformancePort;
+    /// # use console_experience::adapters::performance::RyzenAdjAdapter;
+    /// let adapter = RyzenAdjAdapter::new();
+    /// let metrics = adapter.get_performance_metrics()?;
+    /// println!("CPU: {:.1}%, GPU: {:.1}%", metrics.cpu_usage, metrics.gpu_usage);
+    /// # Ok::<(), String>(())
+    /// ```
+    fn get_performance_metrics(&self) -> Result<PerformanceMetrics, String> {
+        // Default implementation: return empty metrics
+        Ok(PerformanceMetrics::default())
+    }
 }

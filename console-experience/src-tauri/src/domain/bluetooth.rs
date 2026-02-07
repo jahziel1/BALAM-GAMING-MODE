@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-/// Domain entity representing Bluetooth signal strength configuration.
+/// Domain entity representing `Bluetooth` signal strength configuration.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct BluetoothSignalConfig {
     /// Signal strength percentage (0-100)
@@ -27,7 +27,7 @@ impl BluetoothSignalConfig {
 
     /// Converts RSSI (Received Signal Strength Indicator) to percentage.
     ///
-    /// Typical Bluetooth range: -100 dBm (0%) to -30 dBm (100%).
+    /// Typical `Bluetooth` range: -100 dBm (0%) to -30 dBm (100%).
     #[must_use]
     pub fn from_rssi(rssi: i32) -> u32 {
         let normalized = ((rssi + 100) * 100) / 70;

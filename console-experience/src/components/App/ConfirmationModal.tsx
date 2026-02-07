@@ -2,7 +2,7 @@
  * @module components/App/ConfirmationModal
  */
 
-import type { Game } from '../../types/game';
+import type { Game } from '../../domain/entities/game';
 
 /**
  * Represents a running game with its process ID

@@ -1,5 +1,67 @@
 use serde::{Deserialize, Serialize};
 
+/// FPS statistics collected from performance monitoring.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FPSStats {
+    /// Current FPS (frames per second)
+    pub current_fps: f32,
+    /// Average FPS over last 1 second
+    pub avg_fps_1s: f32,
+    /// 1% low FPS (worst 1% of frames)
+    pub fps_1_percent_low: f32,
+    /// Frame time in milliseconds (1000/fps)
+    pub frame_time_ms: f32,
+}
+
+impl FPSStats {
+    /// Creates FPS stats with just current FPS (other values default to current).
+    #[must_use]
+    pub fn new(current_fps: f32) -> Self {
+        Self {
+            current_fps,
+            avg_fps_1s: current_fps,
+            fps_1_percent_low: current_fps,
+            frame_time_ms: if current_fps > 0.0 { 1000.0 / current_fps } else { 0.0 },
+        }
+    }
+}
+
+/// Complete performance metrics (CPU, GPU, RAM, Temps, FPS).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PerformanceMetrics {
+    /// CPU usage percentage (0-100, average across all cores)
+    pub cpu_usage: f32,
+    /// GPU usage percentage (0-100)
+    pub gpu_usage: f32,
+    /// RAM usage in GB
+    pub ram_used_gb: f32,
+    /// Total RAM in GB
+    pub ram_total_gb: f32,
+    /// GPU temperature in Celsius
+    pub gpu_temp_c: Option<f32>,
+    /// CPU temperature in Celsius (if available)
+    pub cpu_temp_c: Option<f32>,
+    /// GPU power draw in Watts
+    pub gpu_power_w: Option<f32>,
+    /// FPS stats (if monitoring a game)
+    pub fps: Option<FPSStats>,
+}
+
+impl Default for PerformanceMetrics {
+    fn default() -> Self {
+        Self {
+            cpu_usage: 0.0,
+            gpu_usage: 0.0,
+            ram_used_gb: 0.0,
+            ram_total_gb: 0.0,
+            gpu_temp_c: None,
+            cpu_temp_c: None,
+            gpu_power_w: None,
+            fps: None,
+        }
+    }
+}
+
 /// Domain entity representing TDP (Thermal Design Power) configuration.
 /// Pure business logic, no infrastructure dependencies.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]

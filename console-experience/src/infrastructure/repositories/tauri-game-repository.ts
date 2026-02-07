@@ -18,10 +18,23 @@ import type { GameRepository } from '../../domain/repositories/game-repository';
  * Updated to match new backend signatures:
  * - launch_game: Only requires gameId (backend looks up path)
  * - kill_game: Requires pid (backend uses hybrid kill strategy)
+ * - scan_games: Async scanning with progress events (Tokio spawn_blocking)
  */
 export class TauriGameRepository implements GameRepository {
   async getAll(): Promise<Game[]> {
     return invoke<Game[]>('get_games');
+  }
+
+  /**
+   * Scan all games asynchronously with progress events
+   *
+   * Uses Tokio spawn_blocking for non-blocking I/O.
+   * Emits "scan-progress" events during discovery.
+   *
+   * @returns Promise resolving to array of discovered games
+   */
+  async scan(): Promise<Game[]> {
+    return invoke<Game[]>('scan_games');
   }
 
   async launch(gameId: string): Promise<ActiveGame> {

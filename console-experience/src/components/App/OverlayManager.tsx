@@ -11,13 +11,15 @@
 
 import { useMemo } from 'react';
 
+import { useAppStore } from '../../application/providers/StoreProvider';
+import type { Game } from '../../domain/entities/game';
 import type { VirtualKeyboardHook } from '../../hooks/useVirtualKeyboard';
-import type { Game } from '../../types/game';
 import { BluetoothPanel } from '../overlay/BluetoothPanel';
 import FileExplorer from '../overlay/FileExplorer';
 import { InGameMenuOptimized } from '../overlay/InGameMenuOptimized';
 import { QuickSettings } from '../overlay/QuickSettings';
 import SearchOverlay from '../overlay/SearchOverlay/SearchOverlay';
+import { SettingsPanel } from '../overlay/SettingsPanel';
 import VirtualKeyboard from '../overlay/VirtualKeyboard/VirtualKeyboard';
 import { WiFiPanel } from '../overlay/WiFiPanel';
 
@@ -38,9 +40,12 @@ interface OverlayManagerProps {
   onRegisterSearchInput?: (ref: React.RefObject<HTMLInputElement>) => void;
   onOpenVirtualKeyboard?: () => void;
 
-  // Quick Settings
-  isQuickSettingsOpen: boolean;
-  onCloseQuickSettings: () => void;
+  // Settings Panel
+  isSettingsOpen: boolean;
+  onCloseSettings: () => void;
+  onOpenQuickSettingsFromSettings?: () => void;
+
+  // Quick Settings (NEW: managed by app-store, but still needs focus/adjust handlers for gamepad)
   quickSettingsSliderIndex: number;
   onQuickSettingsFocusChange: (index: number) => void;
   onRegisterQuickSettingsAdjustHandler: (handler: (direction: number) => void) => void;
@@ -120,8 +125,9 @@ export function OverlayManager({
   onLaunchFromSearch,
   onRegisterSearchInput,
   onOpenVirtualKeyboard,
-  isQuickSettingsOpen,
-  onCloseQuickSettings,
+  isSettingsOpen,
+  onCloseSettings,
+  onOpenQuickSettingsFromSettings,
   quickSettingsSliderIndex,
   onQuickSettingsFocusChange,
   onRegisterQuickSettingsAdjustHandler,
@@ -134,6 +140,8 @@ export function OverlayManager({
   virtualKeyboard,
   controllerType,
 }: OverlayManagerProps) {
+  // Get QuickSettings state from app-store (right sidebar)
+  const { overlay, closeRightSidebar } = useAppStore();
   // Fix #2: Memoize keyboard props to avoid function calls during render
   const keyboardProps = useMemo(() => {
     // Use getTargetInput to support custom inputs (e.g., Command.Input in SearchOverlay)
@@ -200,10 +208,18 @@ export function OverlayManager({
         onOpenVirtualKeyboard={onOpenVirtualKeyboard}
       />
 
-      {/* Quick Settings */}
+      {/* Settings Panel */}
+      <SettingsPanel
+        isOpen={isSettingsOpen}
+        onClose={onCloseSettings}
+        controllerType={controllerType}
+        onOpenQuickSettings={onOpenQuickSettingsFromSettings}
+      />
+
+      {/* Quick Settings (Right Sidebar - managed by app-store) */}
       <QuickSettings
-        isOpen={isQuickSettingsOpen}
-        onClose={onCloseQuickSettings}
+        isOpen={overlay.rightSidebarOpen}
+        onClose={closeRightSidebar}
         focusedSliderIndex={quickSettingsSliderIndex}
         onFocusChange={onQuickSettingsFocusChange}
         controllerType={controllerType}

@@ -5,41 +5,17 @@
  * Each placeholder is customized based on game source and title.
  *
  * ## Features
- * - **Source-specific colors**: Steam (blue), Xbox (green), Epic (purple), Manual (orange)
+ * - **Source-specific colors**: Automatically uses colors from game-sources config
  * - **Unique per game**: Uses game title to generate color variations
  * - **SVG-based**: Lightweight, scalable, no external assets needed
  * - **Accessibility**: High contrast, readable text
+ * - **Centralized**: Add new source in game-sources.ts, placeholder works automatically
  *
  * @module utils/game-placeholder
  */
 
-import type { GameSource } from '@/types/game';
-
-/**
- * Source-specific color schemes
- */
-const SOURCE_COLORS: Record<GameSource, { primary: string; secondary: string; accent: string }> = {
-  Steam: {
-    primary: '#1b2838',
-    secondary: '#2a475e',
-    accent: '#66c0f4',
-  },
-  Epic: {
-    primary: '#121212',
-    secondary: '#2a2a2a',
-    accent: '#0078f2',
-  },
-  Xbox: {
-    primary: '#0e7a0d',
-    secondary: '#107c10',
-    accent: '#92e088',
-  },
-  Manual: {
-    primary: '#3a3a3a',
-    secondary: '#505050',
-    accent: '#ff9500',
-  },
-};
+import { getSourceConfig } from '@/config/game-sources';
+import type { GameSource } from '@/domain/entities/game';
 
 /**
  * Extract initials from game title (max 3 characters)
@@ -113,31 +89,6 @@ function varyColor(title: string, baseColor: string): string {
 }
 
 /**
- * Generate source icon SVG path
- *
- * @param source - Game source
- * @returns SVG path data for source icon
- */
-function getSourceIcon(source: GameSource): string {
-  switch (source) {
-    case 'Steam':
-      // Steam logo simplified
-      return 'M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M9.17,15.5c-0.64,0-1.17-0.53-1.17-1.17 c0-0.65,0.53-1.17,1.17-1.17c0.65,0,1.17,0.52,1.17,1.17C10.33,14.97,9.81,15.5,9.17,15.5z M15.5,15.5c-0.64,0-1.17-0.53-1.17-1.17 c0-0.65,0.53-1.17,1.17-1.17s1.17,0.52,1.17,1.17C16.67,14.97,16.14,15.5,15.5,15.5z';
-    case 'Xbox':
-      // Xbox logo simplified (X shape)
-      return 'M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M16,16l-4-4l-4,4V8l4,4l4-4V16z';
-    case 'Epic':
-      // Epic Games logo simplified
-      return 'M12,2L2,7v10l10,5l10-5V7L12,2z M12,15l-5-2.5v-5L12,5l5,2.5v5L12,15z';
-    case 'Manual':
-      // Folder icon
-      return 'M20,6h-8l-2-2H4C2.9,4,2.01,4.9,2.01,6L2,18c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V8C22,6.9,21.1,6,20,6z M20,18H4V6h5.17 l2,2H20V18z';
-    default:
-      return '';
-  }
-}
-
-/**
  * Generate SVG placeholder cover
  *
  * Creates a unique, professional-looking placeholder image for games without artwork.
@@ -158,10 +109,15 @@ function getSourceIcon(source: GameSource): string {
  * ```
  */
 export function generatePlaceholder(title: string, source: GameSource): string {
-  const colors = SOURCE_COLORS[source];
+  const config = getSourceConfig(source);
+  const colors = {
+    primary: config.primaryColor,
+    secondary: config.secondaryColor,
+    accent: config.accentColor,
+  };
   const initials = getInitials(title);
   const accentColor = varyColor(title, colors.accent);
-  const iconPath = getSourceIcon(source);
+  const iconPath = config.iconPath;
 
   const svg = `
     <svg width="300" height="450" viewBox="0 0 300 450" xmlns="http://www.w3.org/2000/svg">
@@ -221,7 +177,7 @@ export function generatePlaceholder(title: string, source: GameSource): string {
           font-size="11"
           font-weight="600"
           fill="rgba(255,255,255,0.8)"
-        >${source}</text>
+        >${config.displayName}</text>
       </g>
     </svg>
   `;

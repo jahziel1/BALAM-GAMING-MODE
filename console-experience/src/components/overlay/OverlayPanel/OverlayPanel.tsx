@@ -12,6 +12,10 @@ interface OverlayPanelProps {
   footer?: React.ReactNode;
   header?: React.ReactNode;
   className?: string;
+  /** Enable blur on backdrop (default: true). Set to false for secondary panels. */
+  enableBlur?: boolean;
+  /** Enable background on wrapper (default: true). Set to false for secondary panels. */
+  enableBackground?: boolean;
 }
 
 /**
@@ -29,12 +33,19 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
   footer,
   header,
   className = '',
+  enableBlur = true,
+  enableBackground = true,
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="overlay-panel-wrapper">
-      <div className="overlay-panel-backdrop" onClick={onClose} />
+    <div
+      className={`overlay-panel-wrapper ${enableBackground ? 'with-background' : 'no-background'}`}
+    >
+      <div
+        className={`overlay-panel-backdrop ${enableBlur ? 'with-blur' : 'no-blur'}`}
+        onClick={onClose}
+      />
 
       <div className={`overlay-panel overlay-panel-${side} ${className}`} style={{ width }}>
         <header className="overlay-panel-header">

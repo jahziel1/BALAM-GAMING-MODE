@@ -20,7 +20,7 @@ use crate::domain::entities::game::Game;
 pub struct ActiveGameInfo {
     /// Complete game data
     pub game: Game,
-    /// Process ID (None for Steam games and Xbox fallback)
+    /// Process ID (`None` for Steam games and Xbox fallback)
     pub pid: Option<u32>,
     /// Game executable path (used for kill operations)
     pub path: String,
@@ -49,6 +49,7 @@ pub struct ActiveGamesTracker {
 
 impl ActiveGamesTracker {
     /// Create a new tracker
+    #[must_use]
     pub fn new() -> Self {
         Self {
             games: Arc::new(RwLock::new(HashMap::new())),
@@ -64,6 +65,7 @@ impl ActiveGamesTracker {
     }
 
     /// Get active game by ID
+    #[must_use]
     pub fn get(&self, game_id: &str) -> Option<ActiveGameInfo> {
         let games = self.games.read().expect("Failed to lock active games for read");
         games.get(game_id).cloned()
@@ -78,12 +80,14 @@ impl ActiveGamesTracker {
     }
 
     /// Get all active games (for debugging)
+    #[must_use]
     pub fn list_active(&self) -> Vec<String> {
         let games = self.games.read().expect("Failed to lock active games for read");
         games.keys().cloned().collect()
     }
 
     /// Get tracker clone for use in threads (watchdog)
+    #[must_use]
     pub fn clone_tracker(&self) -> Self {
         Self {
             games: Arc::clone(&self.games),

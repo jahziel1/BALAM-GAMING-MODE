@@ -1,7 +1,7 @@
 import './QuickSettings.css';
 
 import { invoke } from '@tauri-apps/api/core';
-import { Bluetooth, Wifi } from 'lucide-react';
+import { Bluetooth, Cable, Headphones, Monitor, Speaker, Usb, Wifi } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import ButtonHint from '../ui/ButtonHint/ButtonHint';
@@ -23,6 +23,23 @@ interface TDPConfig {
   watts: number;
   min_watts: number;
   max_watts: number;
+}
+
+type AudioDeviceType =
+  | 'Speakers'
+  | 'Headphones'
+  | 'HDMI'
+  | 'DisplayPort'
+  | 'USB'
+  | 'Bluetooth'
+  | 'Virtual'
+  | 'Generic';
+
+interface AudioDevice {
+  id: string;
+  name: string;
+  device_type: AudioDeviceType;
+  is_default: boolean;
 }
 
 /**
@@ -51,6 +68,7 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   const [tdp, setTdp] = useState(15);
   const [tdpConfig, setTdpConfig] = useState<TDPConfig>({ watts: 15, min_watts: 5, max_watts: 30 });
   const [supportedRates, setSupportedRates] = useState<number[]>([60]);
+  const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
 
   // Feature support flags
   const [supportsBrightness, setSupportsBrightness] = useState(false);
@@ -88,6 +106,16 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         setTdpConfig(config);
         setTdp(config.watts);
       }
+
+      // Audio Devices
+      try {
+        const devices = await invoke<AudioDevice[]>('list_audio_devices');
+        console.log('🔊 Audio devices loaded:', devices);
+        setAudioDevices(devices);
+      } catch (audioError) {
+        console.error('❌ Failed to load audio devices:', audioError);
+        // Non-critical, continue without audio device switching
+      }
     } catch (error) {
       console.error('Failed to load Quick Settings values:', error);
     }
@@ -96,6 +124,7 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   // Load initial values
   useEffect(() => {
     if (isOpen) {
+      console.log('🎛️ Quick Settings opened, loading values...');
       // eslint-disable-next-line react-hooks/set-state-in-effect
       void loadCurrentValues();
     }
@@ -135,6 +164,17 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
       await invoke('set_tdp', { watts: value });
     } catch (error) {
       console.error('Failed to set TDP:', error);
+    }
+  }, []);
+
+  const handleAudioDeviceChange = useCallback(async (deviceId: string) => {
+    try {
+      await invoke('set_default_audio_device', { deviceId });
+      // Reload devices to update default status
+      const devices = await invoke<AudioDevice[]>('list_audio_devices');
+      setAudioDevices(devices);
+    } catch (error) {
+      console.error('Failed to change audio device:', error);
     }
   }, []);
 
@@ -239,10 +279,37 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
 
   if (!isOpen) return null;
 
+  console.log('🎛️ QuickSettings rendering with:', {
+    volume,
+    audioDevices: audioDevices.length,
+    supportsBrightness,
+    supportsTDP,
+  });
+
   // Get nearest supported refresh rate for slider
   const nearestRate = supportedRates.reduce((prev, curr) =>
     Math.abs(curr - refreshRate) < Math.abs(prev - refreshRate) ? curr : prev
   );
+
+  // Get icon for audio device type
+  const getDeviceIcon = (deviceType: AudioDeviceType) => {
+    switch (deviceType) {
+      case 'Headphones':
+        return <Headphones size={20} />;
+      case 'HDMI':
+        return <Cable size={20} />;
+      case 'DisplayPort':
+        return <Monitor size={20} />;
+      case 'USB':
+        return <Usb size={20} />;
+      case 'Bluetooth':
+        return <Bluetooth size={20} />;
+      case 'Speakers':
+      case 'Generic':
+      default:
+        return <Speaker size={20} />;
+    }
+  };
 
   const footer = (
     <div className="prompts-container">
@@ -259,6 +326,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
       title="Quick Settings"
       side="right"
       footer={footer}
+      enableBlur={false} // No blur - InGameMenu already has it
+      enableBackground={false} // No background - InGameMenu already has it
     >
       {/* Quick Actions */}
       <div className="quick-actions">
@@ -293,6 +362,27 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         unit="%"
         isFocused={focusedSliderIndex === 0}
       />
+
+      {/* Audio Output Devices */}
+      {audioDevices.length > 0 && (
+        <div className="audio-devices-section">
+          <h3 className="section-title">Audio Output</h3>
+          <div className="audio-devices-list">
+            {audioDevices.map((device) => (
+              <button
+                key={device.id}
+                className={`audio-device-item ${device.is_default ? 'default' : ''}`}
+                onClick={() => void handleAudioDeviceChange(device.id)}
+                title={device.name}
+              >
+                <span className="device-icon">{getDeviceIcon(device.device_type)}</span>
+                <span className="device-name">{device.name}</span>
+                {device.is_default ? <span className="default-badge">Default</span> : null}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <RadixSlider
         label="Brightness"

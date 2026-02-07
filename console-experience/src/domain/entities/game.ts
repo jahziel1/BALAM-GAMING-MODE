@@ -10,7 +10,7 @@
 /**
  * Game source platform
  */
-export type GameSource = 'Steam' | 'Epic' | 'Xbox' | 'Manual';
+export type GameSource = 'Steam' | 'Epic' | 'Xbox' | 'BattleNet' | 'Manual';
 
 /**
  * Game entity representing a playable game
@@ -34,6 +34,10 @@ export interface Game {
   logo: string | null;
   /** Last played timestamp (Unix epoch, optional) */
   last_played: number | null;
+  /** Favorite flag (SQLite boolean: 0 or 1) */
+  is_favorite?: number;
+  /** Total play time in seconds */
+  play_time_seconds?: number;
 }
 
 /**

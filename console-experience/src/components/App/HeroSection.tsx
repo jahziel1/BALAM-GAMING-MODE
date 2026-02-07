@@ -8,11 +8,12 @@
 import './HeroSection.css';
 
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Play, RotateCcw } from 'lucide-react';
+import { Play, RotateCcw, Star } from 'lucide-react';
+import { memo, useCallback, useMemo } from 'react';
 
 import defaultCover from '../../assets/default_cover.png';
+import type { Game } from '../../domain/entities/game';
 import type { FocusArea } from '../../hooks/useNavigation';
-import type { Game } from '../../types/game';
 import { getCachedAssetSrc } from '../../utils/image-cache';
 import Badge from '../ui/Badge/Badge';
 
@@ -38,6 +39,8 @@ interface HeroSectionProps {
   focusArea: FocusArea;
   /** Whether a game is currently launching */
   isLaunching: boolean;
+  /** Whether the active game is favorited */
+  isFavorite: boolean;
   /** Callback to change focus area */
   onSetFocusArea: (area: FocusArea) => void;
   /** Callback to open in-game menu */
@@ -46,6 +49,8 @@ interface HeroSectionProps {
   onLaunchGame: () => void;
   /** Callback to remove a manual game */
   onRemoveGame: (id: string) => void;
+  /** Callback to toggle favorite status */
+  onToggleFavorite: (gameId: string) => void;
 }
 
 /**
@@ -60,31 +65,55 @@ interface HeroSectionProps {
  * @param props - Component props
  * @returns Hero section with game details and controls
  */
-export function HeroSection({
+export const HeroSection = memo(function HeroSection({
   activeGame,
   activeRunningGame,
   focusArea,
   isLaunching,
+  isFavorite,
   onSetFocusArea,
   onSetInGameMenuOpen,
   onLaunchGame,
   onRemoveGame,
+  onToggleFavorite,
 }: HeroSectionProps) {
-  const getAssetSrc = (path: string | null | undefined) => {
+  /**
+   * Memoized asset source getter
+   * Prevents function recreation on every render
+   */
+  const getAssetSrc = useCallback((path: string | null | undefined) => {
     return getCachedAssetSrc(path, defaultCover);
-  };
+  }, []);
 
-  const handleResume = async () => {
+  /**
+   * Memoized resume handler
+   * Best practice: useCallback for async functions
+   */
+  const handleResume = useCallback(async () => {
     onSetInGameMenuOpen(false);
     await getCurrentWindow().hide();
-  };
+  }, [onSetInGameMenuOpen]);
 
-  const isRunningCurrentGame =
-    activeRunningGame &&
-    activeGame?.id &&
-    String(activeRunningGame.game.id) === String(activeGame.id);
+  /**
+   * Memoized running game check
+   * Prevents recalculation on every render
+   */
+  const isRunningCurrentGame = useMemo(
+    () =>
+      activeRunningGame &&
+      activeGame?.id &&
+      String(activeRunningGame.game.id) === String(activeGame.id),
+    [activeRunningGame, activeGame?.id]
+  );
 
-  const backgroundImage = getAssetSrc(activeGame?.hero_image ?? activeGame?.image);
+  /**
+   * Memoized background image
+   * Only recalculates when activeGame changes
+   */
+  const backgroundImage = useMemo(
+    () => getAssetSrc(activeGame?.hero_image ?? activeGame?.image),
+    [activeGame?.hero_image, activeGame?.image, getAssetSrc]
+  );
 
   return (
     <div
@@ -107,6 +136,16 @@ export function HeroSection({
 
         <div className="hero-meta">
           <Badge label={activeGame?.source ?? 'INSTALLED'} variant="default" />
+          {activeGame ? (
+            <button
+              className={`btn-favorite ${isFavorite ? 'favorited' : ''}`}
+              onClick={() => onToggleFavorite(activeGame.id)}
+              title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <Star size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+            </button>
+          ) : null}
         </div>
 
         <div className="hero-actions">
@@ -140,4 +179,4 @@ export function HeroSection({
       </div>
     </div>
   );
-}
+});

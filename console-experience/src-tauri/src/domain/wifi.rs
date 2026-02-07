@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-/// Domain entity representing WiFi signal strength configuration.
+/// Domain entity representing `WiFi` signal strength configuration.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct WiFiStrengthConfig {
     /// Signal strength percentage (0-100)
@@ -27,7 +27,7 @@ impl WiFiStrengthConfig {
 
     /// Converts dBm (-100 to 0) to percentage (0-100).
     ///
-    /// Typical WiFi range: -100 dBm (0%) to -30 dBm (100%).
+    /// Typical `WiFi` range: -100 dBm (0%) to -30 dBm (100%).
     #[must_use]
     pub fn from_dbm(dbm: i32) -> u32 {
         let normalized = ((dbm + 100) * 100) / 70;

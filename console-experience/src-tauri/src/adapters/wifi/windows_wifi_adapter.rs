@@ -20,11 +20,11 @@ struct NotificationContext {
     scan_ready: Mutex<bool>,
 }
 
-/// Windows notification callback - called by WlanAPI on WiFi events.
+/// Windows notification callback - called by WlanAPI on `WiFi` events.
 ///
 /// # Safety
 /// This function is called from Windows system threads. The context pointer
-/// must remain valid for the lifetime of the WlanAPI handle.
+/// must remain valid for the lifetime of the `WlanAPI` handle.
 ///
 /// # Events Handled
 /// - `wlan_notification_acm_scan_complete` (3): Scan finished
@@ -71,9 +71,9 @@ unsafe extern "system" fn notification_callback(data: *mut L2_NOTIFICATION_DATA,
     }
 }
 
-/// Windows implementation of WiFiPort using native WlanAPI with event-driven architecture.
+/// Windows implementation of `WiFi`Port using native WlanAPI with event-driven architecture.
 ///
-/// This implementation uses Windows Native WiFi API directly (wlanapi.dll)
+/// This implementation uses Windows Native `WiFi` API directly (wlanapi.dll)
 /// instead of parsing netsh output, making it:
 /// - Language-independent (works on any Windows locale)
 /// - Event-driven (zero polling overhead)
@@ -85,7 +85,7 @@ unsafe extern "system" fn notification_callback(data: *mut L2_NOTIFICATION_DATA,
 /// polling with sleep. This eliminates arbitrary delays and enables real-time updates.
 ///
 /// # Thread Safety
-/// WlanAPI handles are thread-safe. The notification context uses Arc + Condvar
+/// `WlanAPI` handles are thread-safe. The notification context uses Arc + Condvar
 /// for safe cross-thread communication.
 pub struct WindowsWiFiAdapter {
     client_handle: HANDLE,
@@ -93,13 +93,13 @@ pub struct WindowsWiFiAdapter {
 }
 
 impl WindowsWiFiAdapter {
-    /// Creates a new Windows WiFi adapter with event-driven WlanAPI.
+    /// Creates a new Windows `WiFi` adapter with event-driven WlanAPI.
     ///
-    /// Registers a notification callback to receive WiFi events asynchronously,
+    /// Registers a notification callback to receive `WiFi` events asynchronously,
     /// eliminating the need for polling and arbitrary sleep delays.
     ///
     /// # Errors
-    /// Returns error if WlanAPI initialization or notification registration fails.
+    /// Returns error if `WlanAPI` initialization or notification registration fails.
     pub fn new() -> Result<Self, String> {
         let mut client_handle = HANDLE::default();
         let mut negotiated_version = 0u32;
@@ -148,10 +148,10 @@ impl WindowsWiFiAdapter {
         }
     }
 
-    /// Gets the first WiFi interface GUID.
+    /// Gets the first `WiFi` interface GUID.
     ///
     /// # Errors
-    /// Returns error if no WiFi interfaces found.
+    /// Returns error if no `WiFi` interfaces found.
     fn get_interface_guid(&self) -> Result<windows::core::GUID, String> {
         let mut interface_list: *mut WLAN_INTERFACE_INFO_LIST = ptr::null_mut();
 
@@ -182,7 +182,8 @@ impl WindowsWiFiAdapter {
         }
     }
 
-    /// Converts WLAN_AVAILABLE_NETWORK to WiFiNetwork.
+    /// Converts WLAN_AVAILABLE_NETWORK to `WiFi`Network.
+    #[allow(clippy::unused_self)]
     fn convert_network(&self, network: &WLAN_AVAILABLE_NETWORK) -> WiFiNetwork {
         // Extract SSID
         let ssid_len = network.dot11Ssid.uSSIDLength as usize;
