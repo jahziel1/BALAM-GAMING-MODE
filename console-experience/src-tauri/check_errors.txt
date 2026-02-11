@@ -1,0 +1,447 @@
+    Checking console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+warning: unused import: `crate::application::DIContainer`
+  --> src\application\commands\mod.rs:11:5
+   |
+11 | use crate::application::DIContainer;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `tauri::State`
+  --> src\application\commands\mod.rs:21:5
+   |
+21 | use tauri::State;
+   |     ^^^^^^^^^^^^
+
+error[E0599]: no method named `set_enabled` found for struct `WindowsBluetoothAdapter` in the current scope
+   --> src\application\commands\mod.rs:216:13
+    |
+216 |     adapter.set_enabled(enabled).await
+    |             ^^^^^^^^^^^
+    |
+   ::: src\adapters\bluetooth\windows_bluetooth_adapter.rs:22:1
+    |
+ 22 | pub struct WindowsBluetoothAdapter;
+    | ---------------------------------- method `set_enabled` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `set_enabled`, perhaps you need to implement one of them:
+            candidate #1: `tauri_runtime::WindowDispatch`
+            candidate #2: `tauri_runtime_wry::window::WindowExt`
+help: there is a method `set_bluetooth_enabled` with a similar name
+    |
+216 |     adapter.set_bluetooth_enabled(enabled).await
+    |                 ++++++++++
+
+error[E0063]: missing field `address` in initializer of `BluetoothPairingConfig`
+   --> src\application\commands\mod.rs:244:47
+    |
+244 |     adapter.pair_device(&address, pin.map(|p| BluetoothPairingConfig { pin: p })).await
+    |                                               ^^^^^^^^^^^^^^^^^^^^^^ missing `address`
+
+error[E0061]: this method takes 1 argument but 2 arguments were supplied
+   --> src\application\commands\mod.rs:244:13
+    |
+244 |     adapter.pair_device(&address, pin.map(|p| BluetoothPairingConfig { pin: p })).await
+    |             ^^^^^^^^^^^ --------  ---------------------------------------------- unexpected argument #2 of type `std::option::Option<BluetoothPairingConfig>`
+    |                         |
+    |                         expected `BluetoothPairingConfig`, found `&String`
+    |
+note: method defined here
+   --> src\ports\bluetooth_port.rs:96:14
+    |
+ 96 |     async fn pair_device(&self, config: BluetoothPairingConfig) -> Result<(), String>;
+    |              ^^^^^^^^^^^        ------
+help: remove the extra argument
+    |
+244 -     adapter.pair_device(&address, pin.map(|p| BluetoothPairingConfig { pin: p })).await
+244 +     adapter.pair_device(/* BluetoothPairingConfig */).await
+    |
+
+error[E0599]: no method named `trigger` found for struct `GilrsHapticAdapter` in the current scope
+   --> src\application\commands\mod.rs:429:13
+    |
+429 |     adapter.trigger(feedback).await
+    |             ^^^^^^^ method not found in `GilrsHapticAdapter`
+    |
+   ::: src\ports\haptic_port.rs:26:14
+    |
+ 26 |     async fn trigger(&self, feedback: HapticFeedback) -> Result<(), String>;
+    |              ------- the method is available for `GilrsHapticAdapter` here
+    |
+   ::: src\adapters\haptic\gilrs_haptic_adapter.rs:21:1
+    |
+ 21 | pub struct GilrsHapticAdapter {
+    | ----------------------------- method `trigger` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `HapticPort` which provides `trigger` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::haptic_port::HapticPort;
+    |
+
+error[E0599]: no method named `get_current_game` found for struct `WindowsGameAdapter` in the current scope
+   --> src\application\commands\game.rs:478:13
+    |
+478 |     adapter.get_current_game()
+    |             ^^^^^^^^^^^^^^^^ method not found in `WindowsGameAdapter`
+    |
+   ::: src\ports\game_management_port.rs:43:8
+    |
+ 43 |     fn get_current_game(&self) -> Result<Option<GameProcess>, String>;
+    |        ---------------- the method is available for `WindowsGameAdapter` here
+    |
+   ::: src\adapters\game\windows_game_adapter.rs:16:1
+    |
+ 16 | pub struct WindowsGameAdapter;
+    | ----------------------------- method `get_current_game` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `GameManagementPort` which provides `get_current_game` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::game_management_port::GameManagementPort;
+    |
+
+error[E0599]: no method named `close_game` found for struct `WindowsGameAdapter` in the current scope
+   --> src\application\commands\game.rs:485:26
+    |
+485 |     let result = adapter.close_game(pid);
+    |                          ^^^^^^^^^^ method not found in `WindowsGameAdapter`
+    |
+   ::: src\ports\game_management_port.rs:80:8
+    |
+ 80 |     fn close_game(&self, pid: u32) -> Result<bool, String>;
+    |        ---------- the method is available for `WindowsGameAdapter` here
+    |
+   ::: src\adapters\game\windows_game_adapter.rs:16:1
+    |
+ 16 | pub struct WindowsGameAdapter;
+    | ----------------------------- method `close_game` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `GameManagementPort` which provides `close_game` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::game_management_port::GameManagementPort;
+    |
+
+error[E0599]: no method named `get_brightness` found for struct `WindowsDisplayAdapter` in the current scope
+  --> src\application\commands\mod.rs:71:34
+   |
+71 |     WindowsDisplayAdapter::new().get_brightness()
+   |                                  ^^^^^^^^^^^^^^
+   |
+  ::: src\adapters\display\windows_display_adapter.rs:45:1
+   |
+45 | pub struct WindowsDisplayAdapter;
+   | -------------------------------- method `get_brightness` not found for this struct
+   |
+  ::: src\ports\display_port.rs:43:8
+   |
+43 |     fn get_brightness(&self) -> Result<Option<u32>, String>;
+   |        -------------- the method is available for `WindowsDisplayAdapter` here
+   |
+   = help: items from traits can only be used if the trait is in scope
+help: there is a method `set_brightness` with a similar name, but with different arguments
+  --> src\ports\display_port.rs:65:5
+   |
+65 |     fn set_brightness(&self, config: BrightnessConfig) -> Result<(), String>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: trait `DisplayPort` which provides `get_brightness` is implemented but not in scope; perhaps you want to import it
+   |
+ 1 + use crate::ports::display_port::DisplayPort;
+   |
+
+error[E0599]: no method named `set_brightness` found for struct `WindowsDisplayAdapter` in the current scope
+  --> src\application\commands\mod.rs:78:34
+   |
+78 |     WindowsDisplayAdapter::new().set_brightness(config)
+   |                                  ^^^^^^^^^^^^^^
+   |
+  ::: src\adapters\display\windows_display_adapter.rs:45:1
+   |
+45 | pub struct WindowsDisplayAdapter;
+   | -------------------------------- method `set_brightness` not found for this struct
+   |
+  ::: src\ports\display_port.rs:65:8
+   |
+65 |     fn set_brightness(&self, config: BrightnessConfig) -> Result<(), String>;
+   |        -------------- the method is available for `WindowsDisplayAdapter` here
+   |
+   = help: items from traits can only be used if the trait is in scope
+help: there is a method `get_brightness` with a similar name, but with different arguments
+  --> src\ports\display_port.rs:43:5
+   |
+43 |     fn get_brightness(&self) -> Result<Option<u32>, String>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: trait `DisplayPort` which provides `set_brightness` is implemented but not in scope; perhaps you want to import it
+   |
+ 1 + use crate::ports::display_port::DisplayPort;
+   |
+
+error[E0599]: no method named `get_refresh_rate` found for struct `WindowsDisplayAdapter` in the current scope
+   --> src\application\commands\mod.rs:84:34
+    |
+ 84 |     WindowsDisplayAdapter::new().get_refresh_rate()
+    |                                  ^^^^^^^^^^^^^^^^
+    |
+   ::: src\adapters\display\windows_display_adapter.rs:45:1
+    |
+ 45 | pub struct WindowsDisplayAdapter;
+    | -------------------------------- method `get_refresh_rate` not found for this struct
+    |
+   ::: src\ports\display_port.rs:74:8
+    |
+ 74 |     fn get_refresh_rate(&self) -> Result<u32, String>;
+    |        ---------------- the method is available for `WindowsDisplayAdapter` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: there is a method `set_refresh_rate` with a similar name, but with different arguments
+   --> src\ports\display_port.rs:105:5
+    |
+105 |     fn set_refresh_rate(&self, config: RefreshRateConfig) -> Result<(), String>;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: trait `DisplayPort` which provides `get_refresh_rate` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::display_port::DisplayPort;
+    |
+
+error[E0599]: no method named `set_refresh_rate` found for struct `WindowsDisplayAdapter` in the current scope
+   --> src\application\commands\mod.rs:91:34
+    |
+ 91 |     WindowsDisplayAdapter::new().set_refresh_rate(config)
+    |                                  ^^^^^^^^^^^^^^^^
+    |
+   ::: src\adapters\display\windows_display_adapter.rs:45:1
+    |
+ 45 | pub struct WindowsDisplayAdapter;
+    | -------------------------------- method `set_refresh_rate` not found for this struct
+    |
+   ::: src\ports\display_port.rs:105:8
+    |
+105 |     fn set_refresh_rate(&self, config: RefreshRateConfig) -> Result<(), String>;
+    |        ---------------- the method is available for `WindowsDisplayAdapter` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: there is a method `get_refresh_rate` with a similar name, but with different arguments
+   --> src\ports\display_port.rs:74:5
+    |
+ 74 |     fn get_refresh_rate(&self) -> Result<u32, String>;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: trait `DisplayPort` which provides `set_refresh_rate` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::display_port::DisplayPort;
+    |
+
+error[E0599]: no method named `get_supported_refresh_rates` found for struct `WindowsDisplayAdapter` in the current scope
+   --> src\application\commands\mod.rs:97:34
+    |
+ 97 |     WindowsDisplayAdapter::new().get_supported_refresh_rates()
+    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: src\adapters\display\windows_display_adapter.rs:45:1
+    |
+ 45 | pub struct WindowsDisplayAdapter;
+    | -------------------------------- method `get_supported_refresh_rates` not found for this struct
+    |
+   ::: src\ports\display_port.rs:117:8
+    |
+117 |     fn get_supported_refresh_rates(&self) -> Result<Vec<u32>, String>;
+    |        --------------------------- the method is available for `WindowsDisplayAdapter` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `DisplayPort` which provides `get_supported_refresh_rates` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::display_port::DisplayPort;
+    |
+help: there is a method `get_refresh_rate` with a similar name
+    |
+ 97 -     WindowsDisplayAdapter::new().get_supported_refresh_rates()
+ 97 +     WindowsDisplayAdapter::new().get_refresh_rate()
+    |
+
+error[E0599]: no method named `supports_brightness_control` found for struct `WindowsDisplayAdapter` in the current scope
+   --> src\application\commands\mod.rs:104:34
+    |
+104 |     WindowsDisplayAdapter::new().supports_brightness_control()
+    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: src\adapters\display\windows_display_adapter.rs:45:1
+    |
+ 45 | pub struct WindowsDisplayAdapter;
+    | -------------------------------- method `supports_brightness_control` not found for this struct
+    |
+   ::: src\ports\display_port.rs:127:8
+    |
+127 |     fn supports_brightness_control(&self) -> bool;
+    |        --------------------------- the method is available for `WindowsDisplayAdapter` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: there is a method `set_brightness` with a similar name, but with different arguments
+   --> src\ports\display_port.rs:65:5
+    |
+ 65 |     fn set_brightness(&self, config: BrightnessConfig) -> Result<(), String>;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: trait `DisplayPort` which provides `supports_brightness_control` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::display_port::DisplayPort;
+    |
+
+error[E0599]: no method named `get_tdp_config` found for struct `RyzenAdjAdapter` in the current scope
+   --> src\application\commands\mod.rs:114:28
+    |
+114 |     RyzenAdjAdapter::new().get_tdp_config()
+    |                            ^^^^^^^^^^^^^^ method not found in `RyzenAdjAdapter`
+    |
+   ::: src\ports\performance_port.rs:72:8
+    |
+ 72 |     fn get_tdp_config(&self) -> Result<TDPConfig, String>;
+    |        -------------- the method is available for `RyzenAdjAdapter` here
+    |
+   ::: src\adapters\performance\ryzenadj_adapter.rs:13:1
+    |
+ 13 | pub struct RyzenAdjAdapter {
+    | -------------------------- method `get_tdp_config` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `PerformancePort` which provides `get_tdp_config` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::performance_port::PerformancePort;
+    |
+
+error[E0599]: no method named `set_tdp` found for struct `RyzenAdjAdapter` in the current scope
+   --> src\application\commands\mod.rs:121:28
+    |
+121 |     RyzenAdjAdapter::new().set_tdp(watts)
+    |                            ^^^^^^^ method not found in `RyzenAdjAdapter`
+    |
+   ::: src\ports\performance_port.rs:100:8
+    |
+100 |     fn set_tdp(&self, watts: u32) -> Result<(), String>;
+    |        ------- the method is available for `RyzenAdjAdapter` here
+    |
+   ::: src\adapters\performance\ryzenadj_adapter.rs:13:1
+    |
+ 13 | pub struct RyzenAdjAdapter {
+    | -------------------------- method `set_tdp` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `PerformancePort` which provides `set_tdp` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::performance_port::PerformancePort;
+    |
+
+error[E0599]: no method named `apply_profile` found for struct `RyzenAdjAdapter` in the current scope
+   --> src\application\commands\mod.rs:135:28
+    |
+135 |     RyzenAdjAdapter::new().apply_profile(profile_enum)
+    |                            ^^^^^^^^^^^^^ method not found in `RyzenAdjAdapter`
+    |
+   ::: src\ports\performance_port.rs:124:8
+    |
+124 |     fn apply_profile(&self, profile: PerformanceProfile) -> Result<(), String> {
+    |        ------------- the method is available for `RyzenAdjAdapter` here
+    |
+   ::: src\adapters\performance\ryzenadj_adapter.rs:13:1
+    |
+ 13 | pub struct RyzenAdjAdapter {
+    | -------------------------- method `apply_profile` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `PerformancePort` which provides `apply_profile` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::performance_port::PerformancePort;
+    |
+
+error[E0599]: no method named `supports_tdp_control` found for struct `RyzenAdjAdapter` in the current scope
+   --> src\application\commands\mod.rs:142:28
+    |
+142 |     RyzenAdjAdapter::new().supports_tdp_control()
+    |                            ^^^^^^^^^^^^^^^^^^^^ method not found in `RyzenAdjAdapter`
+    |
+   ::: src\ports\performance_port.rs:148:8
+    |
+148 |     fn supports_tdp_control(&self) -> bool;
+    |        -------------------- the method is available for `RyzenAdjAdapter` here
+    |
+   ::: src\adapters\performance\ryzenadj_adapter.rs:13:1
+    |
+ 13 | pub struct RyzenAdjAdapter {
+    | -------------------------- method `supports_tdp_control` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `PerformancePort` which provides `supports_tdp_control` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::performance_port::PerformancePort;
+    |
+
+error[E0599]: no method named `disconnect_network` found for struct `WindowsWiFiAdapter` in the current scope
+   --> src\application\commands\mod.rs:178:13
+    |
+178 |     adapter.disconnect_network()
+    |             ^^^^^^^^^^^^^^^^^^
+    |
+   ::: src\adapters\wifi\windows_wifi_adapter.rs:90:1
+    |
+ 90 | pub struct WindowsWiFiAdapter {
+    | ----------------------------- method `disconnect_network` not found for this struct
+    |
+help: there is a method `connect_network` with a similar name, but with different arguments
+   --> src\ports\wifi_port.rs:78:5
+    |
+ 78 |     fn connect_network(&self, config: WiFiConfig) -> Result<(), String>;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+   --> src\application\commands\mod.rs:199:5
+    |
+197 | pub fn get_wifi_signal_strength() -> Result<u32, String> {
+    |                                      ------------------- expected `Result<u32, std::string::String>` because of return type
+198 |     let adapter = WindowsWiFiAdapter::new()?;
+199 |     adapter.get_signal_strength()
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Result<u32, String>`, found `Result<Option<u32>, String>`
+    |
+    = note: expected enum `Result<u32, _>`
+               found enum `Result<std::option::Option<u32>, _>`
+
+error[E0599]: no method named `is_available` found for struct `WindowsBluetoothAdapter` in the current scope
+   --> src\application\commands\mod.rs:209:36
+    |
+209 |     WindowsBluetoothAdapter::new().is_available()
+    |                                    ^^^^^^^^^^^^
+    |
+   ::: src\adapters\bluetooth\windows_bluetooth_adapter.rs:22:1
+    |
+ 22 | pub struct WindowsBluetoothAdapter;
+    | ---------------------------------- method `is_available` not found for this struct
+    |
+help: there is a method `is_bluetooth_available` with a similar name
+    |
+209 |     WindowsBluetoothAdapter::new().is_bluetooth_available()
+    |                                       ++++++++++
+
+error[E0599]: no method named `is_supported` found for struct `GilrsHapticAdapter` in the current scope
+   --> src\application\commands\mod.rs:436:16
+    |
+436 |     Ok(adapter.is_supported())
+    |                ^^^^^^^^^^^^ method not found in `GilrsHapticAdapter`
+    |
+   ::: src\ports\haptic_port.rs:36:8
+    |
+ 36 |     fn is_supported(&self) -> bool;
+    |        ------------ the method is available for `GilrsHapticAdapter` here
+    |
+   ::: src\adapters\haptic\gilrs_haptic_adapter.rs:21:1
+    |
+ 21 | pub struct GilrsHapticAdapter {
+    | ----------------------------- method `is_supported` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `HapticPort` which provides `is_supported` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use crate::ports::haptic_port::HapticPort;
+    |
+
+Some errors have detailed explanations: E0061, E0063, E0308, E0599.
+For more information about an error, try `rustc --explain E0061`.
+warning: `console-experience` (lib) generated 2 warnings
+error: could not compile `console-experience` (lib) due to 20 previous errors; 2 warnings emitted

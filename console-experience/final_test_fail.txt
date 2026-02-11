@@ -1,0 +1,247 @@
+
+ RUN  v4.0.18 C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > renders when overlay is open
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays active game title
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays fallback title when no game is running
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked
+­ƒö┤ handleResume called - hiding window
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls showOverlay with quickSettings when Quick Settings is clicked
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > renders when overlay is open 191ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays active game title 34ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays fallback title when no game is running 29ms
+ ├ù src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked 31ms
+   ÔåÆ expected "vi.fn()" to be called at least once
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ CLOSE GAME REQUESTED
+Active game: { game: { id: [32m'1'[39m, title: [32m'Test Game'[39m }, pid: [33m1234[39m }
+PID: [33m1234[39m
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 1: handleCloseGameConfirmed called
+activeGame: { game: { id: [32m'1'[39m, title: [32m'Test Game'[39m }, pid: [33m1234[39m }
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 2: Got game ID: 1 PID: [33m1234[39m
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 3: Setting isClosingGame = true
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to InGameMenuOptimized2 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 4: Closing confirmation dialog
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to InGameMenuOptimized2 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 5: Calling kill_game with PID: [33m1234[39m
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+Ô£à STEP 6: Game killed successfully
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 7: Clearing active game state
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 8: Closing all sidebars
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 9: Showing window
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+Ô£à STEP 9: Close game completed successfully
+­ƒö┤ STEP 10 (finally): Setting isClosingGame = false
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to InGameMenuOptimized2 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls showOverlay with quickSettings when Quick Settings is clicked 25ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed 88ms
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 1 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked
+AssertionError: expected "vi.fn()" to be called at least once
+ ÔØ» src/components/overlay/InGameMenuOptimized.test.tsx:103:34
+    101|     const resumeButton = screen.getByText('Resume Game');
+    102|     fireEvent.click(resumeButton);
+    103|     expect(mockCloseLeftSidebar).toHaveBeenCalled();
+       |                                  ^
+    104|   });
+    105| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/1]ÔÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  11:53:35
+   Duration  1.55s (transform 163ms, setup 202ms, import 194ms, tests 400ms, environment 593ms)
+

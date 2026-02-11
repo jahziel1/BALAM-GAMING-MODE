@@ -1,0 +1,517 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/diabl/OneDrive/Documentos/shell_game/console-experience[39m
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the main layout components
+PresentMon not found, downloading automatically...
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the main layout components
+PresentMon downloaded successfully
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the games list
+PresentMon not found, downloading automatically...
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the games list
+PresentMon downloaded successfully
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the TopBar
+PresentMon not found, downloading automatically...
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the TopBar
+PresentMon downloaded successfully
+
+ [32mÔ£ô[39m src/App.baseline.test.tsx[2m > [22mApp Baseline[2m > [22mrenders the main layout components[32m 117[2mms[22m[39m
+ [31m├ù[39m src/App.baseline.test.tsx[2m > [22mApp Baseline[2m > [22mrenders the games list[32m 35[2mms[22m[39m
+[31m   ÔåÆ Found multiple elements with the text: Test Game 1
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<h1[31m
+  [33mclass[31m=[32m"hero-title"[31m
+[36m>[31m
+  [0mTest Game 1[0m
+[36m</h1>[31m
+
+Ignored nodes: comments, script, style
+[36m<div[31m
+  [33mclass[31m=[32m"card-title-fallback"[31m
+[36m>[31m
+  [0mTest Game 1[0m
+[36m</div>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"app-background"[31m
+      [33mstyle[31m=[32m"background-image: url(\"/src/assets/default_cover.png\");"[31m
+    [36m/>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"app-overlay"[31m
+    [36m/>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"menu-hint-area"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"menu-glow-line"[31m
+      [36m/>[31m
+    [36m</div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"sidebar "[31m
+      [33mdata-testid[31m=[32m"sidebar"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"sidebar-header"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"avatar-large"[31m
+        [36m/>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"user-info"[31m
+        [36m>[31m
+          [36m<h2>[31m
+            [0mDIABLO[0m
+          [36m</h2>[31m
+          [36m<span>[31m
+            [0mOnline[0m
+          [36m</span>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"menu-list"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item focused"[31m
+          [33mrole[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0m­ƒÅá[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mINICIO[0m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item "[31m
+          [33mrole[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0m­ƒôÜ[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mBIBLIOTECA[0m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item "[31m
+          [33mrole[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0mÔ×ò[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mA├æADIR JUEGO[0m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item "[31m
+          [33mrole[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0m­ƒöì[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mBUSCAR[0m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item "[31m
+          [33mrole[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0mÔÜÖ´©Å[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mAJUSTES[0m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item "[31m
+          [33mrole[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0m­ƒÆ╗[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mESCRITORIO[0m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"menu-item "[31m
+          [33mrole[31m=[32m"button"[31m
+          [33mstyle[31m=[32m"color: rgb(239, 68, 68);"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"icon"[31m
+          [36m>[31m
+            [0mÔ¡ò[0m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"label"[31m
+          [36m>[31m
+            [0mAPAGAR[0m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"app-container"[31m
+      [33mdata-focus-area[31m=[32m"LIBRARY"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"top-bar"[31m
+        [33mdata-testid[31m=[32m"top-bar"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"user-section"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"avatar-small"[31m
+          [36m/>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"username"[31m
+          [36m>[31m
+            [0mDIABLO[0m
+          [36m</span>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"level-badge"[31m
+          [36m>[31m
+            [0mLVL 42[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"system-status"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"status-icons"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mtitle[31m=[32m"Gamepad Connected"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-gamepad2 lucide-gamepad-2 icon active"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"20"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"20"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<line[31m
+                  [33mx1[31m=[32m"6"[31m
+                  [33mx2[31m=[32m"10"[31m
+                  [33my1[31m=[32m"11"[31m
+                  [33my2[31m=[32m"11"[31m
+                [36m/>[31m
+                [36m<line[31m
+                  [33mx1[31m=[32m"8"[31m
+                  [33mx2[31m=[32m"8"[31m
+                  [33my1[31m=[32m"9"[31m
+                  [33my2[31m=[32m"13"[31m
+                [36m/>[31m
+                [36m<line[31m
+                  [33mx1[31m=[32m"15"[31m
+                  [33mx2[31m=[32m"15.01"[31m
+                  [33my1[31m=[32m"12"[31m
+                  [33my2[31m=[32m"12"[31m
+                [36m/>[...[39m
+ [32mÔ£ô[39m src/App.baseline.test.tsx[2m > [22mApp Baseline[2m > [22mrenders the TopBar[32m 26[2mms[22m[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 1 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  src/App.baseline.test.tsx > App Baseline > renders the games list
+TestingLibraryElementError: Found multiple elements with the text: Test Game 1
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<h1
+  class="hero-title"
+>
+  Test Game 1
+</h1>
+
+Ignored nodes: comments, script, style
+<div
+  class="card-title-fallback"
+>
+  Test Game 1
+</div>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-background"
+      style="background-image: url(\"/src/assets/default_cover.png\");"
+    />
+    <div
+      class="app-overlay"
+    />
+    <div
+      class="menu-hint-area"
+    >
+      <div
+        class="menu-glow-line"
+      />
+    </div>
+    <div
+      class="sidebar "
+      data-testid="sidebar"
+    >
+      <div
+        class="sidebar-header"
+      >
+        <div
+          class="avatar-large"
+        />
+        <div
+          class="user-info"
+        >
+          <h2>
+            DIABLO
+          </h2>
+          <span>
+            Online
+          </span>
+        </div>
+      </div>
+      <div
+        class="menu-list"
+      >
+        <div
+          class="menu-item focused"
+          role="button"
+        >
+          <div
+            class="icon"
+          >
+            ­ƒÅá
+          </div>
+          <div
+            class="label"
+          >
+            INICIO
+          </div>
+        </div>
+        <div
+          class="menu-item "
+          role="button"
+        >
+          <div
+            class="icon"
+          >
+            ­ƒôÜ
+          </div>
+          <div
+            class="label"
+          >
+            BIBLIOTECA
+          </div>
+        </div>
+        <div
+          class="menu-item "
+          role="button"
+        >
+          <div
+            class="icon"
+          >
+            Ô×ò
+          </div>
+          <div
+            class="label"
+          >
+            A├æADIR JUEGO
+          </div>
+        </div>
+        <div
+          class="menu-item "
+          role="button"
+        >
+          <div
+            class="icon"
+          >
+            ­ƒöì
+          </div>
+          <div
+            class="label"
+          >
+            BUSCAR
+          </div>
+        </div>
+        <div
+          class="menu-item "
+          role="button"
+        >
+          <div
+            class="icon"
+          >
+            ÔÜÖ´©Å
+          </div>
+          <div
+            class="label"
+          >
+            AJUSTES
+          </div>
+        </div>
+        <div
+          class="menu-item "
+          role="button"
+        >
+          <div
+            class="icon"
+          >
+            ­ƒÆ╗
+          </div>
+          <div
+            class="label"
+          >
+            ESCRITORIO
+          </div>
+        </div>
+        <div
+          class="menu-item "
+          role="button"
+          style="color: rgb(239, 68, 68);"
+        >
+          <div
+            class="icon"
+          >
+            Ô¡ò
+          </div>
+          <div
+            class="label"
+          >
+            APAGAR
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="app-container"
+      data-focus-area="LIBRARY"
+    >
+      <div
+        class="top-bar"
+        data-testid="top-bar"
+      >
+        <div
+          class="user-section"
+        >
+          <div
+            class="avatar-small"
+          />
+          <span
+            class="username"
+          >
+            DIABLO
+          </span>
+          <span
+            class="level-badge"
+          >
+            LVL 42
+          </span>
+        </div>
+        <div
+          class="system-status"
+        >
+          <div
+            class="status-icons"
+          >
+            <span
+              title="Gamepad Connected"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-gamepad2 lucide-gamepad-2 icon active"
+                fill="none"
+                height="20"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line
+                  x1="6"
+                  x2="10"
+                  y1="11"
+                  y2="11"
+                />
+                <line
+                  x1="8"
+                  x2="8"
+                  y1="9"
+                  y2="13"
+                />
+                <line
+                  x1="15"
+                  x2="15.01"
+                  y1="12"
+                  y2="12"
+                />[...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ÔØ» getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» src/App.baseline.test.tsx:108:23
+    106|         });
+    107| 
+    108|         expect(screen.getByText('Test Game 1')).toBeDefined();
+       |                       ^
+    109|         expect(screen.getByText('Test Game 2')).toBeDefined();
+    110|     });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/1]ÔÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 23:58:31
+[2m   Duration [22m 2.02s[2m (transform 649ms, setup 204ms, import 865ms, tests 179ms, environment 604ms)[22m
+

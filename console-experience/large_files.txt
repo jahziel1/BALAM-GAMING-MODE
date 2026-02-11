@@ -1,0 +1,4 @@
+677 : C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\App.tsx
+946 : C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\SettingsPanel\SettingsPanel.tsx
+569 : C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri\src\adapters\process_launcher.rs
+1519 : C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri\src\application\commands.rs

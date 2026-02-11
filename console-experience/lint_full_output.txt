@@ -1,0 +1,107 @@
+
+> console-experience@0.1.0 lint
+> eslint .
+
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\application\providers\StoreProvider.tsx
+  129:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  141:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  162:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\GameLibrary\GameLibraryVirtualized.tsx
+  174:26  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\GameLibrary\GameLibraryVirtualized.tsx:174:26
+  172 |    * - getTotalSize(): Total scroll height for container
+  173 |    */
+> 174 |   const rowVirtualizer = useVirtualizer({
+      |                          ^^^^^^^^^^^^^^ TanStack Virtual's `useVirtualizer()` API returns functions that cannot be memoized safely
+  175 |     count: rowCount,
+  176 |     getScrollElement: () => parentRef.current,
+  177 |     estimateSize: () => ROW_HEIGHT,  react-hooks/incompatible-library
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\layout\Sidebar\Sidebar.tsx
+  13:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\InGameMenuOptimized.tsx
+   67:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   86:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   87:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   88:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   95:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+   96:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  111:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  115:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  119:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  126:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  134:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  137:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  143:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  147:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  153:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  162:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  165:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  168:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\PowerModal\PowerModal.tsx
+  24:7  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/set-state-in-effect')
+  26:7  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/set-state-in-effect')
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\QuickSettings.tsx
+  113:9  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  127:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  282:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\SettingsPanel\SettingsPanel.tsx
+  119:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  204:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  208:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  225:15  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  248:15  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  279:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  283:7   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  300:15  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  323:15  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\SettingsPanel\components\FpsServiceSettings.tsx
+  44:57  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+  50:61  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+  54:61  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+  58:59  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+  61:58  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\SettingsPanel\components\tabs\FpsServiceToggle.tsx
+  60:22  error  Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\hooks\useHaptic.ts
+   99:9  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  115:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  129:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  143:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\hooks\useNavigation.behavior.test.ts
+  5:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unused-vars')
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\hooks\useNavigation.ts
+  266:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  271:11  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  285:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  320:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  338:11  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  343:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  348:13  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  471:11  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  475:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\main.tsx
+  28:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\services\database.ts
+   22:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  303:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+✖ 60 problems (6 errors, 54 warnings)
+  0 errors and 3 warnings potentially fixable with the `--fix` option.
+

@@ -10,19 +10,76 @@ pub mod infrastructure;
 pub mod ports;
 
 use crate::application::commands::{
-    add_game_manually, apply_performance_profile, close_current_game, connect_bluetooth_device, connect_wifi,
-    disable_rtss_overlay, disconnect_bluetooth_device, disconnect_wifi, download_presentmon, enable_rtss_overlay,
-    forget_wifi, get_brightness, get_connected_bluetooth_devices, get_current_wifi, get_fps_stats, get_games,
-    get_paired_bluetooth_devices, get_performance_metrics, get_refresh_rate, get_rtss_version, get_running_game,
-    get_saved_networks, get_supported_refresh_rates, get_system_drives, get_system_status, get_tdp_config,
-    get_wifi_signal_strength, haptic_action, haptic_event, haptic_navigation, install_rtss_via_winget,
-    is_bluetooth_available, is_fps_monitoring_active, is_haptic_supported, is_nvml_available, is_presentmon_available,
-    is_rtss_available, is_rtss_installed_via_winget, is_using_rtss_overlay, is_winget_available, kill_game,
-    launch_game, list_audio_devices, list_directory, log_message, logout_pc, pair_bluetooth_device, remove_game,
-    restart_pc, scan_bluetooth_devices, scan_games, scan_wifi_networks, set_bluetooth_enabled, set_brightness,
-    set_default_audio_device, set_refresh_rate, set_tdp, set_volume, shutdown_pc, start_fps_monitoring,
-    stop_fps_monitoring, supports_brightness_control, supports_tdp_control, trigger_haptic, uninstall_rtss_via_winget,
-    unpair_bluetooth_device, update_rtss_overlay,
+    // Game commands
+    add_game_manually,
+    // Performance commands
+    apply_performance_profile,
+    close_current_game,
+    // Network commands
+    connect_bluetooth_device,
+    connect_wifi,
+    disconnect_bluetooth_device,
+    disconnect_wifi,
+    forget_wifi,
+    get_brightness,
+    get_connected_bluetooth_devices,
+    get_current_wifi,
+    // FPS Service commands
+    get_fps_service_status,
+    get_fps_stats,
+    get_games,
+    get_paired_bluetooth_devices,
+    get_performance_metrics,
+    get_refresh_rate,
+    get_running_game,
+    get_saved_networks,
+    get_supported_refresh_rates,
+    get_system_drives,
+    get_system_status,
+    get_tdp_config,
+    get_wifi_signal_strength,
+    // Haptic commands
+    haptic_action,
+    haptic_event,
+    haptic_navigation,
+    // PiP commands
+    hide_performance_pip,
+    install_fps_service,
+    is_bluetooth_available,
+    is_haptic_supported,
+    is_nvml_available,
+    is_pip_visible,
+    kill_game,
+    launch_game,
+    // System commands
+    list_audio_devices,
+    list_directory,
+    log_message,
+    logout_pc,
+    pair_bluetooth_device,
+    remove_game,
+    restart_pc,
+    scan_bluetooth_devices,
+    scan_games,
+    scan_wifi_networks,
+    set_bluetooth_enabled,
+    set_brightness,
+    set_default_audio_device,
+    set_refresh_rate,
+    set_tdp,
+    set_volume,
+    show_performance_pip,
+    shutdown_pc,
+    start_fps_service,
+    stop_fps_service,
+    supports_brightness_control,
+    supports_tdp_control,
+    toggle_fps_service,
+    toggle_performance_pip,
+    trigger_haptic,
+    uninstall_fps_service,
+    unpair_bluetooth_device,
+    update_fps_service,
 };
 use crate::application::DIContainer;
 use tauri::{Emitter, Manager};
@@ -254,24 +311,20 @@ pub fn run() {
             // Performance monitoring commands
             get_fps_stats,
             get_performance_metrics,
-            start_fps_monitoring,
-            stop_fps_monitoring,
-            is_fps_monitoring_active,
             is_nvml_available,
-            download_presentmon,
-            is_presentmon_available,
-            // RTSS overlay commands
-            is_rtss_available,
-            enable_rtss_overlay,
-            disable_rtss_overlay,
-            is_using_rtss_overlay,
-            update_rtss_overlay,
-            // RTSS auto-installation commands
-            is_winget_available,
-            is_rtss_installed_via_winget,
-            install_rtss_via_winget,
-            uninstall_rtss_via_winget,
-            get_rtss_version
+            // FPS Service management commands
+            get_fps_service_status,
+            install_fps_service,
+            uninstall_fps_service,
+            start_fps_service,
+            stop_fps_service,
+            update_fps_service,
+            toggle_fps_service,
+            // PiP commands
+            show_performance_pip,
+            hide_performance_pip,
+            toggle_performance_pip,
+            is_pip_visible
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,0 +1,654 @@
+
+> console-experience@0.1.0 test
+> vitest --run --reporter=verbose --no-color
+
+
+ RUN  v4.0.18 C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience
+
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > showOverlay > should show overlay 21ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > showOverlay > should track previous overlay 4ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > hideOverlay > should hide current overlay 3ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > toggleOverlay > should show overlay when hidden 2ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > toggleOverlay > should hide overlay when shown 2ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > toggleOverlay > should switch to different overlay 3ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > goBack > should navigate back to previous overlay 3ms
+ Ô£ô src/application/stores/__tests__/overlay-store.test.ts > OverlayStore > goBack > should clear overlay if no previous 2ms
+ Ô£ô src/components/ui/Badge/Badge.test.tsx > Badge Component > renders the label correctly 43ms
+ Ô£ô src/components/ui/Badge/Badge.test.tsx > Badge Component > applies variant classes correctly 3ms
+ Ô£ô src/components/layout/Footer/Footer.test.tsx > Footer Component > renders default prompts (keyboard) 55ms
+ Ô£ô src/components/layout/Footer/Footer.test.tsx > Footer Component > switches to gamepad prompts when gamepad is active 7ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > renders when isOpen is true 55ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > does not render when isOpen is false 4ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > calls onClose when backdrop is clicked 39ms
+ Ô£ô src/components/layout/Sidebar/Sidebar.test.tsx > Sidebar Component > renders collapsed by default 71ms
+ Ô£ô src/components/layout/Sidebar/Sidebar.test.tsx > Sidebar Component > renders expanded when isOpen is true 14ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > renders slider with label 82ms
+ Ô£ô src/components/layout/Sidebar/Sidebar.test.tsx > Sidebar Component > renders all menu items 20ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders XBOX button for CONFIRM action 43ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders PlayStation button for CONFIRM action 6ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders Switch button for CONFIRM action 9ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders keyboard key for CONFIRM action 5ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders BACK button correctly 7ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders MENU button correctly 3ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders D-Pad hints 3ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders arrow keys 3ms
+ Ô£ô src/components/ui/ButtonHint/ButtonHint.test.tsx > ButtonHint Component > renders without label 35ms
+ Ô£ô src/hooks/useVirtualKeyboard.test.ts > useVirtualKeyboard Hook > initializes with keyboard closed 23ms
+ Ô£ô src/hooks/useVirtualKeyboard.test.ts > useVirtualKeyboard Hook > provides keyboard control functions 4ms
+ Ô£ô src/hooks/useVirtualKeyboard.test.ts > useVirtualKeyboard Hook > getInitialValue returns empty string when no input focused 4ms
+ Ô£ô src/hooks/useVirtualKeyboard.test.ts > useVirtualKeyboard Hook > getInputType returns text when no input focused 3ms
+ Ô£ô src/hooks/useVirtualKeyboard.test.ts > useVirtualKeyboard Hook > closes keyboard when device switches to physical keyboard 6ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should complete full game discovery flow 28ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should complete full game launch flow 7ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should complete full game lifecycle: launch ÔåÆ kill 5ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should complete manual game addition flow 4ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should complete game removal flow 4ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should handle error flow: launch non-existent game 5ms
+ Ô£ô src/tests/integration/game-flow.test.ts > Integration: Game Flow > should recover from error state 3ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Basic Rendering > should render with games 85ms
+ Ô£ô src/components/overlay/SystemOSD.test.tsx > SystemOSD Component > renders volume OSD with correct value 62ms
+ Ô£ô src/components/overlay/SystemOSD.test.tsx > SystemOSD Component > renders brightness OSD with correct value 21ms
+ Ô£ô src/components/overlay/SystemOSD.test.tsx > SystemOSD Component > does not render when isVisible is false 5ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > renders slider with label 109ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > displays current value with unit 14ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > displays value without unit when not provided 14ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > renders with icon 55ms
+stderr | src/components/layout/TopBar/TopBar.test.tsx > TopBar Component > renders clock and user info
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/components/layout/TopBar/TopBar.test.tsx > TopBar Component > updates time periodically
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TopBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ Ô£ô src/components/layout/TopBar/TopBar.test.tsx > TopBar Component > renders clock and user info 118ms
+ Ô£ô src/components/layout/TopBar/TopBar.test.tsx > TopBar Component > updates time periodically 36ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > renders children correctly 59ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > applies focused class when isFocused is true 16ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > applies disabled class when disabled is true 6ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > renders when isOpen is true 63ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > does not render when isOpen is false 3ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > displays current text 19ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > displays placeholder when text is empty 9ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Basic Rendering > should render empty state with no games 47ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Basic Rendering > should render cards for visible games 12ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Focus State > should mark active card as focused when focus is on LIBRARY 10ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Focus State > should not mark active card as focused when focus is not on LIBRARY 8ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Focus State > should only focus the active card 42ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > calls onClose when close button is clicked 14ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > applies correct side class 6ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > loadGames > should load games from repository 83ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > loadGames > should clear error on successful load 5ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > launchGame > should launch game and set active game 4ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > launchGame > should handle launch error 3ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > killGame > should kill game and clear active game 3ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > calls onClick when clicked and not disabled 219ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > does not call onClick when disabled 16ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > applies custom className 2ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > applies variant class 2ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > has correct tabIndex when not disabled 17ms
+ Ô£ô src/components/ui/SelectableItem/SelectableItem.test.tsx > SelectableItem Component > has tabIndex -1 when disabled 19ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > applies custom width style 259ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > renders custom footer when provided 4ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > renders custom header when provided 4ms
+ Ô£ô src/components/overlay/OverlayPanel/OverlayPanel.test.tsx > OverlayPanel Component > applies custom className 7ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > addManualGame > should add manual game to games list 4ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > removeGame > should remove game from games list 4ms
+ Ô£ô src/application/stores/__tests__/game-store.test.ts > GameStore > clearError > should clear error message 2ms
+ Ô£ô src/components/overlay/FileExplorer.test.tsx > FileExplorer Component > renders file explorer 109ms
+ Ô£ô src/components/overlay/FileExplorer.test.tsx > FileExplorer Component > loads system drives on mount 33ms
+ Ô£ô src/components/overlay/FileExplorer.test.tsx > FileExplorer Component > sets up gamepad event listener 17ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > displays current value with unit 27ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > displays value without unit when not provided 6ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > calls onChange when value changes 21ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > applies focused class when isFocused is true 17ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > disables slider when disabled prop is true 9ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > renders with custom step value 4ms
+ Ô£ô src/components/ui/Slider/Slider.test.tsx > Slider Component > calculates percentage correctly 235ms
+ Ô£ô src/hooks/useNavigation.behavior.test.ts > useNavigation Behavioral Tests > Grid Navigation (Steam Big Picture Style) > should navigate horizontally in the library 28ms
+ Ô£ô src/hooks/useNavigation.behavior.test.ts > useNavigation Behavioral Tests > Grid Navigation (Steam Big Picture Style) > should NOT wrap around on boundaries 6ms
+ Ô£ô src/hooks/useNavigation.behavior.test.ts > useNavigation Behavioral Tests > Overlay & Sidebar Conflicts > should block CONFIRM when QuickSettings is open 4ms
+ Ô£ô src/hooks/useNavigation.behavior.test.ts > useNavigation Behavioral Tests > Overlay & Sidebar Conflicts > should toggle QuickSettings with QUICK_SETTINGS action 4ms
+ Ô£ô src/hooks/useNavigation.behavior.test.ts > useNavigation Behavioral Tests > In-Game Menu Logic > should open In-Game Menu when BACK is pressed and a game is running 3ms
+ Ô£ô src/hooks/useNavigation.behavior.test.ts > useNavigation Behavioral Tests > In-Game Menu Logic > should handle menu items: Resume, Dashboard, Quit 3ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should render carousel with title 68ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should render all game cards 16ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should mark focused card with correct classes 14ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Click Handling > should call onLaunchGame when card is clicked 26ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Click Handling > should call onSetActiveIndex when card is clicked 7ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Click Handling > should call onSetFocusArea when card is clicked 7ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Click Handling > should handle multiple clicks correctly 17ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Mouse Interaction > should set focus area to LIBRARY on mouse enter 11ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Large Game Libraries > should handle 100 games efficiently 15ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Large Game Libraries > should handle 1000 games without performance issues 14ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Edge Cases > should handle activeIndex out of bounds gracefully 5ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Edge Cases > should handle negative activeIndex 7ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Edge Cases > should handle single game 3ms
+ Ô£ô src/components/GameLibrary/GameLibraryVirtualized.test.tsx > GameLibraryVirtualized > Integration with Image Cache > should use getCachedAssetSrc for images 9ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > renders keyboard layout 33ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > renders special keys with correct labels 64ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > calls handleKeyPress when key is clicked 22ms
+ Ô£ô src/components/overlay/VirtualKeyboard/VirtualKeyboard.test.tsx > VirtualKeyboard Component > renders close button 24ms
+ Ô£ô src/components/overlay/SystemOSD.test.tsx > SystemOSD Component > renders muted icon when volume is 0 14ms
+ Ô£ô src/components/overlay/SystemOSD.test.tsx > SystemOSD Component > applies exit animation class when hiding 24ms
+ Ô£ô src/components/overlay/SystemOSD.test.tsx > SystemOSD Component > renders fill bar with correct width 194ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > applies focused class when isFocused is true 54ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > applies disabled class when disabled is true 8ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should NOT apply focused class when carousel is inactive 7ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should call scrollIntoView when focus changes and carousel is active 29ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should NOT call scrollIntoView when carousel is inactive 45ms
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > renders when overlay is open
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > calls onChange when value changes 240ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > sets correct min and max attributes 42ms
+ Ô£ô src/components/ui/RadixSlider/RadixSlider.test.tsx > RadixSlider Component > sets correct current value 69ms
+ Ô£ô src/components/ui/Card/Card.test.tsx > Card Component > renders title and image correctly 265ms
+ Ô£ô src/components/ui/Card/Card.test.tsx > Card Component > applies focused class when isFocused prop is true 14ms
+ Ô£ô src/components/ui/Card/Card.test.tsx > Card Component > does not have focused class by default 5ms
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays active game title
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays fallback title when no game is running
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > renders when overlay is open 422ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays active game title 81ms
+ Ô£ô src/tests/property/overlay-store.property.test.ts > Property: Overlay Store > should always have a current overlay after showing any overlay 550ms
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked
+­ƒö┤ handleResume called - hiding window
+
+ Ô£ô src/tests/property/game-store.property.test.ts > Property: Game Store > should never increase game count when removing 241ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > displays fallback title when no game is running 57ms
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls showOverlay with quickSettings when Quick Settings is clicked
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ Ô£ô src/tests/property/game-store.property.test.ts > Property: Game Store > should always increase game count when adding manual game 154ms
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ CLOSE GAME REQUESTED
+Active game: { game: { id: [32m'1'[39m, title: [32m'Test Game'[39m }, pid: [33m1234[39m }
+PID: [33m1234[39m
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 1: handleCloseGameConfirmed called
+activeGame: { game: { id: [32m'1'[39m, title: [32m'Test Game'[39m }, pid: [33m1234[39m }
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 2: Got game ID: 1 PID: [33m1234[39m
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 3: Setting isClosingGame = true
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to InGameMenuOptimized2 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 4: Closing confirmation dialog
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to InGameMenuOptimized2 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 5: Calling kill_game with PID: [33m1234[39m
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+Ô£à STEP 6: Game killed successfully
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 7: Clearing active game state
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 8: Closing all sidebars
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+­ƒö┤ STEP 9: Showing window
+
+stdout | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+Ô£à STEP 9: Close game completed successfully
+­ƒö┤ STEP 10 (finally): Setting isClosingGame = false
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to InGameMenuOptimized2 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls hideOverlay when Resume Game is clicked 116ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls showOverlay with quickSettings when Quick Settings is clicked 55ms
+ Ô£ô src/components/overlay/InGameMenuOptimized.test.tsx > InGameMenuOptimized Component > calls clearActiveGame when Close Game is clicked and confirmed 130ms
+ Ô£ô src/tests/property/overlay-store.property.test.ts > Property: Overlay Store > should always clear both overlays when hiding 208ms
+ Ô£ô src/tests/property/game-store.property.test.ts > Property: Game Store > should maintain game count after kill operation 196ms
+ Ô£ô src/tests/property/overlay-store.property.test.ts > Property: Overlay Store > should toggle consistently: show ÔåÆ hide ÔåÆ show 303ms
+ Ô£ô src/tests/property/game-store.property.test.ts > Property: Game Store > should always have null activeGame after kill 123ms
+ Ô£ô src/tests/property/overlay-store.property.test.ts > Property: Overlay Store > should track previous overlay correctly after navigation 202ms
+ Ô£ô src/tests/property/overlay-store.property.test.ts > Property: Overlay Store > should handle goBack idempotently when no previous overlay 127ms
+ ├ù src/tests/property/game-store.property.test.ts > Property: Game Store > should never have duplicate game IDs 348ms
+   ÔåÆ Property failed after 84 tests
+{ seed: -1984592811, path: "83:9:8:8:8:8:8:8:8:8:8:8:16:16:16:16:16:16:16:16:16:16:16:16", endOnFailure: true }
+Counterexample: [[{"id":"1","raw_id":" ","title":" ","path":"     ","source":"Steam","image":null,"hero_image":null,"logo":null,"last_played":null},{"id":"1","raw_id":" ","title":" ","path":"     ","source":"Steam","image":null,"hero_image":null,"logo":null,"last_played":null}]]
+Shrunk 23 time(s)
+Got AssertionError: expected 1 to be 2 // Object.is equality
+    at C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/src/tests/property/game-store.property.test.ts:169:32
+    at AsyncProperty.run (file:///C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/node_modules/fast-check/lib/esm/check/property/AsyncProperty.generic.js:46:28)
+    at asyncRunIt (file:///C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/node_modules/fast-check/lib/esm/check/runner/Runner.js:33:21)
+    at C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/src/tests/property/game-store.property.test.ts:156:5
+    at file:///C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/node_modules/@vitest/runner/dist/index.js:915:20
+
+Hint: Enable verbose mode in order to have the list of all failing values encountered during the run
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should only scroll ONCE when focus changes (no infinite loop) 1010ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should render empty if no games provided 1ms
+ Ô£ô src/components/GameLibrary/GameCarousel.test.tsx > GameCarousel - Scroll Behavior > should apply correct data-active attribute 13ms
+stderr | src/hooks/useGames.test.ts > useGames Hook > initializes with empty games array
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/hooks/useGames.test.ts > useGames Hook > initializes with empty games array
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/hooks/useGames.test.ts > useGames Hook > provides game management functions
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/hooks/useGames.test.ts > useGames Hook > provides game management functions
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/hooks/useGames.test.ts > useGames Hook > loads games on mount
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/hooks/useGames.test.ts > useGames Hook > loads games on mount
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ Ô£ô src/hooks/useGames.test.ts > useGames Hook > initializes with empty games array 25ms
+ Ô£ô src/hooks/useGames.test.ts > useGames Hook > provides game management functions 6ms
+ Ô£ô src/hooks/useGames.test.ts > useGames Hook > loads games on mount 9ms
+ Ô£ô src/tests/integration/overlay-flow.test.ts > Integration: Overlay Flow > should complete navigation flow: menu ÔåÆ settings ÔåÆ back 26ms
+ Ô£ô src/tests/integration/overlay-flow.test.ts > Integration: Overlay Flow > should complete toggle flow: show ÔåÆ hide 5ms
+ Ô£ô src/tests/integration/overlay-flow.test.ts > Integration: Overlay Flow > should complete multi-level navigation flow 4ms
+ Ô£ô src/hooks/useKeyboardNavigation.test.ts > useKeyboardNavigation Hook > initializes with index 0 25ms
+ Ô£ô src/hooks/useKeyboardNavigation.test.ts > useKeyboardNavigation Hook > moves right correctly 7ms
+ Ô£ô src/hooks/useKeyboardNavigation.test.ts > useKeyboardNavigation Hook > stops at the last item when moving right 4ms
+ Ô£ô src/hooks/useKeyboardNavigation.test.ts > useKeyboardNavigation Hook > moves down correctly (by column count) 4ms
+ Ô£ô src/application/stores/__tests__/system-store.test.ts > SystemStore > refreshStatus > should load system status from repository 28ms
+ Ô£ô src/application/stores/__tests__/system-store.test.ts > SystemStore > refreshStatus > should update status on refresh 5ms
+ Ô£ô src/application/stores/__tests__/system-store.test.ts > SystemStore > refreshStatus > should clear error on successful refresh 4ms
+ Ô£ô src/application/stores/__tests__/system-store.test.ts > SystemStore > clearError > should clear error message 3ms
+ Ô£ô src/tests/integration/system-monitoring.test.ts > Integration: System Monitoring > should complete status refresh flow 28ms
+ Ô£ô src/tests/integration/system-monitoring.test.ts > Integration: System Monitoring > should complete monitoring flow: multiple refreshes 6ms
+ Ô£ô src/tests/integration/system-monitoring.test.ts > Integration: System Monitoring > should handle error recovery flow 4ms
+ Ô£ô src/hooks/useInputDevice.test.ts > useInputDevice Hook > returns current device type 21ms
+ Ô£ô src/hooks/useInputDevice.test.ts > useInputDevice Hook > provides helper flags for device type 3ms
+ Ô£ô src/hooks/useInputDevice.test.ts > useInputDevice Hook > subscribes to device changes 3ms
+ Ô£ô src/hooks/useInputDevice.test.ts > useInputDevice Hook > handles gamepad device type 2ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > Basic Operations > should cache converted URLs 3ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > Basic Operations > should return different URLs for different paths 0ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > Basic Operations > should update lastAccessed timestamp on cache hit 1ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > LRU Eviction > should work with a separate cache instance 1ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > LRU Eviction > should evict an entry when cache is full 0ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > LRU Eviction > should maintain cache size at maxSize 0ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > Clear > should clear all cached entries 0ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > Clear > should require new conversions after clear 0ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache > Statistics > should return correct stats 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should return default cover for null path 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should return default cover for undefined path 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should pass through HTTP URLs without caching 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should pass through HTTPS URLs without caching 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should convert and cache local paths 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should handle Windows paths 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should use cache for repeated calls with same path 0ms
+ Ô£ô src/utils/image-cache.test.ts > getCachedAssetSrc > should handle empty string as falsy and return default 0ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache Performance > should handle large number of entries efficiently 2ms
+ Ô£ô src/utils/image-cache.test.ts > ImageCache Performance > should evict efficiently when cache is full 2ms
+ Ô£ô src/hooks/useNavigation.test.ts > useNavigation Hook > initializes with default state 19ms
+ Ô£ô src/hooks/useNavigation.test.ts > useNavigation Hook > provides navigation control functions 3ms
+ Ô£ô src/hooks/useNavigation.test.ts > useNavigation Hook > subscribes to navigation events 4ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-system-repository.test.ts > MockSystemRepository > getStatus > should return default system status 2ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-system-repository.test.ts > MockSystemRepository > getStatus > should return copy of status object 1ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-system-repository.test.ts > MockSystemRepository > setStatus > should update CPU usage 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-system-repository.test.ts > MockSystemRepository > setStatus > should update multiple values 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-system-repository.test.ts > MockSystemRepository > setStatus > should handle partial updates 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-system-repository.test.ts > MockSystemRepository > reset > should reset to default values 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > getAll > should return all games 3ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > getAll > should return copy of games array 1ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > getAll > should return empty array when initialized empty 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > launch > should launch game and return ActiveGame 1ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > launch > should throw error for non-existent game 2ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > launch > should increment PID for each launch 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > launch > should track active game 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > kill > should kill active game by PID 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > kill > should do nothing when killing non-active PID 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > addManual > should add manual game 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > addManual > should generate unique ID 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > addManual > should add to games list 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > remove > should remove game by ID 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > remove > should do nothing when removing non-existent game 1ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > reset > should reset games list 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > reset > should clear active game 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-game-repository.test.ts > MockGameRepository > reset > should reset PID counter 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > minimize > should set window to minimized 2ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > close > should set window to closed 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > toggleFullscreen > should toggle fullscreen from false to true 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > toggleFullscreen > should toggle fullscreen from true to false 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > toggleFullscreen > should toggle multiple times correctly 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > getState > should return initial state 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > getState > should return current state after operations 0ms
+ Ô£ô src/infrastructure/repositories/__tests__/mock-window-repository.test.ts > MockWindowRepository > reset > should reset all state to defaults 0ms
+ Ô£ô src/components/overlay/QuickSettings.test.tsx > QuickSettings Component > does not render when isOpen is false 14ms
+ Ô£ô src/components/overlay/QuickSettings.test.tsx > QuickSettings Component > registers adjust handler when provided 2ms
+ Ô£ô src/components/overlay/SearchOverlay/SearchOverlay.test.tsx > SearchOverlay Component > does not render when isOpen is false 14ms
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 1 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  src/tests/property/game-store.property.test.ts > Property: Game Store > should never have duplicate game IDs
+Error: Property failed after 84 tests
+{ seed: -1984592811, path: "83:9:8:8:8:8:8:8:8:8:8:8:16:16:16:16:16:16:16:16:16:16:16:16", endOnFailure: true }
+Counterexample: [[{"id":"1","raw_id":" ","title":" ","path":"     ","source":"Steam","image":null,"hero_image":null,"logo":null,"last_played":null},{"id":"1","raw_id":" ","title":" ","path":"     ","source":"Steam","image":null,"hero_image":null,"logo":null,"last_played":null}]]
+Shrunk 23 time(s)
+Got AssertionError: expected 1 to be 2 // Object.is equality
+    at C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/src/tests/property/game-store.property.test.ts:169:32
+    at AsyncProperty.run (file:///C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/node_modules/fast-check/lib/esm/check/property/AsyncProperty.generic.js:46:28)
+    at asyncRunIt (file:///C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/node_modules/fast-check/lib/esm/check/runner/Runner.js:33:21)
+    at C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/src/tests/property/game-store.property.test.ts:156:5
+    at file:///C:/Users/diabl/OneDrive/Documentos/shell_game/console-experience/node_modules/@vitest/runner/dist/index.js:915:20
+
+Hint: Enable verbose mode in order to have the list of all failing values encountered during the run
+ ÔØ» src/tests/property/game-store.property.test.ts:169:32
+    167|         const uniqueIds = new Set(ids);
+    168| 
+    169|         expect(uniqueIds.size).toBe(ids.length);
+       |                                ^
+    170|       })
+    171|     );
+ ÔØ» AsyncProperty.run node_modules/fast-check/lib/esm/check/property/AsyncProperty.generic.js:46:28
+ ÔØ» asyncRunIt node_modules/fast-check/lib/esm/check/runner/Runner.js:33:21
+ ÔØ» src/tests/property/game-store.property.test.ts:156:5
+ ÔØ» buildError node_modules/fast-check/lib/esm/check/runner/utils/RunDetailsFormatter.js:126:15
+ ÔØ» asyncThrowIfFailed node_modules/fast-check/lib/esm/check/runner/utils/RunDetailsFormatter.js:143:11
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/1]ÔÄ»
+
+
+ Test Files  1 failed | 35 passed (36)
+      Tests  1 failed | 225 passed (226)
+   Start at  22:49:30
+   Duration  4.68s (transform 7.30s, setup 12.05s, import 11.69s, tests 8.78s, environment 44.26s)
+

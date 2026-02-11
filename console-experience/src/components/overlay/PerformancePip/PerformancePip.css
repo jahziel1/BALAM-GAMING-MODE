@@ -1,0 +1,131 @@
+/* Performance PiP - Steam Deck / MangoHUD Style */
+
+.performance-pip {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 18px;
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  user-select: none;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.pip-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* Metric Container */
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  color: #aaaaaa;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Value Colors - Steam Deck Style */
+.value {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.value.good {
+  color: #7fff7f; /* Green - good performance */
+}
+
+.value.warning {
+  color: #ffd700; /* Yellow - warning */
+}
+
+.value.critical {
+  color: #ff6b6b; /* Red - critical */
+}
+
+/* Temperature */
+.temp {
+  font-size: 14px;
+  margin-left: 2px;
+}
+
+.temp.good {
+  color: #7fff7f;
+}
+
+.temp.warning {
+  color: #ffd700;
+}
+
+.temp.critical {
+  color: #ff6b6b;
+}
+
+/* RAM Percent */
+.percent {
+  color: #888888;
+  font-size: 14px;
+  margin-left: 2px;
+}
+
+/* Separator */
+.separator {
+  color: #444444;
+  font-weight: 300;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.performance-pip {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive - smaller on smaller screens */
+@media (max-width: 1280px) {
+  .performance-pip {
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+
+  .value {
+    font-size: 16px;
+  }
+
+  .label,
+  .temp,
+  .percent {
+    font-size: 12px;
+  }
+}
+
+/* High contrast mode for visibility */
+@media (prefers-contrast: high) {
+  .performance-pip {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}

@@ -1,0 +1,98 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/diabl/OneDrive/Documentos/shell_game/console-experience[39m
+
+stderr | src/App.baseline.test.tsx > App Baseline
+A suspended resource finished loading inside a test, but the event was not wrapped in act(...).
+
+When testing, code that resolves suspended data should be wrapped into act(...):
+
+act(() => {
+  /* finish loading suspended data */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/App.baseline.test.tsx > App Baseline
+A suspended resource finished loading inside a test, but the event was not wrapped in act(...).
+
+When testing, code that resolves suspended data should be wrapped into act(...):
+
+act(() => {
+  /* finish loading suspended data */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the games list
+PresentMon not found, downloading automatically...
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the games list
+PresentMon downloaded successfully
+
+ [31m├ù[39m src/App.baseline.test.tsx[2m > [22mApp Baseline[2m > [22mrenders the main layout components[32m 98[2mms[22m[39m
+[31m   ÔåÆ (0 , __vite_ssr_import_0__.getCurrentWindow)(...).listen is not a function[39m
+stderr | src/App.baseline.test.tsx > App Baseline > renders the TopBar
+PresentMon not found, downloading automatically...
+
+stderr | src/App.baseline.test.tsx > App Baseline > renders the TopBar
+PresentMon downloaded successfully
+
+ [31m├ù[39m src/App.baseline.test.tsx[2m > [22mApp Baseline[2m > [22mrenders the games list[32m 23[2mms[22m[39m
+[31m   ÔåÆ (0 , __vite_ssr_import_0__.getCurrentWindow)(...).listen is not a function[39m
+ [31m├ù[39m src/App.baseline.test.tsx[2m > [22mApp Baseline[2m > [22mrenders the TopBar[32m 18[2mms[22m[39m
+[31m   ÔåÆ (0 , __vite_ssr_import_0__.getCurrentWindow)(...).listen is not a function[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 3 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  src/App.baseline.test.tsx > App Baseline > renders the main layout components
+ FAIL  src/App.baseline.test.tsx > App Baseline > renders the games list
+ FAIL  src/App.baseline.test.tsx > App Baseline > renders the TopBar
+TypeError: (0 , __vite_ssr_import_0__.getCurrentWindow)(...).listen is not a function
+ ÔØ» src/hooks/useNavigation.ts:210:48
+    208| 
+    209|   useEffect(() => {
+    210|     const unlistenPromise = getCurrentWindow().listen('tauri://focus',ÔÇª
+       |                                                ^
+    211|       void (async () => {
+    212|         if (!activeRunningGame) return;
+ ÔØ» Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:25989:20
+ ÔØ» runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ÔØ» commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:13249:29
+ ÔØ» commitHookPassiveMountEffects node_modules/react-dom/cjs/react-dom-client.development.js:13336:11
+ ÔØ» commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:15484:13
+ ÔØ» recursivelyTraversePassiveMountEffects node_modules/react-dom/cjs/react-dom-client.development.js:15439:11
+ ÔØ» commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:15519:11
+ ÔØ» flushPassiveEffects node_modules/react-dom/cjs/react-dom-client.development.js:18432:9
+ ÔØ» flushPendingEffects node_modules/react-dom/cjs/react-dom-client.development.js:18358:14
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/3]ÔÄ»
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Unhandled Errors ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: navigator.getGamepads is not a function
+ ÔØ» Timeout._onTimeout src/adapters/input/InputDeviceDetector.ts:56:34
+     54|     // Gamepad detection (polling-based)
+     55|     this.gamepadCheckInterval = window.setInterval(() => {
+     56|       const gamepads = navigator.getGamepads();
+       |                                  ^
+     57|       const activeGamepad = gamepads[0] ?? gamepads[1] ?? gamepads[2] ÔÇª
+     58| 
+ ÔØ» listOnTimeout node:internal/timers:588:17
+ ÔØ» processTimers node:internal/timers:523:7
+
+This error originated in "src/App.baseline.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 23:56:41
+[2m   Duration [22m 1.98s[2m (transform 638ms, setup 200ms, import 856ms, tests 142ms, environment 612ms)[22m
+

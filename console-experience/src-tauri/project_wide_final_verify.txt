@@ -1,0 +1,171 @@
+   Compiling console-experience v0.1.0 (C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.11s
+     Running unittests src\lib.rs (target\debug\deps\console_experience_lib-c5b8c2c48c6ed67f.exe)
+
+running 88 tests
+test adapters::microsoft_store_adapter::tests::test_fetch_calculator_artwork ... ignored, requires network access
+test adapters::epic_scanner::tests::test_manifest_deserialization ... ok
+test adapters::display::windows_display_adapter::tests::test_refresh_rate_query ... ok
+test adapters::battlenet_scanner::tests::test_scanner_creation ... ok
+test adapters::game::windows_game_adapter::tests::test_adapter_creation ... ok
+test adapters::battlenet_scanner::tests::test_product_id_extraction ... ok
+test adapters::epic_scanner::tests::test_exclusion_patterns ... ok
+test adapters::performance::ryzenadj_adapter::tests::test_tdp_config ... ok
+test adapters::epic_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::epic_scanner::tests::test_scanner_creation ... ok
+test adapters::performance_monitoring::presentmon_adapter::tests::test_fps_calculation ... ok
+test adapters::performance_monitoring::presentmon_adapter::tests::test_csv_parsing ... ok
+test adapters::performance_monitoring::presentmon_adapter::tests::test_presentmon_creation ... ok
+test adapters::performance::ryzenadj_adapter::tests::test_hardware_detection ... ok
+test adapters::performance_monitoring::rtss_installer::tests::test_install_rtss ... ignored, manual only - avoid accidental system installs
+test adapters::performance::ryzenadj_adapter::tests::test_adapter_creation ... ok
+test adapters::performance_monitoring::presentmon_downloader::tests::test_get_cache_path ... ok
+test adapters::performance_monitoring::rtss_adapter::tests::test_rtss_availability ... ok
+test adapters::performance_monitoring::rtss_adapter::tests::test_rtss_adapter_creation ... ok
+test adapters::performance_monitoring::presentmon_downloader::tests::test_version_constant ... ok
+test adapters::registry_scanner::tests::test_exclusion_patterns ... ok
+test adapters::registry_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::performance_monitoring::rtss_adapter::tests::test_rtss_update ... ok
+test adapters::microsoft_store_adapter::tests::test_url_construction ... ok
+test adapters::microsoft_store_adapter::tests::test_adapter_creation ... ok
+test adapters::registry_scanner::tests::test_scanner_creation ... ok
+test adapters::registry_scanner::tests::test_scanner_default ... ok
+test adapters::steam_scanner::tests::test_extract_value ... ok
+test adapters::steam_scanner::tests::test_exclusion_filtering ... ok
+test adapters::steam_scanner::tests::test_scanner_creation ... ok
+test adapters::bluetooth::windows_bluetooth_adapter::tests::test_adapter_creation ... ok
+test adapters::steam_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::steam_scanner::tests::test_parse_library_folders ... ok
+test adapters::window_monitor::tests::test_is_launcher_process ... ok
+test config::exclusions::tests::test_default_config ... ok
+test adapters::xbox_scanner::tests::test_exclusion_patterns ... ok
+test adapters::xbox_scanner::tests::test_scanner_creation ... ok
+test adapters::xbox_scanner::tests::test_scanner_default ... ok
+test adapters::xbox_scanner::tests::test_scanner_implements_trait ... ok
+test application::di::container::tests::test_container_creation ... ok
+test application::di::container::tests::test_container_default ... ok
+test config::exclusions::tests::test_epic_pattern_exclusion ... ok
+test config::exclusions::tests::test_steam_exclusion ... ok
+test domain::bluetooth::tests::test_strength_validation ... ok
+test domain::bluetooth::tests::test_rssi_conversion ... ok
+test domain::bluetooth::tests::test_strength_clamp ... ok
+test config::exclusions::tests::test_valid_game_not_excluded ... ok
+test domain::display::tests::test_nearest_common_rate ... ok
+test domain::display::tests::test_brightness_clamp ... ok
+test domain::display::tests::test_refresh_rate_common ... ok
+test domain::entities::game::tests::test_game_creation ... ok
+test domain::display::tests::test_brightness_validation ... ok
+test domain::entities::game::tests::test_has_artwork ... ok
+test domain::entities::game::tests::test_mark_played ... ok
+test domain::errors::scan_error::tests::test_io_error_conversion ... ok
+test domain::errors::scan_error::tests::test_scan_error_display ... ok
+test domain::game_process::tests::test_game_process_responding ... ok
+test domain::game_process::tests::test_game_process_validation ... ok
+test domain::performance::tests::test_performance_profiles ... ok
+test domain::performance::tests::test_tdp_clamp ... ok
+test domain::performance::tests::test_tdp_config_validation ... ok
+test domain::services::game_deduplication_service::tests::test_deduplicate_empty_input ... ok
+test domain::services::game_discovery_service::tests::test_discover_all_fail ... ok
+test domain::services::game_deduplication_service::tests::test_deduplicate_removes_duplicates ... ok
+test domain::services::game_deduplication_service::tests::test_deduplicate_keeps_unique ... ok
+test domain::services::game_discovery_service::tests::test_discover_continues_on_partial_failure ... ok
+test domain::services::game_discovery_service::tests::test_discover_with_working_scanner ... ok
+test domain::services::game_discovery_service::tests::test_scanner_count ... ok
+test domain::value_objects::game_source::tests::test_id_prefixes ... ok
+test domain::value_objects::game_source::tests::test_display_names ... ok
+test domain::wifi::tests::test_strength_clamp ... ok
+test adapters::wifi::windows_wifi_adapter::tests::test_adapter_creation ... ok
+test domain::value_objects::game_source::tests::test_serialization ... ok
+test domain::wifi::tests::test_dbm_conversion ... ok
+test domain::value_objects::game_source::tests::test_metadata_support ... ok
+test domain::wifi::tests::test_strength_validation ... ok
+test adapters::bluetooth::windows_bluetooth_adapter::tests::test_bluetooth_availability ... ok
+test adapters::display::windows_display_adapter::tests::test_enumerate_rates ... ok
+test adapters::performance_monitoring::nvml_adapter::tests::test_nvml_creation ... ok
+test adapters::performance_monitoring::nvml_adapter::tests::test_nvml_graceful_failure ... ok
+test adapters::display::windows_display_adapter::tests::test_adapter_creation ... ok
+test adapters::performance_monitoring::rtss_installer::tests::test_winget_available ... ok
+test adapters::performance_monitoring::windows_perf_monitor::tests::test_nvml_availability ... ok
+test adapters::performance_monitoring::windows_perf_monitor::tests::test_monitor_creation ... ok
+test adapters::performance_monitoring::windows_perf_monitor::tests::test_gpu_metrics_graceful_fallback ... ok
+test adapters::performance_monitoring::rtss_installer::tests::test_rtss_installed ... ok
+test adapters::game::windows_game_adapter::tests::test_close_nonexistent_process ... ok
+test adapters::wifi::windows_wifi_adapter::tests::test_scan_networks ... ok
+
+test result: ok. 86 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 10.06s
+
+     Running unittests src\main.rs (target\debug\deps\console_experience-1e3a32fc2229e952.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\watchdog\main.rs (target\debug\deps\watchdog-0312de1eeaf3713b.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\integration_tests.rs (target\debug\deps\integration_tests-13fa34d27edebd28.exe)
+
+running 9 tests
+test test_game_entity_full_lifecycle ... ok
+test test_game_source_consistency ... ok
+test test_di_container_initialization ... ok
+test test_empty_game_list_handling ... ok
+test test_deduplication_removes_exact_duplicates ... ok
+test test_scanner_priority_order ... ok
+test test_multiple_container_instances_independent ... ok
+test test_full_game_discovery_flow ... ok
+test test_discovery_and_deduplication_flow ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\property_tests.rs (target\debug\deps\property_tests-9a6a7edc9b36c05f.exe)
+
+running 7 tests
+test deduplication_properties::prop_empty_list_stays_empty ... ok
+test game_entity_properties::prop_has_artwork_consistent ... ok
+test deduplication_properties::prop_single_game_stays_single ... ok
+test game_entity_properties::prop_game_id_never_empty ... ok
+test game_entity_properties::prop_mark_played_always_sets_timestamp ... ok
+test deduplication_properties::prop_deduplication_reduces_or_maintains_size ... ok
+test deduplication_properties::prop_deduplication_idempotent ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+
+   Doc-tests console_experience_lib
+
+running 29 tests
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_winget_available (line 45) - compile ... ok
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_rtss_installed (line 83) - compile ... ok
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::uninstall_rtss (line 214) - compile ... ok
+test src\ports\display_port.rs - ports::display_port::DisplayPort::set_brightness (line 56) - compile ... ok
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::install_rtss_silent (line 146) - compile ... ok
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::Command (line 17) - compile ... ok
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort (line 25) ... ok
+test src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner::new (line 59) ... ok
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::supports_tdp_control (line 140) ... ok
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner::source (line 68) ... ok
+test src\ports\system_port.rs - ports::system_port::SystemPort::set_volume (line 101) ... ok
+test src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner (line 32) ... ok
+test src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner::new (line 53) ... ok
+test src\ports\display_port.rs - ports::display_port::DisplayPort (line 16) ... ok
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_tdp_config (line 63) ... ok
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner::scan (line 51) ... ok
+test src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner (line 39) ... ok
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_performance_metrics (line 182) ... ok
+test src\ports\display_port.rs - ports::display_port::DisplayPort::set_refresh_rate (line 93) ... ok
+test src\adapters\microsoft_store_adapter.rs - adapters::microsoft_store_adapter::MicrosoftStoreAdapter::fetch_artwork (line 85) ... ok
+test src\ports\system_port.rs - ports::system_port::SystemPort::set_default_audio_device (line 188) ... ok
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner::priority (line 91) ... ok
+test src\ports\system_port.rs - ports::system_port::SystemPort::list_audio_devices (line 159) ... ok
+test src\ports\system_port.rs - ports::system_port::SystemPort (line 69) ... ok
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::set_tdp (line 93) ... ok
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::apply_profile (line 116) ... ok
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner (line 24) ... ok
+test src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort (line 18) ... ok
+test src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort::close_game (line 70) ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.47s
+

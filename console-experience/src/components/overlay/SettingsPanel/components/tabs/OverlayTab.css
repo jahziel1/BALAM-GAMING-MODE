@@ -1,0 +1,285 @@
+/* Overlay Settings Tab - Native Overlay UI */
+
+.overlay-tab {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  color: #ffffff;
+}
+
+.overlay-tab h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.overlay-description {
+  margin: 0 0 24px 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Error Display */
+.overlay-error {
+  background: rgba(255, 68, 68, 0.15);
+  border: 1px solid #ff4444;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #ff6b6b;
+  font-size: 14px;
+}
+
+/* Setting Cards */
+.overlay-setting-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.overlay-setting-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.overlay-setting-header {
+  margin-bottom: 12px;
+}
+
+/* Toggle Switch */
+.overlay-toggle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.overlay-toggle input[type='checkbox'] {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.overlay-toggle input[type='checkbox']:before {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+}
+
+.overlay-toggle input[type='checkbox']:checked {
+  background: linear-gradient(135deg, #4a9eff 0%, #8a2be2 100%);
+  border-color: #4a9eff;
+}
+
+.overlay-toggle input[type='checkbox']:checked:before {
+  transform: translateX(24px);
+}
+
+.overlay-toggle input[type='checkbox']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.overlay-toggle-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.overlay-setting-description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Warning Banner */
+.overlay-warning {
+  background: rgba(255, 212, 59, 0.15);
+  border: 1px solid #ffd43b;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #ffd43b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.overlay-warning small {
+  display: block;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+/* Position Grid */
+.overlay-setting-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.overlay-position-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.overlay-position-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.overlay-position-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(74, 158, 255, 0.5);
+  color: #ffffff;
+}
+
+.overlay-position-button.active {
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
+  border-color: #4a9eff;
+  color: #4a9eff;
+}
+
+.overlay-position-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Position Preview Box */
+.overlay-position-preview {
+  width: 80px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  position: relative;
+}
+
+.overlay-preview-dot {
+  width: 12px;
+  height: 12px;
+  background: #4a9eff;
+  border-radius: 2px;
+  position: absolute;
+}
+
+.overlay-preview-dot.position-top-left {
+  top: 4px;
+  left: 4px;
+}
+
+.overlay-preview-dot.position-top-right {
+  top: 4px;
+  right: 4px;
+}
+
+.overlay-preview-dot.position-bottom-left {
+  bottom: 4px;
+  left: 4px;
+}
+
+.overlay-preview-dot.position-bottom-right {
+  bottom: 4px;
+  right: 4px;
+}
+
+.overlay-position-button.active .overlay-preview-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Info Cards */
+.overlay-info-card {
+  background: rgba(74, 158, 255, 0.05);
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.overlay-info-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a9eff;
+}
+
+.overlay-info-card p {
+  margin: 0 0 12px 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.overlay-info-card p:last-child {
+  margin-bottom: 0;
+}
+
+.overlay-info-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.overlay-info-list li {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.overlay-info-list li:last-child {
+  margin-bottom: 0;
+}
+
+.overlay-info-list li strong {
+  color: #4a9eff;
+  margin-right: 8px;
+}

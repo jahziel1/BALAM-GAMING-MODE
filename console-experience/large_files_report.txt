@@ -1,0 +1,4 @@
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\components\overlay\SettingsPanel\SettingsPanel.tsx - 946 lines
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src\App.tsx - 677 lines
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri\src\adapters\process_launcher.rs - 569 lines
+C:\Users\diabl\OneDrive\Documentos\shell_game\console-experience\src-tauri\src\application\commands.rs - 1519 lines

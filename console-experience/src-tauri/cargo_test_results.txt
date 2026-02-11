@@ -1,0 +1,1316 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.63s
+     Running unittests src\lib.rs (target\debug\deps\console_experience_lib-c5b8c2c48c6ed67f.exe)
+
+running 88 tests
+test adapters::microsoft_store_adapter::tests::test_fetch_calculator_artwork ... ignored, requires network access
+test adapters::performance::ryzenadj_adapter::tests::test_hardware_detection ... ok
+test adapters::battlenet_scanner::tests::test_scanner_creation ... ok
+test adapters::battlenet_scanner::tests::test_product_id_extraction ... ok
+test adapters::game::windows_game_adapter::tests::test_adapter_creation ... ok
+test adapters::epic_scanner::tests::test_manifest_deserialization ... ok
+test adapters::epic_scanner::tests::test_scanner_creation ... ok
+test adapters::performance::ryzenadj_adapter::tests::test_adapter_creation ... ok
+test adapters::performance::ryzenadj_adapter::tests::test_tdp_config ... ok
+test adapters::performance_monitoring::presentmon_adapter::tests::test_presentmon_creation ... ok
+test adapters::performance_monitoring::presentmon_adapter::tests::test_fps_calculation ... ok
+test adapters::performance_monitoring::rtss_installer::tests::test_install_rtss ... ignored, manual only - avoid accidental system installs
+test adapters::display::windows_display_adapter::tests::test_refresh_rate_query ... ok
+test adapters::performance_monitoring::presentmon_adapter::tests::test_csv_parsing ... ok
+test adapters::performance_monitoring::presentmon_downloader::tests::test_version_constant ... ok
+test adapters::performance_monitoring::rtss_adapter::tests::test_rtss_adapter_creation ... ok
+test adapters::performance_monitoring::rtss_adapter::tests::test_rtss_availability ... ok
+test adapters::microsoft_store_adapter::tests::test_url_construction ... ok
+test adapters::performance_monitoring::rtss_adapter::tests::test_rtss_update ... ok
+test adapters::epic_scanner::tests::test_exclusion_patterns ... ok
+test adapters::epic_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::microsoft_store_adapter::tests::test_adapter_creation ... ok
+test adapters::performance_monitoring::presentmon_downloader::tests::test_get_cache_path ... ok
+test adapters::registry_scanner::tests::test_exclusion_patterns ... ok
+test adapters::registry_scanner::tests::test_scanner_creation ... ok
+test adapters::bluetooth::windows_bluetooth_adapter::tests::test_adapter_creation ... ok
+test adapters::registry_scanner::tests::test_scanner_default ... ok
+test adapters::registry_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::steam_scanner::tests::test_exclusion_filtering ... ok
+test adapters::xbox_scanner::tests::test_scanner_creation ... ok
+test adapters::steam_scanner::tests::test_scanner_creation ... ok
+test adapters::xbox_scanner::tests::test_scanner_default ... ok
+test adapters::window_monitor::tests::test_is_launcher_process ... ok
+test adapters::steam_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::xbox_scanner::tests::test_exclusion_patterns ... ok
+test adapters::xbox_scanner::tests::test_scanner_implements_trait ... ok
+test adapters::steam_scanner::tests::test_extract_value ... ok
+test adapters::steam_scanner::tests::test_parse_library_folders ... ok
+test config::exclusions::tests::test_default_config ... ok
+test config::exclusions::tests::test_epic_pattern_exclusion ... ok
+test config::exclusions::tests::test_steam_exclusion ... ok
+test config::exclusions::tests::test_valid_game_not_excluded ... ok
+test domain::bluetooth::tests::test_rssi_conversion ... ok
+test domain::bluetooth::tests::test_strength_clamp ... ok
+test domain::bluetooth::tests::test_strength_validation ... ok
+test application::di::container::tests::test_container_creation ... ok
+test domain::display::tests::test_brightness_validation ... ok
+test adapters::wifi::windows_wifi_adapter::tests::test_adapter_creation ... ok
+test application::di::container::tests::test_container_default ... ok
+test domain::display::tests::test_brightness_clamp ... ok
+test domain::display::tests::test_nearest_common_rate ... ok
+test domain::display::tests::test_refresh_rate_common ... ok
+test domain::entities::game::tests::test_game_creation ... ok
+test domain::entities::game::tests::test_has_artwork ... ok
+test domain::entities::game::tests::test_mark_played ... ok
+test domain::errors::scan_error::tests::test_io_error_conversion ... ok
+test domain::errors::scan_error::tests::test_scan_error_display ... ok
+test domain::game_process::tests::test_game_process_responding ... ok
+test domain::game_process::tests::test_game_process_validation ... ok
+test domain::performance::tests::test_performance_profiles ... ok
+test domain::performance::tests::test_tdp_clamp ... ok
+test domain::performance::tests::test_tdp_config_validation ... ok
+test domain::services::game_deduplication_service::tests::test_deduplicate_empty_input ... ok
+test domain::services::game_deduplication_service::tests::test_deduplicate_keeps_unique ... ok
+test domain::services::game_discovery_service::tests::test_discover_all_fail ... ok
+test domain::services::game_deduplication_service::tests::test_deduplicate_removes_duplicates ... ok
+test domain::services::game_discovery_service::tests::test_discover_continues_on_partial_failure ... ok
+test domain::services::game_discovery_service::tests::test_discover_with_working_scanner ... ok
+test domain::services::game_discovery_service::tests::test_scanner_count ... ok
+test domain::value_objects::game_source::tests::test_id_prefixes ... ok
+test domain::wifi::tests::test_strength_validation ... ok
+test domain::value_objects::game_source::tests::test_serialization ... ok
+test domain::wifi::tests::test_dbm_conversion ... ok
+test domain::value_objects::game_source::tests::test_display_names ... ok
+test domain::wifi::tests::test_strength_clamp ... ok
+test domain::value_objects::game_source::tests::test_metadata_support ... ok
+test adapters::display::windows_display_adapter::tests::test_enumerate_rates ... ok
+test adapters::bluetooth::windows_bluetooth_adapter::tests::test_bluetooth_availability ... ok
+test adapters::performance_monitoring::nvml_adapter::tests::test_nvml_creation ... ok
+test adapters::performance_monitoring::nvml_adapter::tests::test_nvml_graceful_failure ... ok
+test adapters::display::windows_display_adapter::tests::test_adapter_creation ... ok
+test adapters::performance_monitoring::rtss_installer::tests::test_winget_available ... ok
+test adapters::performance_monitoring::windows_perf_monitor::tests::test_nvml_availability ... ok
+test adapters::wifi::windows_wifi_adapter::tests::test_scan_networks ... ok
+test adapters::performance_monitoring::windows_perf_monitor::tests::test_gpu_metrics_graceful_fallback ... ok
+test adapters::performance_monitoring::windows_perf_monitor::tests::test_monitor_creation ... ok
+test adapters::performance_monitoring::rtss_installer::tests::test_rtss_installed ... ok
+test adapters::game::windows_game_adapter::tests::test_close_nonexistent_process ... ok
+
+test result: ok. 86 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 5.00s
+
+     Running unittests src\main.rs (target\debug\deps\console_experience-1e3a32fc2229e952.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\watchdog\main.rs (target\debug\deps\watchdog-0312de1eeaf3713b.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\integration_tests.rs (target\debug\deps\integration_tests-13fa34d27edebd28.exe)
+
+running 9 tests
+test test_game_source_consistency ... ok
+test test_game_entity_full_lifecycle ... ok
+test test_di_container_initialization ... ok
+test test_empty_game_list_handling ... ok
+test test_scanner_priority_order ... ok
+test test_deduplication_removes_exact_duplicates ... ok
+test test_multiple_container_instances_independent ... ok
+test test_full_game_discovery_flow ... ok
+test test_discovery_and_deduplication_flow ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\property_tests.rs (target\debug\deps\property_tests-9a6a7edc9b36c05f.exe)
+
+running 7 tests
+test deduplication_properties::prop_empty_list_stays_empty ... ok
+test game_entity_properties::prop_has_artwork_consistent ... ok
+test deduplication_properties::prop_single_game_stays_single ... ok
+test game_entity_properties::prop_game_id_never_empty ... ok
+test game_entity_properties::prop_mark_played_always_sets_timestamp ... ok
+test deduplication_properties::prop_deduplication_idempotent ... ok
+test deduplication_properties::prop_deduplication_reduces_or_maintains_size ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+   Doc-tests console_experience_lib
+
+running 30 tests
+test src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner::new (line 59) ... FAILED
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_performance_metrics (line 182) ... FAILED
+test src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner (line 39) ... FAILED
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner::priority (line 91) ... FAILED
+test src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort (line 18) ... FAILED
+test src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner::new (line 53) ... FAILED
+test src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner (line 32) ... FAILED
+test src\ports\display_port.rs - ports::display_port::DisplayPort (line 16) ... FAILED
+test src\ports\display_port.rs - ports::display_port::DisplayPort::set_brightness (line 56) ... FAILED
+test src\ports\display_port.rs - ports::display_port::DisplayPort::set_refresh_rate (line 93) ... FAILED
+test src\adapters\performance_monitoring\presentmon_adapter.rs - adapters::performance_monitoring::presentmon_adapter::PresentMonAdapter::spawn_presentmon (line 224) ... FAILED
+test src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort::close_game (line 70) ... FAILED
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort (line 25) ... FAILED
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::apply_profile (line 116) ... FAILED
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_tdp_config (line 63) ... FAILED
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::supports_tdp_control (line 140) ... FAILED
+test src\ports\performance_port.rs - ports::performance_port::PerformancePort::set_tdp (line 93) ... FAILED
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner (line 24) ... FAILED
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner::source (line 68) ... FAILED
+test src\ports\system_port.rs - ports::system_port::SystemPort (line 69) ... FAILED
+test src\ports\system_port.rs - ports::system_port::SystemPort::list_audio_devices (line 159) ... FAILED
+test src\ports\system_port.rs - ports::system_port::SystemPort::set_volume (line 101) ... FAILED
+test src\adapters\microsoft_store_adapter.rs - adapters::microsoft_store_adapter::MicrosoftStoreAdapter::fetch_artwork (line 85) ... FAILED
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_winget_available (line 43) ... FAILED
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::install_rtss_silent (line 142) ... FAILED
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::uninstall_rtss (line 209) ... FAILED
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::Command (line 17) ... FAILED
+test src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_rtss_installed (line 80) ... FAILED
+test src\ports\system_port.rs - ports::system_port::SystemPort::set_default_audio_device (line 188) ... FAILED
+test src\ports\scanner_port.rs - ports::scanner_port::GameScanner::scan (line 51) ... FAILED
+
+failures:
+
+---- src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner::new (line 59) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\adapters\epic_scanner.rs:60:5
+  |
+3 | use console_experience::adapters::epic_scanner::EpicScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::adapters::epic_scanner::EpicScanner;
+  |                       ++++
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_performance_metrics (line 182) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:183:5
+  |
+3 | use console_experience::ports::performance_port::PerformancePort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::performance_port::PerformancePort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:184:5
+  |
+4 | use console_experience::adapters::performance::RyzenAdjAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::performance::RyzenAdjAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner (line 39) stdout ----
+error: unknown start of token: `
+ --> src\adapters\epic_scanner.rs:45:5
+  |
+8 |     `Ok`(games) => println!("Found {} Epic games", games.len()),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+8 -     `Ok`(games) => println!("Found {} Epic games", games.len()),
+8 +     'Ok`(games) => println!("Found {} Epic games", games.len()),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\epic_scanner.rs:45:8
+  |
+8 |     `Ok`(games) => println!("Found {} Epic games", games.len()),
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+8 -     `Ok`(games) => println!("Found {} Epic games", games.len()),
+8 +     `Ok'(games) => println!("Found {} Epic games", games.len()),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\epic_scanner.rs:46:5
+  |
+9 |     `Err`(e) => eprintln!("Epic scan failed: {}", e),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+9 -     `Err`(e) => eprintln!("Epic scan failed: {}", e),
+9 +     'Err`(e) => eprintln!("Epic scan failed: {}", e),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\epic_scanner.rs:46:9
+  |
+9 |     `Err`(e) => eprintln!("Epic scan failed: {}", e),
+  |         ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+9 -     `Err`(e) => eprintln!("Epic scan failed: {}", e),
+9 +     `Err'(e) => eprintln!("Epic scan failed: {}", e),
+  |
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\adapters\epic_scanner.rs:40:5
+  |
+3 | use console_experience::adapters::epic_scanner::EpicScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::adapters::epic_scanner::EpicScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\adapters\epic_scanner.rs:41:5
+  |
+4 | use console_experience::ports::GameScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::ports::GameScanner;
+  |                       ++++
+
+error[E0282]: type annotations needed
+ --> src\adapters\epic_scanner.rs:45:52
+  |
+8 |     `Ok`(games) => println!("Found {} Epic games", games.len()),
+  |                                                    ^^^^^ cannot infer type
+
+error: aborting due to 7 previous errors
+
+Some errors have detailed explanations: E0282, E0433.
+For more information about an error, try `rustc --explain E0282`.
+Couldn't compile the test.
+---- src\ports\scanner_port.rs - ports::scanner_port::GameScanner::priority (line 91) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:92:5
+  |
+3 | use console_experience::ports::GameScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::GameScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:93:5
+  |
+4 | use console_experience::adapters::steam_scanner::SteamScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::steam_scanner::SteamScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:94:5
+  |
+5 | use console_experience::adapters::registry_scanner::RegistryScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::adapters::registry_scanner::RegistryScanner;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort (line 18) stdout ----
+error: unknown start of token: `
+ --> src\ports\game_management_port.rs:23:8
+  |
+7 | if let `Some`(game) = adapter.get_current_game()? {
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+7 - if let `Some`(game) = adapter.get_current_game()? {
+7 + if let 'Some`(game) = adapter.get_current_game()? {
+  |
+
+error: unknown start of token: `
+ --> src\ports\game_management_port.rs:23:13
+  |
+7 | if let `Some`(game) = adapter.get_current_game()? {
+  |             ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+7 - if let `Some`(game) = adapter.get_current_game()? {
+7 + if let `Some'(game) = adapter.get_current_game()? {
+  |
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\game_management_port.rs:19:5
+  |
+3 | use console_experience::ports::game_management_port::GameManagementPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::game_management_port::GameManagementPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\game_management_port.rs:20:5
+  |
+4 | use console_experience::adapters::game::WindowsGameAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::game::WindowsGameAdapter;
+  |                       ++++
+
+error: aborting due to 4 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner::new (line 53) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\adapters\steam_scanner.rs:54:5
+  |
+3 | use console_experience::adapters::steam_scanner::SteamScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::adapters::steam_scanner::SteamScanner;
+  |                       ++++
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner (line 32) stdout ----
+error: unknown start of token: `
+ --> src\adapters\steam_scanner.rs:38:5
+  |
+8 |     `Ok`(games) => println!("Found {} Steam games", games.len()),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+8 -     `Ok`(games) => println!("Found {} Steam games", games.len()),
+8 +     'Ok`(games) => println!("Found {} Steam games", games.len()),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\steam_scanner.rs:38:8
+  |
+8 |     `Ok`(games) => println!("Found {} Steam games", games.len()),
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+8 -     `Ok`(games) => println!("Found {} Steam games", games.len()),
+8 +     `Ok'(games) => println!("Found {} Steam games", games.len()),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\steam_scanner.rs:39:5
+  |
+9 |     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+9 -     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+9 +     'Err`(e) => eprintln!("Steam scan failed: {}", e),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\steam_scanner.rs:39:9
+  |
+9 |     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+  |         ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+9 -     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+9 +     `Err'(e) => eprintln!("Steam scan failed: {}", e),
+  |
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\adapters\steam_scanner.rs:33:5
+  |
+3 | use console_experience::adapters::steam_scanner::SteamScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::adapters::steam_scanner::SteamScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\adapters\steam_scanner.rs:34:5
+  |
+4 | use console_experience::ports::GameScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::ports::GameScanner;
+  |                       ++++
+
+error[E0282]: type annotations needed
+ --> src\adapters\steam_scanner.rs:38:53
+  |
+8 |     `Ok`(games) => println!("Found {} Steam games", games.len()),
+  |                                                     ^^^^^ cannot infer type
+
+error: aborting due to 7 previous errors
+
+Some errors have detailed explanations: E0282, E0433.
+For more information about an error, try `rustc --explain E0282`.
+Couldn't compile the test.
+---- src\ports\display_port.rs - ports::display_port::DisplayPort (line 16) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:17:5
+  |
+3 | use console_experience::ports::display_port::DisplayPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::display_port::DisplayPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:18:5
+  |
+4 | use console_experience::adapters::display::WindowsDisplayAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::display::WindowsDisplayAdapter;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:19:5
+  |
+5 | use console_experience::domain::display::BrightnessConfig;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::domain::display::BrightnessConfig;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\display_port.rs - ports::display_port::DisplayPort::set_brightness (line 56) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:57:5
+  |
+3 | use console_experience::ports::display_port::DisplayPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::display_port::DisplayPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:58:5
+  |
+4 | use console_experience::domain::display::BrightnessConfig;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::domain::display::BrightnessConfig;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:59:5
+  |
+5 | use console_experience::adapters::display::WindowsDisplayAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::adapters::display::WindowsDisplayAdapter;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\display_port.rs - ports::display_port::DisplayPort::set_refresh_rate (line 93) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:94:5
+  |
+3 | use console_experience::ports::display_port::DisplayPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::display_port::DisplayPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:95:5
+  |
+4 | use console_experience::domain::display::RefreshRateConfig;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::domain::display::RefreshRateConfig;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\display_port.rs:96:5
+  |
+5 | use console_experience::adapters::display::WindowsDisplayAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::adapters::display::WindowsDisplayAdapter;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\performance_monitoring\presentmon_adapter.rs - adapters::performance_monitoring::presentmon_adapter::PresentMonAdapter::spawn_presentmon (line 224) stdout ----
+error: expected one of `!` or `::`, found `.`
+ --> src\adapters\performance_monitoring\presentmon_adapter.rs:225:13
+  |
+1 | PresentMon64.exe -process_id <pid> -output_stdout -no_csv_header -terminate_on_proc_exit
+  |             ^ expected one of `!` or `::`
+
+error: aborting due to 1 previous error
+
+Couldn't compile the test.
+---- src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort::close_game (line 70) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\game_management_port.rs:71:5
+  |
+3 | use console_experience::ports::game_management_port::GameManagementPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::game_management_port::GameManagementPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\game_management_port.rs:72:5
+  |
+4 | use console_experience::adapters::game::WindowsGameAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::game::WindowsGameAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\performance_port.rs - ports::performance_port::PerformancePort (line 25) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:26:5
+  |
+3 | use console_experience::ports::performance_port::PerformancePort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::performance_port::PerformancePort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:27:5
+  |
+4 | use console_experience::adapters::performance::RyzenAdjAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::performance::RyzenAdjAdapter;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:28:5
+  |
+5 | use console_experience::domain::performance::PerformanceProfile;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::domain::performance::PerformanceProfile;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\performance_port.rs - ports::performance_port::PerformancePort::apply_profile (line 116) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:117:5
+  |
+3 | use console_experience::ports::performance_port::PerformancePort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::performance_port::PerformancePort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:118:5
+  |
+4 | use console_experience::domain::performance::PerformanceProfile;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::domain::performance::PerformanceProfile;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:119:5
+  |
+5 | use console_experience::adapters::performance::RyzenAdjAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::adapters::performance::RyzenAdjAdapter;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_tdp_config (line 63) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:64:5
+  |
+3 | use console_experience::ports::performance_port::PerformancePort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::performance_port::PerformancePort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:65:5
+  |
+4 | use console_experience::adapters::performance::RyzenAdjAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::performance::RyzenAdjAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\performance_port.rs - ports::performance_port::PerformancePort::supports_tdp_control (line 140) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:141:5
+  |
+3 | use console_experience::ports::performance_port::PerformancePort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::performance_port::PerformancePort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:142:5
+  |
+4 | use console_experience::adapters::performance::RyzenAdjAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::performance::RyzenAdjAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\performance_port.rs - ports::performance_port::PerformancePort::set_tdp (line 93) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:94:5
+  |
+3 | use console_experience::ports::performance_port::PerformancePort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::performance_port::PerformancePort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\performance_port.rs:95:5
+  |
+4 | use console_experience::adapters::performance::RyzenAdjAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::performance::RyzenAdjAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\scanner_port.rs - ports::scanner_port::GameScanner (line 24) stdout ----
+error: unknown start of token: `
+ --> src\ports\scanner_port.rs:30:5
+  |
+8 |     `Ok`(games) => println!("Found {} Steam games", games.len()),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+8 -     `Ok`(games) => println!("Found {} Steam games", games.len()),
+8 +     'Ok`(games) => println!("Found {} Steam games", games.len()),
+  |
+
+error: unknown start of token: `
+ --> src\ports\scanner_port.rs:30:8
+  |
+8 |     `Ok`(games) => println!("Found {} Steam games", games.len()),
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+8 -     `Ok`(games) => println!("Found {} Steam games", games.len()),
+8 +     `Ok'(games) => println!("Found {} Steam games", games.len()),
+  |
+
+error: unknown start of token: `
+ --> src\ports\scanner_port.rs:31:5
+  |
+9 |     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+9 -     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+9 +     'Err`(e) => eprintln!("Steam scan failed: {}", e),
+  |
+
+error: unknown start of token: `
+ --> src\ports\scanner_port.rs:31:9
+  |
+9 |     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+  |         ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+9 -     `Err`(e) => eprintln!("Steam scan failed: {}", e),
+9 +     `Err'(e) => eprintln!("Steam scan failed: {}", e),
+  |
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:25:5
+  |
+3 | use console_experience::ports::GameScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::GameScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:26:5
+  |
+4 | use console_experience::adapters::steam_scanner::SteamScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::steam_scanner::SteamScanner;
+  |                       ++++
+
+error[E0282]: type annotations needed
+ --> src\ports\scanner_port.rs:30:53
+  |
+8 |     `Ok`(games) => println!("Found {} Steam games", games.len()),
+  |                                                     ^^^^^ cannot infer type
+
+error: aborting due to 7 previous errors
+
+Some errors have detailed explanations: E0282, E0433.
+For more information about an error, try `rustc --explain E0282`.
+Couldn't compile the test.
+---- src\ports\scanner_port.rs - ports::scanner_port::GameScanner::source (line 68) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:69:5
+  |
+3 | use console_experience::ports::GameScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::GameScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:70:5
+  |
+4 | use console_experience::adapters::steam_scanner::SteamScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::steam_scanner::SteamScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:71:5
+  |
+5 | use console_experience::domain::value_objects::GameSource;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+5 | use console_experience_lib::domain::value_objects::GameSource;
+  |                       ++++
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\system_port.rs - ports::system_port::SystemPort (line 69) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:70:5
+  |
+3 | use console_experience::ports::system_port::{SystemPort, ConnectionType};
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::system_port::{SystemPort, ConnectionType};
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:71:5
+  |
+4 | use console_experience::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\system_port.rs - ports::system_port::SystemPort::list_audio_devices (line 159) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:160:5
+  |
+3 | use console_experience::ports::system_port::SystemPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::system_port::SystemPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:161:5
+  |
+4 | use console_experience::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\system_port.rs - ports::system_port::SystemPort::set_volume (line 101) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:102:5
+  |
+3 | use console_experience::ports::system_port::SystemPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::system_port::SystemPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:103:5
+  |
+4 | use console_experience::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |                       ++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\microsoft_store_adapter.rs - adapters::microsoft_store_adapter::MicrosoftStoreAdapter::fetch_artwork (line 85) stdout ----
+error: unknown start of token: `
+ --> src\adapters\microsoft_store_adapter.rs:88:8
+  |
+5 | if let `Some`(cover) = artwork.cover_url {
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+5 - if let `Some`(cover) = artwork.cover_url {
+5 + if let 'Some`(cover) = artwork.cover_url {
+  |
+
+error: unknown start of token: `
+ --> src\adapters\microsoft_store_adapter.rs:88:13
+  |
+5 | if let `Some`(cover) = artwork.cover_url {
+  |             ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+5 - if let `Some`(cover) = artwork.cover_url {
+5 + if let `Some'(cover) = artwork.cover_url {
+  |
+
+error[E0433]: failed to resolve: use of undeclared type `MicrosoftStoreAdapter`
+ --> src\adapters\microsoft_store_adapter.rs:86:15
+  |
+3 | let adapter = MicrosoftStoreAdapter::new();
+  |               ^^^^^^^^^^^^^^^^^^^^^ use of undeclared type `MicrosoftStoreAdapter`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::microsoft_store_adapter::MicrosoftStoreAdapter;
+  |
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_winget_available (line 43) stdout ----
+error[E0433]: failed to resolve: use of undeclared type `RTSSInstaller`
+ --> src\adapters\performance_monitoring\rtss_installer.rs:44:4
+  |
+3 | if RTSSInstaller::is_winget_available() {
+  |    ^^^^^^^^^^^^^ use of undeclared type `RTSSInstaller`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::performance_monitoring::RTSSInstaller;
+  |
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::install_rtss_silent (line 142) stdout ----
+error: unknown start of token: `
+ --> src\adapters\performance_monitoring\rtss_installer.rs:144:5
+  |
+4 |     `Ok`(()) => println!("RTSS installed successfully"),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+4 -     `Ok`(()) => println!("RTSS installed successfully"),
+4 +     'Ok`(()) => println!("RTSS installed successfully"),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\performance_monitoring\rtss_installer.rs:144:8
+  |
+4 |     `Ok`(()) => println!("RTSS installed successfully"),
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+4 -     `Ok`(()) => println!("RTSS installed successfully"),
+4 +     `Ok'(()) => println!("RTSS installed successfully"),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\performance_monitoring\rtss_installer.rs:145:5
+  |
+5 |     `Err`(e) => eprintln!("Installation failed: {}", e),
+  |     ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+5 -     `Err`(e) => eprintln!("Installation failed: {}", e),
+5 +     'Err`(e) => eprintln!("Installation failed: {}", e),
+  |
+
+error: unknown start of token: `
+ --> src\adapters\performance_monitoring\rtss_installer.rs:145:9
+  |
+5 |     `Err`(e) => eprintln!("Installation failed: {}", e),
+  |         ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+5 -     `Err`(e) => eprintln!("Installation failed: {}", e),
+5 +     `Err'(e) => eprintln!("Installation failed: {}", e),
+  |
+
+error[E0433]: failed to resolve: use of undeclared type `RTSSInstaller`
+ --> src\adapters\performance_monitoring\rtss_installer.rs:143:7
+  |
+3 | match RTSSInstaller::install_rtss_silent() {
+  |       ^^^^^^^^^^^^^ use of undeclared type `RTSSInstaller`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::performance_monitoring::RTSSInstaller;
+  |
+
+error: aborting due to 5 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::uninstall_rtss (line 209) stdout ----
+error[E0433]: failed to resolve: use of undeclared type `RTSSInstaller`
+ --> src\adapters\performance_monitoring\rtss_installer.rs:210:1
+  |
+3 | RTSSInstaller::uninstall_rtss()?;
+  | ^^^^^^^^^^^^^ use of undeclared type `RTSSInstaller`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::performance_monitoring::RTSSInstaller;
+  |
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::Command (line 17) stdout ----
+error[E0433]: failed to resolve: use of undeclared type `RTSSInstaller`
+ --> src\adapters\performance_monitoring\rtss_installer.rs:18:5
+  |
+3 | if !RTSSInstaller::is_rtss_installed() {
+  |     ^^^^^^^^^^^^^ use of undeclared type `RTSSInstaller`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::performance_monitoring::RTSSInstaller;
+  |
+
+error[E0433]: failed to resolve: use of undeclared type `RTSSInstaller`
+ --> src\adapters\performance_monitoring\rtss_installer.rs:19:5
+  |
+4 |     RTSSInstaller::install_rtss_silent()?;
+  |     ^^^^^^^^^^^^^ use of undeclared type `RTSSInstaller`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::performance_monitoring::RTSSInstaller;
+  |
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_rtss_installed (line 80) stdout ----
+error[E0433]: failed to resolve: use of undeclared type `RTSSInstaller`
+ --> src\adapters\performance_monitoring\rtss_installer.rs:81:4
+  |
+3 | if RTSSInstaller::is_rtss_installed() {
+  |    ^^^^^^^^^^^^^ use of undeclared type `RTSSInstaller`
+  |
+help: consider importing this struct
+  |
+2 + use console_experience_lib::adapters::performance_monitoring::RTSSInstaller;
+  |
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\system_port.rs - ports::system_port::SystemPort::set_default_audio_device (line 188) stdout ----
+error: unknown start of token: `
+ --> src\ports\system_port.rs:193:8
+  |
+7 | if let `Some`(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+  |        ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+7 - if let `Some`(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+7 + if let 'Some`(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+  |
+
+error: unknown start of token: `
+ --> src\ports\system_port.rs:193:13
+  |
+7 | if let `Some`(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+  |             ^
+  |
+help: Unicode character '`' (Grave Accent) looks like ''' (Single Quote), but it is not
+  |
+7 - if let `Some`(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+7 + if let `Some'(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+  |
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:189:5
+  |
+3 | use console_experience::ports::system_port::SystemPort;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::system_port::SystemPort;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\system_port.rs:190:5
+  |
+4 | use console_experience::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::windows_system_adapter::WindowsSystemAdapter;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of undeclared type `AudioDeviceType`
+ --> src\ports\system_port.rs:193:70
+  |
+7 | if let `Some`(headphones) = devices.iter().find(|d| d.device_type == AudioDeviceType::Headphones) {
+  |                                                                      ^^^^^^^^^^^^^^^ use of undeclared type `AudioDeviceType`
+  |
+help: consider importing this enum
+  |
+2 + use console_experience_lib::ports::system_port::AudioDeviceType;
+  |
+
+error: aborting due to 5 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+---- src\ports\scanner_port.rs - ports::scanner_port::GameScanner::scan (line 51) stdout ----
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:52:5
+  |
+3 | use console_experience::ports::GameScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+3 | use console_experience_lib::ports::GameScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+ --> src\ports\scanner_port.rs:53:5
+  |
+4 | use console_experience::adapters::steam_scanner::SteamScanner;
+  |     ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+  |
+help: there is a crate or module with a similar name
+  |
+4 | use console_experience_lib::adapters::steam_scanner::SteamScanner;
+  |                       ++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `console_experience`
+  --> src\ports\scanner_port.rs:59:10
+   |
+10 | Ok::<(), console_experience::domain::errors::ScanError>(())
+   |          ^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `console_experience`
+   |
+help: there is a crate or module with a similar name
+   |
+10 | Ok::<(), console_experience_lib::domain::errors::ScanError>(())
+   |                            ++++
+help: consider importing this module
+   |
+ 2 + use console_experience_lib::domain::errors;
+   |
+help: if you import `errors`, refer to it directly
+   |
+10 - Ok::<(), console_experience::domain::errors::ScanError>(())
+10 + Ok::<(), errors::ScanError>(())
+   |
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+Couldn't compile the test.
+
+failures:
+    src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner (line 39)
+    src\adapters\epic_scanner.rs - adapters::epic_scanner::EpicScanner::new (line 59)
+    src\adapters\microsoft_store_adapter.rs - adapters::microsoft_store_adapter::MicrosoftStoreAdapter::fetch_artwork (line 85)
+    src\adapters\performance_monitoring\presentmon_adapter.rs - adapters::performance_monitoring::presentmon_adapter::PresentMonAdapter::spawn_presentmon (line 224)
+    src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::Command (line 17)
+    src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::install_rtss_silent (line 142)
+    src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_rtss_installed (line 80)
+    src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::is_winget_available (line 43)
+    src\adapters\performance_monitoring\rtss_installer.rs - adapters::performance_monitoring::rtss_installer::RTSSInstaller::uninstall_rtss (line 209)
+    src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner (line 32)
+    src\adapters\steam_scanner.rs - adapters::steam_scanner::SteamScanner::new (line 53)
+    src\ports\display_port.rs - ports::display_port::DisplayPort (line 16)
+    src\ports\display_port.rs - ports::display_port::DisplayPort::set_brightness (line 56)
+    src\ports\display_port.rs - ports::display_port::DisplayPort::set_refresh_rate (line 93)
+    src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort (line 18)
+    src\ports\game_management_port.rs - ports::game_management_port::GameManagementPort::close_game (line 70)
+    src\ports\performance_port.rs - ports::performance_port::PerformancePort (line 25)
+    src\ports\performance_port.rs - ports::performance_port::PerformancePort::apply_profile (line 116)
+    src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_performance_metrics (line 182)
+    src\ports\performance_port.rs - ports::performance_port::PerformancePort::get_tdp_config (line 63)
+    src\ports\performance_port.rs - ports::performance_port::PerformancePort::set_tdp (line 93)
+    src\ports\performance_port.rs - ports::performance_port::PerformancePort::supports_tdp_control (line 140)
+    src\ports\scanner_port.rs - ports::scanner_port::GameScanner (line 24)
+    src\ports\scanner_port.rs - ports::scanner_port::GameScanner::priority (line 91)
+    src\ports\scanner_port.rs - ports::scanner_port::GameScanner::scan (line 51)
+    src\ports\scanner_port.rs - ports::scanner_port::GameScanner::source (line 68)
+    src\ports\system_port.rs - ports::system_port::SystemPort (line 69)
+    src\ports\system_port.rs - ports::system_port::SystemPort::list_audio_devices (line 159)
+    src\ports\system_port.rs - ports::system_port::SystemPort::set_default_audio_device (line 188)
+    src\ports\system_port.rs - ports::system_port::SystemPort::set_volume (line 101)
+
+test result: FAILED. 0 passed; 30 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+error: doctest failed, to rerun pass `--doc`
