@@ -1,0 +1,57 @@
+/**
+ * IconWrapper Styles - Unified Icon System
+ *
+ * Color variants for icons.
+ * Size is controlled via inline style (cloned into child element).
+ */
+
+.icon {
+  /* Base icon styles */
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: color var(--transition-fast);
+}
+
+/* Color Variants */
+.icon-default {
+  color: currentColor; /* Inherit from parent */
+}
+
+.icon-primary {
+  color: var(--color-primary);
+}
+
+.icon-accent {
+  color: var(--color-accent);
+}
+
+.icon-success {
+  color: var(--color-success);
+}
+
+.icon-error {
+  color: var(--color-error);
+}
+
+/* Hover states (when inside interactive elements) */
+button:hover .icon-primary,
+a:hover .icon-primary {
+  color: var(--color-primary-light);
+}
+
+button:hover .icon-accent,
+a:hover .icon-accent {
+  color: var(--color-accent-light);
+}
+
+/* Focus states (gamepad navigation) */
+button:focus .icon-primary,
+button.focused .icon-primary {
+  color: var(--color-primary-light);
+}
+
+button:focus .icon-accent,
+button.focused .icon-accent {
+  color: var(--color-accent-light);
+}

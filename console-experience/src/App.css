@@ -12,7 +12,6 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Color Palette (Global Theme) */
-  --color-primary: var(--color-primary);
   --color-primary-light: #06bfff;
   --color-primary-rgb: 45, 115, 255;
   --color-primary-light-rgb: 6, 191, 255;
@@ -63,7 +62,7 @@
 
   /* UI Scaling Vars (Dynamic Fluid) */
   /* Min: 160px (Mobile), Ideal: 14vw, Max: 320px (UltraWide) */
-  --card-width: clamp(160px, 15vw, 3var (--space-5));
+  --card-width: clamp(160px, 15vw, 320px);
   --card-height: calc(var(--card-width) * 1.5);
   /* Always 2:3 ratio */
   --card-gap: clamp(15px, 1.5vw, 30px);
@@ -343,7 +342,7 @@ body.input-keyboard .card {
   background: rgba(255, 68, 68, 0.15);
   border: 1px solid rgba(255, 68, 68, 0.3);
   color: #ff6060;
-  padding: var(--space-3) 2var (--space-1);
+  padding: var(--space-3) calc(2 * var(--space-1));
   border-radius: var(--radius-sm);
   /* match play button */
   font-weight: 700;

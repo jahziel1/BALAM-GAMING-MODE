@@ -97,10 +97,19 @@
     --focus-glow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.3);
     --focus-transform: translateX(8px); /* SelectableItem pattern */
 
+    /* Focus System - Accent (NEW - Orange) */
+    --focus-bg-accent: rgba(var(--color-accent-rgb), 0.12);
+    --focus-border-accent: 2px solid var(--color-accent);
+    --focus-shadow-accent: 0 8px 32px rgba(var(--color-accent-rgb), 0.4);
+    --focus-glow-accent: 0 0 0 3px rgba(var(--color-accent-rgb), 0.3);
+
     /* Glassmorphism System */
     --glass-bg: rgba(15, 17, 21, 0.85);
+    --glass-bg-light: rgba(20, 22, 28, 0.6);
+    --glass-bg-heavy: rgba(10, 12, 16, 0.95);
     --glass-blur: blur(40px);
     --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-border-accent: 1px solid rgba(var(--color-accent-rgb), 0.2);
 
     /* ============================================================================
        SPACING SCALE (8-point grid)
