@@ -16,8 +16,9 @@
 .file-explorer-container {
   width: var(--container-width-lg);
   height: var(--container-height-lg);
-  background: rgba(30, 30, 36, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg); /* Design token */
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
   border-radius: var(--space-5);
   display: flex;
   flex-direction: column;
