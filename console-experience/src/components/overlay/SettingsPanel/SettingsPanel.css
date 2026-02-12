@@ -39,9 +39,15 @@
   color: var(--color-text-primary, #fff);
 }
 
+/* Enhanced hover for active accent items */
+.settings-category.active:hover {
+  background: rgba(var(--color-accent-rgb), 0.2);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.15);
+}
+
 .settings-category.active {
-  background: rgba(45, 115, 255, 0.15);
-  border-color: var(--color-primary, var(--color-primary));
+  background: rgba(var(--color-accent-rgb), 0.15);
+  border-color: var(--color-accent);
   color: var(--color-text-primary, #fff);
 }
 
@@ -52,8 +58,12 @@
 .settings-category-icon {
   display: flex;
   align-items: center;
-  color: var(--color-primary, var(--color-primary));
+  color: var(--color-text-tertiary);
   flex-shrink: 0;
+}
+
+.settings-category.active .settings-category-icon {
+  color: var(--color-accent);
 }
 
 .settings-category-label {

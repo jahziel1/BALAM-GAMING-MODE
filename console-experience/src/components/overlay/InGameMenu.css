@@ -14,6 +14,13 @@
   max-width: 480px;
 }
 
+/* Glassmorphism enhancement for InGameMenu */
+.in-game-menu-panel.overlay-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-right: var(--glass-border);
+}
+
 .in-game-menu-panel .overlay-panel-content {
   display: flex;
   flex-direction: column;

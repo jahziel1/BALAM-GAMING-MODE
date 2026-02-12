@@ -136,3 +136,42 @@
   font-weight: 300;
   letter-spacing: 0.5px;
 }
+
+/* Notification Badge (Orange Accent) */
+.icon-with-badge {
+  position: relative;
+  display: inline-flex;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: var(--space-4);
+  height: var(--space-4);
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xxs);
+  font-weight: var(--font-weight-bold);
+  color: var(--primitive-gray-50);
+  padding: 0 var(--space-1);
+  box-shadow: 0 2px 6px rgba(var(--color-accent-rgb), 0.4);
+  animation: badge-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes badge-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -159,14 +159,14 @@
   right: var(--space-2);
   width: var(--space-8);
   height: var(--space-8);
-  background: rgba(251, 191, 36, 0.9);
+  background: var(--color-accent);
   backdrop-filter: blur(8px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a1a1a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  color: var(--primitive-gray-50);
+  box-shadow: 0 2px 8px rgba(var(--color-accent-rgb), 0.4);
   z-index: 10;
   animation: favorite-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
@@ -183,4 +183,10 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Hover effect for favorite badge */
+.card:hover .card-favorite-badge {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(var(--color-accent-rgb), 0.6);
 }

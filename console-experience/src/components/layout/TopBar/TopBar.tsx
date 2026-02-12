@@ -197,7 +197,11 @@ const TopBar: React.FC<TopBarProps> = ({
             </div>
           )}
 
-          <Bell size={20} className="icon" />
+          <div className="icon-with-badge" title="Notifications">
+            <Bell size={20} className="icon" />
+            {/* Notification badge - example with count */}
+            {/* <span className="notification-badge">3</span> */}
+          </div>
         </div>
         <div className="clock" data-testid="clock">
           {formatTime(time)} | {formatDate(time)}
