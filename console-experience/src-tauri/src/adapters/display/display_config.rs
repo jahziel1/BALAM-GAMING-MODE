@@ -1,10 +1,11 @@
 use crate::domain::display::{DisplayInfo, HdrCapabilities};
 use std::sync::{Arc, Mutex};
-use tracing::{debug, info, warn};
+use tracing::{debug, info};
 use windows::Win32::Devices::Display::{
-    DisplayConfigGetDeviceInfo, GetDisplayConfigBufferSizes, QueryDisplayConfig,
+    DisplayConfigGetDeviceInfo, DisplayConfigSetDeviceInfo, GetDisplayConfigBufferSizes, QueryDisplayConfig,
     DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO, DISPLAYCONFIG_DEVICE_INFO_HEADER,
-    DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO, DISPLAYCONFIG_MODE_INFO, DISPLAYCONFIG_PATH_INFO, QDC_ONLY_ACTIVE_PATHS,
+    DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO, DISPLAYCONFIG_MODE_INFO, DISPLAYCONFIG_PATH_INFO,
+    DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE, QDC_ONLY_ACTIVE_PATHS,
 };
 use windows::Win32::Foundation::{ERROR_SUCCESS, LUID};
 
@@ -259,13 +260,38 @@ impl DisplayConfigManager {
     ///
     /// # Errors
     /// Returns `Err` if HDR toggle fails or HDR not supported.
-    ///
-    /// # Note
-    /// This is a placeholder for Commit 2. Will implement DisplayConfigSetDeviceInfo.
-    #[allow(unused_variables)]
     pub fn set_hdr_state(&self, adapter_id: LUID, target_id: u32, enable: bool) -> Result<(), String> {
-        warn!("set_hdr_state not yet implemented (Commit 2)");
-        Err("HDR state setter not yet implemented".to_string())
+        unsafe {
+            // Prepare set advanced color state request
+            let mut color_state = DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE {
+                header: DISPLAYCONFIG_DEVICE_INFO_HEADER {
+                    r#type: windows::Win32::Devices::Display::DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE,
+                    size: std::mem::size_of::<DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE>() as u32,
+                    adapterId: adapter_id,
+                    id: target_id,
+                },
+                Anonymous: windows::Win32::Devices::Display::DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE_0 {
+                    Anonymous: windows::Win32::Devices::Display::DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE_0_0 {
+                        _bitfield: u32::from(enable), // enableAdvancedColor
+                    },
+                },
+            };
+
+            // Set advanced color state
+            let result =
+                DisplayConfigSetDeviceInfo(&mut color_state.header as *mut _ as *mut DISPLAYCONFIG_DEVICE_INFO_HEADER);
+
+            if result != ERROR_SUCCESS.0 as i32 {
+                return Err(format!("DisplayConfigSetDeviceInfo failed with error code: {}", result));
+            }
+
+            info!(
+                "HDR state set successfully for adapter {:?} target {}: enabled={}",
+                adapter_id, target_id, enable
+            );
+
+            Ok(())
+        }
     }
 }
 
