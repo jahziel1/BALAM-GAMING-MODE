@@ -99,14 +99,14 @@
 
 .caps-badge {
   background: rgba(255, 140, 0, 0.2);
-  color: #ff8c00;
+  color: var(--color-caps);
   border: 1px solid rgba(255, 140, 0, 0.4);
   animation: capsGlow 1.5s ease-in-out infinite;
 }
 
 .layout-badge {
   background: rgba(100, 200, 255, 0.2);
-  color: #64c8ff;
+  color: var(--color-info-light);
   border: 1px solid rgba(100, 200, 255, 0.4);
 }
 
@@ -190,9 +190,9 @@
 }
 
 .preview-counter.counter-limit {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.1);
-  border: 1px solid rgba(255, 107, 107, 0.3);
+  color: var(--color-error);
+  background: rgba(var(--color-error-rgb), 0.1);
+  border: 1px solid rgba(var(--color-error-rgb), 0.3);
 }
 
 /* Keyboard Container */

@@ -90,6 +90,12 @@
     --color-error-rgb: 239, 68, 68;
     --color-info: var(--primitive-cyan-500);
 
+    /* Light Color Variants (for specific UI elements) */
+    --color-temp-cyan: #a5f3fc; /* Cyan for temperature displays */
+    --color-info-light: #64c8ff; /* Light blue for info states */
+    --color-error-light: #fecaca; /* Light red for error text */
+    --color-caps: #ff8c00; /* Orange for CAPS LOCK indicator */
+
     /* Focus System (Enhanced) */
     --focus-bg: rgba(var(--color-primary-rgb), 0.12);
     --focus-border: 2px solid var(--color-primary);
@@ -111,6 +117,9 @@
     --glass-border: 1px solid rgba(255, 255, 255, 0.1);
     --glass-border-accent: 1px solid rgba(var(--color-accent-rgb), 0.2);
 
+    /* Error/Critical Backgrounds */
+    --gradient-error-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+
     /* Standardized Opacity Tokens (NEW) */
     /* White overlays (for borders, subtle backgrounds) */
     --opacity-white-10: rgba(255, 255, 255, 0.1); /* Subtle borders, dividers */
@@ -124,6 +133,11 @@
     --opacity-black-80: rgba(0, 0, 0, 0.8); /* Dark overlays */
     --opacity-black-85: rgba(0, 0, 0, 0.85); /* Very dark overlays */
     --opacity-black-90: rgba(0, 0, 0, 0.9); /* Almost opaque overlays */
+
+    /* Additional opacity tokens for specific components */
+    --opacity-black-25: rgba(0, 0, 0, 0.25); /* Light shadows */
+    --opacity-black-30: rgba(0, 0, 0, 0.3); /* Medium-light shadows */
+    --opacity-white-75: rgba(255, 255, 255, 0.75); /* Semi-opaque white text */
 
     /* ============================================================================
        SPACING SCALE (8-point grid)

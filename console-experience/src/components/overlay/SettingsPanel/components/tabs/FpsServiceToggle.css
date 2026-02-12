@@ -73,7 +73,7 @@
 }
 
 input:checked + .toggle-slider {
-  background-color: #4caf50;
+  background-color: var(--color-success);
 }
 
 input:checked + .toggle-slider:before {
@@ -144,7 +144,7 @@ input:disabled + .toggle-slider {
 
 .error-text {
   font-size: 0.875rem;
-  color: #f44336;
+  color: var(--color-error);
 }
 
 /* Status */
