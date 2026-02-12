@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { invoke } from '@tauri-apps/api/core';
 import { useEffect, useState } from 'react';
 
@@ -91,6 +90,7 @@ export const usePerformanceMetrics = (
     }
 
     // Initial fetch - intentional setState in effect for data fetching
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh();
 
     // Setup polling interval
@@ -101,7 +101,6 @@ export const usePerformanceMetrics = (
     return () => {
       clearInterval(intervalId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interval, enabled]);
 
   return {

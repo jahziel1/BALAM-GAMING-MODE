@@ -23,7 +23,8 @@
     "type-check": "tsc --noEmit",
     "validate": "npm run format:check && npm run lint && npm run type-check",
     "quality": "npm run validate && npm run test run",
-    "analyze": "cross-env ANALYZE=true vite build"
+    "analyze": "cross-env ANALYZE=true vite build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
@@ -75,6 +76,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "fast-check": "^3.15.1",
     "globals": "^17.2.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "lint-staged": "^16.2.7",
     "postcss": "^8.4.49",

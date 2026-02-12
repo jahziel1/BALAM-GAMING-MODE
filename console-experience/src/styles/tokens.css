@@ -1,148 +1,249 @@
 /**
- * Design Tokens
+ * Design Tokens - Complete Frontend Redesign
  *
- * CSS custom properties organized as primitive → semantic → component.
- * All design decisions centralized for consistency and maintainability.
+ * Three-layer token system:
+ * 1. Primitive Tokens - Raw values (colors, sizes)
+ * 2. Semantic Tokens - Purpose-based (primary, accent, text)
+ * 3. Component Tokens - Component-specific (defined in component-tokens.css)
  *
- * Structure:
- * - Primitive: Raw values (colors, sizes, spacing)
- * - Semantic: Purpose-based tokens
- * - Component: Component-specific tokens
+ * @see component-tokens.css for component-level tokens
  */
 
 @layer tokens {
   :root {
-    /* ===== PRIMITIVE TOKENS ===== */
-    /* Colors */
-    --primitive-blue-400: #4a90ff;
-    --primitive-blue-500: #2d73ff;
-    --primitive-blue-600: #1a5fe5;
-    --primitive-gray-50: #f8f9fa;
-    --primitive-gray-100: #e9ecef;
-    --primitive-gray-200: #dee2e6;
-    --primitive-gray-700: #495057;
-    --primitive-gray-800: #343a40;
-    --primitive-gray-900: #212529;
-    --primitive-black: #000000;
-    --primitive-white: #ffffff;
-    --primitive-red-500: #dc3545;
-    --primitive-green-500: #28a745;
-    --primitive-yellow-500: #ffc107;
+    /* ============================================================================
+       PRIMITIVE TOKENS - Raw color values
+       ============================================================================ */
 
-    /* Spacing */
+    /* Primary Blue System (existing) */
+    --primitive-blue-400: #4a90ff;
+    --primitive-blue-500: #2d73ff; /* Current primary */
+    --primitive-blue-600: #1a5fe5;
+
+    /* NEW: Warm Accent System (orange) */
+    --primitive-orange-400: #ff8c61;
+    --primitive-orange-500: #ff6b35; /* Primary warm accent */
+    --primitive-orange-600: #e55527;
+
+    /* NEW: Alternative Warm Accent (yellow) */
+    --primitive-yellow-400: #ffe066;
+    --primitive-yellow-500: #ffd93d; /* Alternative accent */
+    --primitive-yellow-600: #ffb700;
+
+    /* Performance/Accent Colors */
+    --primitive-cyan-400: #5eead4;
+    --primitive-cyan-500: #14b8a6;
+    --primitive-purple-500: #8b5cf6;
+
+    /* Grayscale Elevation (enhanced with rgba for transparency) */
+    --primitive-gray-50: rgba(255, 255, 255, 0.98);
+    --primitive-gray-100: rgba(255, 255, 255, 0.9);
+    --primitive-gray-200: rgba(255, 255, 255, 0.7);
+    --primitive-gray-300: rgba(255, 255, 255, 0.5);
+    --primitive-gray-400: rgba(255, 255, 255, 0.3);
+    --primitive-gray-500: rgba(255, 255, 255, 0.15);
+    --primitive-gray-600: rgba(255, 255, 255, 0.08);
+    --primitive-gray-700: rgba(255, 255, 255, 0.05);
+    --primitive-gray-800: rgba(255, 255, 255, 0.03);
+    --primitive-gray-900: #0f0f0f; /* Base background */
+
+    /* State Colors */
+    --primitive-green-400: #4ade80;
+    --primitive-green-500: #22c55e;
+    --primitive-red-400: #ef4444;
+    --primitive-red-500: #dc2626;
+    --primitive-yellow-warning: #fbbf24;
+
+    /* ============================================================================
+       SEMANTIC TOKENS - Purpose-based
+       ============================================================================ */
+
+    /* Brand Colors */
+    --color-primary: var(--primitive-blue-500);
+    --color-primary-light: var(--primitive-blue-400);
+    --color-primary-dark: var(--primitive-blue-600);
+    --color-primary-rgb: 45, 115, 255; /* For rgba() usage */
+
+    --color-accent: var(--primitive-orange-500); /* NEW - warm accent */
+    --color-accent-light: var(--primitive-orange-400);
+    --color-accent-dark: var(--primitive-orange-600);
+    --color-accent-rgb: 255, 107, 53;
+
+    /* Background Elevation System */
+    --color-background-base: var(--primitive-gray-900);
+    --color-background-elevated-1: var(--primitive-gray-700);
+    --color-background-elevated-2: var(--primitive-gray-600);
+    --color-background-elevated-3: var(--primitive-gray-500);
+
+    /* Text System */
+    --color-text-primary: var(--primitive-gray-50);
+    --color-text-secondary: var(--primitive-gray-200);
+    --color-text-tertiary: var(--primitive-gray-400);
+    --color-text-muted: var(--primitive-gray-500);
+
+    /* State Colors */
+    --color-success: var(--primitive-green-400);
+    --color-success-rgb: 74, 222, 128;
+    --color-warning: var(--primitive-yellow-warning);
+    --color-warning-rgb: 251, 191, 36;
+    --color-error: var(--primitive-red-400);
+    --color-error-rgb: 239, 68, 68;
+    --color-info: var(--primitive-cyan-500);
+
+    /* Focus System (Enhanced) */
+    --focus-bg: rgba(var(--color-primary-rgb), 0.12);
+    --focus-border: 2px solid var(--color-primary);
+    --focus-shadow: 0 8px 32px rgba(var(--color-primary-rgb), 0.4);
+    --focus-glow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.3);
+    --focus-transform: translateX(8px); /* SelectableItem pattern */
+
+    /* Glassmorphism System */
+    --glass-bg: rgba(15, 17, 21, 0.85);
+    --glass-blur: blur(40px);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* ============================================================================
+       SPACING SCALE (8-point grid)
+       ============================================================================ */
+
+    --space-0: 0;
     --space-1: 0.25rem; /* 4px */
     --space-2: 0.5rem; /* 8px */
     --space-3: 0.75rem; /* 12px */
     --space-4: 1rem; /* 16px */
+    --space-5: 1.25rem; /* 20px */
     --space-6: 1.5rem; /* 24px */
     --space-8: 2rem; /* 32px */
+    --space-10: 2.5rem; /* 40px */
     --space-12: 3rem; /* 48px */
 
+    /* ============================================================================
+       TYPOGRAPHY SCALE
+       ============================================================================ */
+
     /* Font Sizes */
-    --font-xs: 0.75rem; /* 12px */
-    --font-sm: 0.875rem; /* 14px */
-    --font-base: 1rem; /* 16px */
-    --font-lg: 1.125rem; /* 18px */
-    --font-xl: 1.25rem; /* 20px */
-    --font-2xl: 1.5rem; /* 24px */
-    --font-3xl: 1.875rem; /* 30px */
+    --font-xxs: 0.6875rem; /* 11px - smallest UI text */
+    --font-xs: 0.75rem; /* 12px - captions, badges */
+    --font-sm: 0.875rem; /* 14px - body small */
+    --font-base: 1rem; /* 16px - body */
+    --font-lg: 1.125rem; /* 18px - emphasized text */
+    --font-xl: 1.25rem; /* 20px - section headers */
+    --font-2xl: 1.5rem; /* 24px - panel titles */
+    --font-3xl: 1.875rem; /* 30px - hero headings */
+    --font-4xl: 2.25rem; /* 36px - hero large */
 
     /* Line Heights */
     --leading-tight: 1.25;
     --leading-normal: 1.5;
     --leading-relaxed: 1.75;
 
-    /* Border Radius */
+    /* Font Weights */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-black: 900;
+
+    /* Font Families */
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-heading: 'Rajdhani', sans-serif;
+    --font-mono: 'Consolas', 'Monaco', monospace;
+
+    /* ============================================================================
+       BORDER RADIUS SCALE
+       ============================================================================ */
+
     --radius-sm: 0.25rem; /* 4px */
     --radius-md: 0.5rem; /* 8px */
     --radius-lg: 0.75rem; /* 12px */
     --radius-xl: 1rem; /* 16px */
+    --radius-full: 9999px; /* Pills */
 
-    /* ===== SEMANTIC TOKENS ===== */
-    /* Colors */
-    --color-primary: var(--primitive-blue-500);
-    --color-primary-hover: var(--primitive-blue-600);
-    --color-surface: var(--primitive-gray-900);
-    --color-surface-secondary: var(--primitive-gray-800);
-    --color-text: var(--primitive-white);
-    --color-text-secondary: var(--primitive-gray-200);
-    --color-text-muted: var(--primitive-gray-700);
-    --color-border: var(--primitive-gray-700);
-    --color-success: var(--primitive-green-500);
-    --color-error: var(--primitive-red-500);
-    --color-warning: var(--primitive-yellow-500);
+    /* ============================================================================
+       SHADOW SYSTEM
+       ============================================================================ */
 
-    /* Spacing */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    /* ============================================================================
+       TRANSITION SYSTEM
+       ============================================================================ */
+
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* ============================================================================
+       LEGACY SEMANTIC TOKENS (Backward Compatibility)
+       Remove these gradually during migration
+       ============================================================================ */
+
+    /* Legacy color aliases */
+    --color-surface: var(--color-background-base);
+    --color-surface-secondary: var(--color-background-elevated-1);
+    --color-text: var(--color-text-primary);
+    --color-border: var(--primitive-gray-600);
+    --color-primary-hover: var(--color-primary-light);
+
+    /* Legacy spacing aliases */
     --spacing-xs: var(--space-2);
     --spacing-sm: var(--space-3);
     --spacing-md: var(--space-4);
     --spacing-lg: var(--space-6);
     --spacing-xl: var(--space-8);
 
-    /* Typography */
+    /* Legacy typography aliases */
     --text-body: var(--font-base);
     --text-heading: var(--font-2xl);
     --text-caption: var(--font-sm);
 
-    /* Effects */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-
-    /* Transitions */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-
-    /* Focus */
+    /* Legacy effects */
     --focus-ring: 0 0 0 3px var(--color-primary);
-    --focus-border: 2px solid var(--color-primary);
+    --transition-base: var(--transition-normal);
 
-    /* ===== COMPONENT TOKENS ===== */
-    /* Card */
-    --card-bg: var(--color-surface-secondary);
-    --card-padding: var(--spacing-md);
+    /* Legacy component tokens (move to component-tokens.css) */
+    --card-bg: var(--color-background-elevated-1);
+    --card-padding: var(--space-4);
     --card-radius: var(--radius-lg);
     --card-shadow: var(--shadow-md);
 
-    /* Button */
-    --button-padding-x: var(--spacing-md);
-    --button-padding-y: var(--spacing-sm);
+    --button-padding-x: var(--space-4);
+    --button-padding-y: var(--space-3);
     --button-radius: var(--radius-md);
     --button-primary-bg: var(--color-primary);
-    --button-primary-hover: var(--color-primary-hover);
+    --button-primary-hover: var(--color-primary-light);
 
-    /* Sidebar */
     --sidebar-width: 240px;
-    --sidebar-bg: var(--color-surface);
+    --sidebar-bg: var(--color-background-base);
 
-    /* TopBar */
     --topbar-height: 60px;
-    --topbar-bg: var(--color-surface);
+    --topbar-bg: var(--color-background-base);
 
-    /* Footer */
     --footer-height: 50px;
-    --footer-bg: var(--color-surface);
+    --footer-bg: var(--color-background-base);
 
-    /* Overlay */
     --overlay-bg: rgba(0, 0, 0, 0.8);
-    --overlay-panel-bg: var(--color-surface);
+    --overlay-panel-bg: var(--color-background-base);
     --overlay-panel-width: 500px;
 
-    /* Game Card */
     --game-card-width: 180px;
     --game-card-aspect: 3 / 4;
-    --game-card-gap: var(--spacing-md);
+    --game-card-gap: var(--space-4);
 
-    /* Steam-inspired additions */
-    --accent-primary: #3b82f6;
-    --accent-primary-hover: #2563eb;
-    --bg-primary: #1b2838;
-    --bg-secondary: #16202d;
-    --text-primary: #ffffff;
-    --text-secondary: #b8bcbf;
+    /* Steam-inspired additions (legacy) */
+    --accent-primary: var(--color-primary);
+    --accent-primary-hover: var(--color-primary-light);
+    --bg-primary: var(--color-background-base);
+    --bg-secondary: var(--color-background-elevated-1);
+    --text-primary: var(--color-text-primary);
+    --text-secondary: var(--color-text-secondary);
 
     /* Shadows for depth */
-    --shadow-focus: 0 0 0 4px rgba(59, 130, 246, 0.4), 0 8px 24px rgba(59, 130, 246, 0.5);
+    --shadow-focus: var(--focus-shadow), var(--focus-glow);
   }
 }

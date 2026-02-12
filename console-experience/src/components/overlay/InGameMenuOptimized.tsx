@@ -35,6 +35,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { memo, useState } from 'react';
 
 import { useAppStore } from '@/application/providers/StoreProvider';
+import { usePerformanceMetrics } from '@/hooks/usePerformanceMetrics';
 import { getCachedAssetSrc } from '@/utils/image-cache';
 
 /**
@@ -57,6 +58,9 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   const isOpen = overlay.leftSidebarOpen;
   const activeGame = game.activeRunningGame;
   const isQuickSettingsOpen = overlay.rightSidebarOpen;
+
+  // Performance metrics (real-time FPS, GPU temp, etc.)
+  const { metrics } = usePerformanceMetrics({ interval: 1000, enabled: isOpen });
 
   /**
    * Resume game handler
@@ -220,11 +224,15 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
             </div>
           </div>
 
-          {/* Stats Bar (FPS, GPU temp) */}
+          {/* Stats Bar (FPS, GPU temp) - Real-time metrics */}
           <div className="game-stats">
-            <span className="stat-item">60 FPS</span>
+            <span className="stat-item">
+              {metrics?.fps?.current_fps ? `${Math.round(metrics.fps.current_fps)} FPS` : 'FPS N/A'}
+            </span>
             <span className="stat-divider">•</span>
-            <span className="stat-item">GPU 65°C</span>
+            <span className="stat-item">
+              {metrics?.gpu_temp_c ? `GPU ${Math.round(metrics.gpu_temp_c)}°C` : 'GPU Temp N/A'}
+            </span>
           </div>
 
           {/* Menu Actions */}

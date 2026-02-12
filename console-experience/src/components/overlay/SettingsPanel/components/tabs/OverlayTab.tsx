@@ -1,8 +1,7 @@
-/* eslint-disable */
 import './OverlayTab.css';
 
 import { invoke } from '@tauri-apps/api/core';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface OverlayStatus {
   enabled: boolean;
@@ -26,15 +25,10 @@ export const OverlayTab: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load overlay status on mount
-  useEffect(() => {
-    loadStatus();
-  }, []);
-
   /**
    * Load current overlay status from backend
    */
-  const loadStatus = async () => {
+  const loadStatus = useCallback(async () => {
     try {
       const status = await invoke<OverlayStatus>('overlay_get_status');
       setEnabled(status.enabled);
@@ -42,10 +36,16 @@ export const OverlayTab: React.FC = () => {
       setFpsAvailable(status.fps_available);
       setError(null);
     } catch (err) {
-      setError(`Failed to load overlay status: ${err}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`Failed to load overlay status: ${errorMessage}`);
       console.error('Overlay status error:', err);
     }
-  };
+  }, []);
+
+  // Load overlay status on mount
+  useEffect(() => {
+    void loadStatus();
+  }, [loadStatus]);
 
   /**
    * Toggle overlay enable/disable
@@ -63,7 +63,8 @@ export const OverlayTab: React.FC = () => {
         setEnabled(true);
       }
     } catch (err) {
-      setError(`Failed to toggle overlay: ${err}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`Failed to toggle overlay: ${errorMessage}`);
       console.error('Overlay toggle error:', err);
     } finally {
       setLoading(false);
@@ -81,7 +82,8 @@ export const OverlayTab: React.FC = () => {
       await invoke('overlay_set_position', { corner: newPosition });
       setPosition(newPosition);
     } catch (err) {
-      setError(`Failed to set position: ${err}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`Failed to set position: ${errorMessage}`);
       console.error('Position change error:', err);
     } finally {
       setLoading(false);
@@ -103,7 +105,12 @@ export const OverlayTab: React.FC = () => {
       <div className="overlay-setting-card">
         <div className="overlay-setting-header">
           <label className="overlay-toggle">
-            <input type="checkbox" checked={enabled} onChange={handleToggle} disabled={loading} />
+            <input
+              type="checkbox"
+              checked={enabled}
+              onChange={() => void handleToggle()}
+              disabled={loading}
+            />
             <span className="overlay-toggle-slider"></span>
             <span className="overlay-toggle-label">{enabled ? 'Enabled' : 'Disabled'}</span>
           </label>
@@ -135,7 +142,7 @@ export const OverlayTab: React.FC = () => {
               <button
                 key={pos}
                 className={`overlay-position-button ${position === pos ? 'active' : ''}`}
-                onClick={() => handlePositionChange(pos)}
+                onClick={() => void handlePositionChange(pos)}
                 disabled={loading}
               >
                 <div className="overlay-position-preview">

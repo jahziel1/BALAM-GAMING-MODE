@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -61,11 +53,11 @@ export const useFpsService = () => {
       // If enabling and not running, might need admin
       if (enabled && !newStatus.running && newStatus.error) {
         setRequiresAdmin(true);
-        throw new Error(newStatus.error || 'Failed to enable FPS monitoring');
+        throw new Error(newStatus.error);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to toggle FPS service:', err);
-      const errorMessage = err?.toString() || 'Toggle failed';
+      const errorMessage = err instanceof Error ? err.message : String(err);
       setError(errorMessage);
 
       // Check if error is due to admin privileges
@@ -86,9 +78,10 @@ export const useFpsService = () => {
     try {
       await invoke('install_fps_service');
       await checkStatus();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to install FPS service:', err);
-      setError(err?.toString() || 'Installation failed');
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -100,9 +93,10 @@ export const useFpsService = () => {
     try {
       await invoke('uninstall_fps_service');
       await checkStatus();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to uninstall FPS service:', err);
-      setError(err?.toString() || 'Uninstallation failed');
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -114,9 +108,10 @@ export const useFpsService = () => {
     try {
       await invoke('start_fps_service');
       await checkStatus();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to start FPS service:', err);
-      setError(err?.toString() || 'Start failed');
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -128,9 +123,10 @@ export const useFpsService = () => {
     try {
       await invoke('stop_fps_service');
       await checkStatus();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to stop FPS service:', err);
-      setError(err?.toString() || 'Stop failed');
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -138,12 +134,14 @@ export const useFpsService = () => {
 
   // Check status on mount
   useEffect(() => {
-    checkStatus();
+    void checkStatus();
   }, [checkStatus]);
 
   // Auto-refresh every 10 seconds
   useEffect(() => {
-    const interval = setInterval(checkStatus, 10000);
+    const interval = setInterval(() => {
+      void checkStatus();
+    }, 10000);
     return () => clearInterval(interval);
   }, [checkStatus]);
 

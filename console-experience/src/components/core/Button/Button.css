@@ -1,0 +1,153 @@
+/**
+ * Button Component Styles
+ *
+ * Uses component tokens from component-tokens.css.
+ * No hardcoded values - all design decisions in tokens.
+ */
+
+@layer components {
+  /* ============================================================================
+     BASE BUTTON STYLES
+     ============================================================================ */
+
+  .btn {
+    /* Layout */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+
+    /* Typography */
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+    text-decoration: none;
+
+    /* Appearance */
+    border-radius: var(--button-radius);
+    border: none;
+    cursor: pointer;
+    transition: all var(--button-transition);
+
+    /* States */
+    user-select: none;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .btn:focus-visible {
+    outline: var(--focus-border);
+    outline-offset: 2px;
+  }
+
+  /* ============================================================================
+     BUTTON SIZES
+     ============================================================================ */
+
+  .btn-sm {
+    padding: var(--button-padding-sm);
+    font-size: var(--button-font-size-sm);
+  }
+
+  .btn-md {
+    padding: var(--button-padding-md);
+    font-size: var(--button-font-size-md);
+  }
+
+  .btn-lg {
+    padding: var(--button-padding-lg);
+    font-size: var(--button-font-size-lg);
+  }
+
+  /* ============================================================================
+     BUTTON VARIANTS
+     ============================================================================ */
+
+  /* Primary (default) - Blue background */
+  .btn-primary {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--button-primary-bg-hover);
+  }
+
+  .btn-primary.btn-focused {
+    background: var(--button-primary-bg-hover);
+    box-shadow: var(--focus-shadow), var(--focus-glow);
+  }
+
+  /* Secondary - Subtle background */
+  .btn-secondary {
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--button-secondary-bg-hover);
+  }
+
+  .btn-secondary.btn-focused {
+    background: var(--button-secondary-bg-hover);
+    box-shadow: var(--focus-shadow), var(--focus-glow);
+  }
+
+  /* Danger - Red background for destructive actions */
+  .btn-danger {
+    background: var(--button-danger-bg);
+    color: var(--button-danger-text);
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: var(--button-danger-bg-hover);
+  }
+
+  .btn-danger.btn-focused {
+    background: var(--button-danger-bg-hover);
+    box-shadow:
+      0 8px 32px rgba(var(--color-error-rgb), 0.4),
+      0 0 0 3px rgba(var(--color-error-rgb), 0.3);
+  }
+
+  /* Ghost - Transparent background */
+  .btn-ghost {
+    background: var(--button-ghost-bg);
+    color: var(--button-ghost-text);
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--button-ghost-bg-hover);
+  }
+
+  .btn-ghost.btn-focused {
+    background: var(--button-ghost-bg-hover);
+    box-shadow: var(--focus-shadow), var(--focus-glow);
+  }
+
+  /* ============================================================================
+     BUTTON MODIFIERS
+     ============================================================================ */
+
+  /* Full Width */
+  .btn-full-width {
+    width: 100%;
+  }
+
+  /* Icon */
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Text */
+  .btn-text {
+    flex: 1 1 auto;
+  }
+}

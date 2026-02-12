@@ -21,9 +21,9 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedAction(null);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setCountdown(5);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setIsExecuting(false);
     }
   }, [isOpen]);

@@ -1,0 +1,125 @@
+/**
+ * StatusIndicator Component Styles
+ *
+ * Uses component tokens from component-tokens.css.
+ * Consistent status visualization across the app.
+ */
+
+@layer components {
+  /* ============================================================================
+     BASE STATUS INDICATOR STYLES
+     ============================================================================ */
+
+  .status-indicator {
+    /* Layout */
+    display: inline-flex;
+    align-items: center;
+    gap: var(--status-indicator-gap);
+
+    /* Spacing */
+    padding: var(--status-indicator-padding);
+
+    /* Typography */
+    font-size: var(--status-indicator-font-size);
+    font-weight: var(--status-indicator-font-weight);
+    font-family: var(--font-body);
+
+    /* Appearance */
+    border-radius: var(--status-indicator-radius);
+    transition: all var(--transition-fast);
+
+    /* States */
+    user-select: none;
+  }
+
+  /* ============================================================================
+     STATUS VARIANTS
+     ============================================================================ */
+
+  /* Success - Green for positive states */
+  .status-success {
+    background: var(--status-success-bg);
+    color: var(--status-success-text);
+  }
+
+  .status-success .status-icon {
+    color: var(--status-success-icon);
+  }
+
+  /* Warning - Yellow for warnings */
+  .status-warning {
+    background: var(--status-warning-bg);
+    color: var(--status-warning-text);
+  }
+
+  .status-warning .status-icon {
+    color: var(--status-warning-icon);
+  }
+
+  /* Error - Red for errors */
+  .status-error {
+    background: var(--status-error-bg);
+    color: var(--status-error-text);
+  }
+
+  .status-error .status-icon {
+    color: var(--status-error-icon);
+  }
+
+  /* Neutral - Gray for inactive/default states */
+  .status-neutral {
+    background: var(--status-neutral-bg);
+    color: var(--status-neutral-text);
+  }
+
+  .status-neutral .status-icon {
+    color: var(--status-neutral-icon);
+  }
+
+  /* Info - Blue for informational states */
+  .status-info {
+    background: var(--status-info-bg);
+    color: var(--status-info-text);
+  }
+
+  .status-info .status-icon {
+    color: var(--status-info-icon);
+  }
+
+  /* ============================================================================
+     PULSE ANIMATION (for loading/active states)
+     ============================================================================ */
+
+  @keyframes status-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  .status-pulse {
+    animation: status-pulse 2s infinite;
+  }
+
+  /* ============================================================================
+     STATUS ELEMENTS
+     ============================================================================ */
+
+  /* Icon */
+  .status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+  }
+
+  /* Text */
+  .status-text {
+    line-height: 1.2;
+  }
+}

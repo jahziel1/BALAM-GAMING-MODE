@@ -1,0 +1,12 @@
+{
+  "name": "balam-console-experience-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Balam Console Experience - Monorepo root",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0"
+  }
+}

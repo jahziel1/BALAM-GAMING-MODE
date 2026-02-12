@@ -1,0 +1,274 @@
+/**
+ * Component Tokens - Complete Frontend Redesign
+ *
+ * Component-specific tokens that reference semantic tokens from tokens.css.
+ * These define the visual appearance of specific UI components.
+ *
+ * @see tokens.css for primitive and semantic tokens
+ */
+
+@layer component-tokens {
+  :root {
+    /* ============================================================================
+       BUTTON SYSTEM
+       ============================================================================ */
+
+    /* Button Sizing */
+    --button-padding-sm: var(--space-2) var(--space-3);
+    --button-padding-md: var(--space-3) var(--space-5);
+    --button-padding-lg: var(--space-4) var(--space-6);
+    --button-font-size-sm: var(--font-sm);
+    --button-font-size-md: var(--font-base);
+    --button-font-size-lg: var(--font-lg);
+    --button-radius: var(--radius-md);
+    --button-transition: var(--transition-fast);
+
+    /* Button Variants */
+    --button-primary-bg: var(--color-primary);
+    --button-primary-bg-hover: var(--color-primary-light);
+    --button-primary-text: var(--primitive-gray-50);
+
+    --button-secondary-bg: var(--color-background-elevated-2);
+    --button-secondary-bg-hover: var(--color-background-elevated-3);
+    --button-secondary-text: var(--color-text-primary);
+
+    --button-danger-bg: var(--color-error);
+    --button-danger-bg-hover: #dc2626;
+    --button-danger-text: var(--primitive-gray-50);
+
+    --button-ghost-bg: transparent;
+    --button-ghost-bg-hover: var(--color-background-elevated-1);
+    --button-ghost-text: var(--color-text-secondary);
+
+    /* Button Accent Variant (NEW) */
+    --button-accent-bg: var(--color-accent);
+    --button-accent-bg-hover: var(--color-accent-light);
+    --button-accent-text: var(--primitive-gray-50);
+
+    /* ============================================================================
+       BADGE SYSTEM
+       ============================================================================ */
+
+    --badge-padding: var(--space-1) var(--space-3);
+    --badge-font-size: var(--font-xs);
+    --badge-radius: var(--radius-sm);
+    --badge-font-weight: var(--font-weight-semibold);
+
+    /* Badge Variants */
+    --badge-default-bg: var(--color-background-elevated-2);
+    --badge-default-text: var(--color-text-primary);
+
+    --badge-outline-bg: transparent;
+    --badge-outline-border: 1px solid var(--color-background-elevated-3);
+    --badge-outline-text: var(--color-text-secondary);
+
+    --badge-ghost-bg: transparent;
+    --badge-ghost-text: var(--color-text-tertiary);
+
+    --badge-success-bg: rgba(var(--color-success-rgb), 0.15);
+    --badge-success-text: var(--color-success);
+
+    --badge-warning-bg: rgba(var(--color-warning-rgb), 0.15);
+    --badge-warning-text: var(--color-warning);
+
+    --badge-danger-bg: rgba(var(--color-error-rgb), 0.15);
+    --badge-danger-text: var(--color-error);
+
+    /* Badge Active State (NEW - uses warm accent) */
+    --badge-active-bg: rgba(var(--color-accent-rgb), 0.15);
+    --badge-active-text: var(--color-accent);
+
+    /* ============================================================================
+       CARD SYSTEM
+       ============================================================================ */
+
+    --card-bg: var(--color-background-elevated-1);
+    --card-border: 1px solid var(--color-background-elevated-2);
+    --card-radius: var(--radius-lg);
+    --card-shadow: var(--shadow-md);
+    --card-padding: var(--space-4);
+
+    /* Card Focus Effects (preserve existing pattern) */
+    --card-focus-scale: 1.08;
+    --card-focus-translate-y: -10px;
+    --card-focus-shadow: var(--focus-shadow), var(--focus-glow);
+    --card-transition: var(--transition-bounce);
+
+    /* ============================================================================
+       SELECTABLE ITEM SYSTEM (preserve existing pattern)
+       ============================================================================ */
+
+    --item-padding: var(--space-4) var(--space-6);
+    --item-bg-hover: rgba(var(--color-primary-rgb), 0.08);
+    --item-bg-focused: var(--focus-bg);
+    --item-border-focused: var(--color-primary);
+    --item-transform-focused: var(--focus-transform);
+    --item-transition: var(--transition-fast);
+
+    /* Item with accent tint (NEW) */
+    --item-bg-hover-accent: rgba(var(--color-accent-rgb), 0.05);
+
+    /* ============================================================================
+       SECTION HEADER SYSTEM
+       ============================================================================ */
+
+    --section-header-font-family: var(--font-heading);
+    --section-header-font-weight: var(--font-weight-bold);
+    --section-header-line-height: var(--leading-tight);
+    --section-header-margin-bottom: var(--space-4);
+
+    /* Section Header Sizes */
+    --section-header-h2-font-size: var(--font-2xl);
+    --section-header-h3-font-size: var(--font-xl);
+    --section-header-h4-font-size: var(--font-lg);
+
+    /* Section Header Variants */
+    --section-header-default-color: var(--color-text-primary);
+    --section-header-emphasized-color: var(--color-primary);
+    --section-header-muted-color: var(--color-text-secondary);
+
+    /* ============================================================================
+       STATUS INDICATOR SYSTEM
+       ============================================================================ */
+
+    --status-indicator-padding: var(--space-2) var(--space-3);
+    --status-indicator-font-size: var(--font-xs);
+    --status-indicator-font-weight: var(--font-weight-semibold);
+    --status-indicator-radius: var(--radius-sm);
+    --status-indicator-gap: var(--space-2);
+
+    /* Status Variants */
+    --status-success-bg: rgba(var(--color-success-rgb), 0.15);
+    --status-success-text: var(--color-success);
+    --status-success-icon: var(--color-success);
+
+    --status-warning-bg: rgba(var(--color-warning-rgb), 0.15);
+    --status-warning-text: var(--color-warning);
+    --status-warning-icon: var(--color-warning);
+
+    --status-error-bg: rgba(var(--color-error-rgb), 0.15);
+    --status-error-text: var(--color-error);
+    --status-error-icon: var(--color-error);
+
+    --status-neutral-bg: var(--color-background-elevated-2);
+    --status-neutral-text: var(--color-text-secondary);
+    --status-neutral-icon: var(--color-text-tertiary);
+
+    --status-info-bg: rgba(45, 115, 255, 0.15); /* primary blue */
+    --status-info-text: var(--color-primary);
+    --status-info-icon: var(--color-primary);
+
+    /* ============================================================================
+       INPUT SYSTEM
+       ============================================================================ */
+
+    --input-bg: var(--color-background-elevated-1);
+    --input-border: 1px solid var(--color-background-elevated-3);
+    --input-border-focus: 2px solid var(--color-primary);
+    --input-text: var(--color-text-primary);
+    --input-placeholder: var(--color-text-muted);
+    --input-radius: var(--radius-md);
+    --input-padding: var(--space-3) var(--space-4);
+    --input-font-size: var(--font-base);
+    --input-transition: var(--transition-fast);
+
+    /* Input States */
+    --input-disabled-bg: var(--color-background-elevated-1);
+    --input-disabled-text: var(--color-text-muted);
+    --input-error-border: 2px solid var(--color-error);
+    --input-success-border: 2px solid var(--color-success);
+
+    /* ============================================================================
+       OVERLAY SYSTEM
+       ============================================================================ */
+
+    --overlay-backdrop: rgba(0, 0, 0, 0.8);
+    --overlay-bg: var(--glass-bg);
+    --overlay-blur: var(--glass-blur);
+    --overlay-border: var(--glass-border);
+    --overlay-shadow: var(--shadow-2xl);
+    --overlay-radius: var(--radius-xl);
+    --overlay-padding: var(--space-8);
+
+    /* ============================================================================
+       PERFORMANCE PIP (Overlay Component)
+       ============================================================================ */
+
+    --pip-bg: var(--glass-bg);
+    --pip-border: var(--glass-border);
+    --pip-radius: var(--radius-md);
+    --pip-padding: var(--space-3) var(--space-4);
+    --pip-shadow: var(--shadow-lg);
+
+    /* PIP Metric Colors (NEW - color-coded) */
+    --pip-fps-color: var(--color-accent); /* Orange for FPS */
+    --pip-cpu-color: var(--color-primary); /* Blue for CPU */
+    --pip-gpu-color: var(--color-info); /* Cyan for GPU */
+    --pip-ram-color: var(--primitive-purple-500); /* Purple for RAM */
+    --pip-temp-color: var(--color-warning); /* Yellow for temps */
+
+    /* ============================================================================
+       GAME CARD SYSTEM
+       ============================================================================ */
+
+    --game-card-bg: var(--color-background-elevated-1);
+    --game-card-border: 1px solid var(--color-background-elevated-2);
+    --game-card-radius: var(--radius-lg);
+    --game-card-shadow: var(--shadow-md);
+    --game-card-width: 180px;
+    --game-card-aspect: 3 / 4;
+    --game-card-gap: var(--space-4);
+
+    /* Game Card Focus (enhanced) */
+    --game-card-focus-scale: var(--card-focus-scale);
+    --game-card-focus-translate-y: var(--card-focus-translate-y);
+    --game-card-focus-shadow: var(--card-focus-shadow);
+    --game-card-transition: var(--card-transition);
+
+    /* Game Card Favorite Badge (NEW - orange star) */
+    --game-card-favorite-color: var(--color-accent);
+
+    /* ============================================================================
+       SIDEBAR SYSTEM
+       ============================================================================ */
+
+    --sidebar-width: 240px;
+    --sidebar-bg: var(--color-background-base);
+    --sidebar-border: 1px solid var(--color-background-elevated-1);
+    --sidebar-padding: var(--space-4);
+
+    /* ============================================================================
+       TOPBAR SYSTEM
+       ============================================================================ */
+
+    --topbar-height: 60px;
+    --topbar-bg: var(--color-background-base);
+    --topbar-border: 1px solid var(--color-background-elevated-1);
+    --topbar-padding: var(--space-0) var(--space-6);
+
+    /* ============================================================================
+       FOOTER SYSTEM
+       ============================================================================ */
+
+    --footer-height: 50px;
+    --footer-bg: var(--color-background-base);
+    --footer-border: 1px solid var(--color-background-elevated-1);
+    --footer-padding: var(--space-0) var(--space-6);
+
+    /* ============================================================================
+       SEMANTIC TYPOGRAPHY TOKENS (NEW)
+       ============================================================================ */
+
+    --text-label: var(--font-sm) / var(--leading-normal) var(--font-weight-medium) var(--font-body);
+    --text-caption: var(--font-xs) / var(--leading-tight) var(--font-weight-regular)
+      var(--font-body);
+    --text-body: var(--font-base) / var(--leading-normal) var(--font-weight-regular)
+      var(--font-body);
+    --text-heading-sm: var(--font-xl) / var(--leading-tight) var(--font-weight-bold)
+      var(--font-heading);
+    --text-heading-md: var(--font-2xl) / var(--leading-tight) var(--font-weight-bold)
+      var(--font-heading);
+    --text-heading-lg: var(--font-3xl) / var(--leading-tight) var(--font-weight-black)
+      var(--font-heading);
+  }
+}

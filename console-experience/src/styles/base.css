@@ -14,7 +14,7 @@
       'Segoe UI',
       Roboto,
       sans-serif;
-    font-size: var(--text-body);
+    font-size: var(--font-base); /* Fixed: use font-base instead of text-body */
     line-height: var(--leading-normal);
     color: var(--color-text);
     background-color: var(--color-surface);

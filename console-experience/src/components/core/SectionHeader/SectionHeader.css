@@ -1,0 +1,60 @@
+/**
+ * SectionHeader Component Styles
+ *
+ * Uses component tokens from component-tokens.css.
+ * Consistent typography hierarchy across all section headers.
+ */
+
+@layer components {
+  /* ============================================================================
+     BASE SECTION HEADER STYLES
+     ============================================================================ */
+
+  .section-header {
+    /* Typography */
+    font-family: var(--section-header-font-family);
+    font-weight: var(--section-header-font-weight);
+    line-height: var(--section-header-line-height);
+
+    /* Spacing */
+    margin: 0 0 var(--section-header-margin-bottom) 0;
+
+    /* States */
+    user-select: none;
+  }
+
+  /* ============================================================================
+     SECTION HEADER LEVELS (Semantic Sizing)
+     ============================================================================ */
+
+  .section-header-h2 {
+    font-size: var(--section-header-h2-font-size);
+  }
+
+  .section-header-h3 {
+    font-size: var(--section-header-h3-font-size);
+  }
+
+  .section-header-h4 {
+    font-size: var(--section-header-h4-font-size);
+  }
+
+  /* ============================================================================
+     SECTION HEADER VARIANTS (Visual Styling)
+     ============================================================================ */
+
+  /* Default - Standard text color */
+  .section-header-default {
+    color: var(--section-header-default-color);
+  }
+
+  /* Emphasized - Primary brand color (blue) */
+  .section-header-emphasized {
+    color: var(--section-header-emphasized-color);
+  }
+
+  /* Muted - Secondary text color */
+  .section-header-muted {
+    color: var(--section-header-muted-color);
+  }
+}

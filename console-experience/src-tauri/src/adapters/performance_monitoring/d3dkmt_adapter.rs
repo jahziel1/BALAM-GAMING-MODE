@@ -8,6 +8,7 @@ use windows::Win32::Graphics::Gdi::{EnumDisplayDevicesW, DISPLAY_DEVICEW, DISPLA
 // Manual D3DKMT type definitions (not available in windows-rs 0.52)
 // These are from d3dkmthk.h in Windows SDK
 
+#[allow(dead_code)]
 #[repr(C)]
 #[derive(Copy, Clone)]
 struct D3DKMT_QUERYSTATISTICS {
@@ -24,6 +25,7 @@ union D3DKMT_QUERYSTATISTICS_RESULT {
     _padding: [u8; 4096], // Large enough for any result type
 }
 
+#[allow(dead_code)]
 #[repr(C)]
 #[derive(Copy, Clone)]
 struct D3DKMT_QUERYSTATISTICS_ADAPTER_INFO {
