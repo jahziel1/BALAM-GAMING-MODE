@@ -17,6 +17,7 @@ export { type AppStore, type AppStoreHook, createAppStore } from './app-store';
 export type { GameSlice } from './slices/game-slice';
 export type { OverlaySlice, OverlayType } from './slices/overlay-slice';
 export type {
+  OverlayLevel,
   PerformanceOverlayConfig,
   PerformanceOverlayMode,
   PerformanceOverlayPosition,

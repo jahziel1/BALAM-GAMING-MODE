@@ -1,6 +1,6 @@
-import { invoke } from '@tauri-apps/api/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
+import { useAppStore } from '../../../../../application/providers/StoreProvider';
 import { OverlayLevelSelector } from '../OverlayLevelSelector';
 import { OverlayPreview } from '../OverlayPreview';
 import { ServiceStatusCard } from '../ServiceStatusCard';
@@ -16,35 +16,10 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
   hardwareAcceleration,
   setHardwareAcceleration,
 }) => {
-  const [pipVisible, setPipVisible] = useState(false);
-  const [pipLoading, setPipLoading] = useState(false);
-  const [overlayLevel, setOverlayLevel] = useState<0 | 1 | 2 | 3 | 4>(1);
-  const [overlayOpacity, setOverlayOpacity] = useState(0.9);
-
-  // Check PiP visibility on mount
-  useEffect(() => {
-    const checkPipVisibility = async () => {
-      try {
-        const visible = await invoke<boolean>('is_pip_visible');
-        setPipVisible(visible);
-      } catch (err) {
-        console.error('Failed to check PiP visibility:', err);
-      }
-    };
-    void checkPipVisibility();
-  }, []);
-
-  const handlePipToggle = async () => {
-    setPipLoading(true);
-    try {
-      const newState = await invoke<boolean>('toggle_performance_pip');
-      setPipVisible(newState);
-    } catch (err) {
-      console.error('Failed to toggle PiP:', err);
-    } finally {
-      setPipLoading(false);
-    }
-  };
+  const { performance, setPerformanceLevel, setPerformanceOpacity } = useAppStore();
+  const overlayLevel = performance.config.level;
+  const overlayOpacity = performance.config.opacity;
+  const pipVisible = overlayLevel > 0;
 
   return (
     <>
@@ -76,8 +51,7 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
         >
           <SettingsToggle
             checked={pipVisible}
-            onChange={() => void handlePipToggle()}
-            disabled={pipLoading}
+            onChange={(e) => setPerformanceLevel(e.target.checked ? 1 : 0)}
           />
         </SettingsItem>
 
@@ -90,7 +64,7 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
               <div style={{ width: '100%' }}>
                 <OverlayLevelSelector
                   selectedLevel={overlayLevel}
-                  onLevelChange={setOverlayLevel}
+                  onLevelChange={setPerformanceLevel}
                 />
               </div>
             </SettingsItem>
@@ -104,7 +78,7 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
                   min="50"
                   max="100"
                   value={overlayOpacity * 100}
-                  onChange={(e) => setOverlayOpacity(Number(e.target.value) / 100)}
+                  onChange={(e) => setPerformanceOpacity(Number(e.target.value) / 100)}
                   style={{ flex: 1 }}
                 />
                 <span style={{ minWidth: '45px', textAlign: 'right' }}>

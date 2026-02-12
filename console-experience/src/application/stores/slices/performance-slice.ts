@@ -6,17 +6,31 @@
  *
  * ## Architecture
  * - **Pattern**: Zustand Slices
- * - **State**: Performance overlay config (mode, position, enabled)
+ * - **State**: Performance overlay config (level 0-4, opacity)
  * - **Actions**: Configure overlay display settings
+ *
+ * ## Overlay Levels (Steam Deck style)
+ * - **0**: Hidden
+ * - **1**: Minimal (FPS only)
+ * - **2**: Basic (FPS + Frame time)
+ * - **3**: Standard (FPS + Frame time + CPU/GPU usage)
+ * - **4**: Full (All metrics: temps, RAM, GPU power)
  *
  * @module stores/slices/performance-slice
  */
 
-export type PerformanceOverlayMode = 'minimal' | 'compact' | 'full';
+export type OverlayLevel = 0 | 1 | 2 | 3 | 4;
+export type PerformanceOverlayMode = 'minimal' | 'compact' | 'full'; // Deprecated, kept for compatibility
 export type PerformanceOverlayPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 export interface PerformanceOverlayConfig {
+  /** Overlay detail level (0-4, Steam Deck style) */
+  level: OverlayLevel;
+  /** Overlay opacity (0-1) */
+  opacity: number;
+  /** @deprecated Legacy field, use level instead */
   enabled: boolean;
+  /** @deprecated Legacy field, use level instead */
   mode: PerformanceOverlayMode;
   position: PerformanceOverlayPosition;
   autoStartFPS: boolean;
@@ -32,7 +46,11 @@ export interface PerformanceSlice {
   };
 
   // Actions
+  setPerformanceLevel: (level: OverlayLevel) => void;
+  setPerformanceOpacity: (opacity: number) => void;
+  /** @deprecated Use setPerformanceLevel instead */
   setPerformanceEnabled: (enabled: boolean) => void;
+  /** @deprecated Use setPerformanceLevel instead */
   setPerformanceMode: (mode: PerformanceOverlayMode) => void;
   setPerformancePosition: (position: PerformanceOverlayPosition) => void;
   setPerformanceAutoStartFPS: (autoStartFPS: boolean) => void;
@@ -41,8 +59,10 @@ export interface PerformanceSlice {
 }
 
 export const DEFAULT_PERFORMANCE_CONFIG: PerformanceOverlayConfig = {
-  enabled: false,
-  mode: 'compact',
+  level: 1, // Minimal (FPS only)
+  opacity: 0.9,
+  enabled: false, // Deprecated
+  mode: 'compact', // Deprecated
   position: 'top-right',
   autoStartFPS: true,
   updateInterval: 1000,
@@ -65,6 +85,22 @@ export const createPerformanceSlice = (
   },
 
   // Actions
+  setPerformanceLevel: (level) =>
+    set((state) => ({
+      performance: {
+        ...state.performance,
+        config: { ...state.performance.config, level },
+      },
+    })),
+
+  setPerformanceOpacity: (opacity) =>
+    set((state) => ({
+      performance: {
+        ...state.performance,
+        config: { ...state.performance.config, opacity },
+      },
+    })),
+
   setPerformanceEnabled: (enabled) =>
     set((state) => ({
       performance: {

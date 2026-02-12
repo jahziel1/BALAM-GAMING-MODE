@@ -17,7 +17,7 @@ import {
 } from './components/App';
 import { Footer, Sidebar, TopBar } from './components/layout';
 import { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
-import { SystemOSD } from './components/overlay';
+import { PerformancePip, SystemOSD } from './components/overlay';
 import { FilterChips, type FilterType } from './components/ui/FilterChips';
 
 // Lazy load heavy overlay components
@@ -51,7 +51,7 @@ function App() {
     loadGames,
   } = useGameStore();
 
-  const { openRightSidebar, openLeftSidebar } = useAppStore();
+  const { openRightSidebar, openLeftSidebar, performance } = useAppStore();
 
   // Haptic feedback
   const { hapticEvent } = useHaptic();
@@ -542,6 +542,7 @@ function App() {
       <div className="app-background" style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className="app-overlay" />
       <SystemOSD type="volume" value={osdValue} isVisible={isOsdVisible} />
+      <PerformancePip level={performance.config.level} opacity={performance.config.opacity} />
 
       {!isSidebarOpen && (
         <div
