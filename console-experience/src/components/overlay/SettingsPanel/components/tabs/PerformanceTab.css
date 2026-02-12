@@ -1,0 +1,7 @@
+/* Performance Tab Styles */
+
+.status-active {
+  color: var(--color-success);
+  font-size: 14px;
+  font-weight: 500;
+}

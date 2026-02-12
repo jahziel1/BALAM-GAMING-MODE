@@ -1,3 +1,5 @@
+import './PerformanceTab.css';
+
 import React from 'react';
 
 import { useAppStore } from '../../../../../application/providers/StoreProvider';
@@ -81,7 +83,7 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
               label="ℹ️ Overlay Information"
               description="The overlay appears in the top-right corner. Only visible in borderless or windowed mode games. For fullscreen exclusive, switch game to borderless mode."
             >
-              <div style={{ color: '#7FFF7F', fontSize: '14px' }}>Active</div>
+              <div className="status-active">Active</div>
             </SettingsItem>
           </>
         ) : null}
