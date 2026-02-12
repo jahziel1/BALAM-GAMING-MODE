@@ -1,4 +1,5 @@
-use crate::domain::display::{BrightnessConfig, RefreshRateConfig};
+use crate::adapters::display::HdrManager;
+use crate::domain::display::{BrightnessConfig, DisplayInfo, RefreshRateConfig};
 use crate::ports::display_port::DisplayPort;
 use serde::Deserialize;
 use tracing::{info, warn};
@@ -41,8 +42,10 @@ struct WmiSetBrightnessParams {
 }
 
 /// Windows-native implementation of `DisplayPort`.
-/// Uses WMI for laptop brightness, DDC/CI for external monitors, and GDI for refresh rate.
-pub struct WindowsDisplayAdapter;
+/// Uses WMI for laptop brightness, DDC/CI for external monitors, GDI for refresh rate, and DisplayConfig for HDR.
+pub struct WindowsDisplayAdapter {
+    hdr_manager: HdrManager,
+}
 
 impl Default for WindowsDisplayAdapter {
     fn default() -> Self {
@@ -53,7 +56,9 @@ impl Default for WindowsDisplayAdapter {
 impl WindowsDisplayAdapter {
     #[must_use]
     pub fn new() -> Self {
-        Self
+        Self {
+            hdr_manager: HdrManager::new(),
+        }
     }
 
     /// Gets brightness using WMI (Windows Management Instrumentation).
@@ -270,6 +275,26 @@ impl DisplayPort for WindowsDisplayAdapter {
     fn supports_brightness_control(&self) -> bool {
         // Check if WMI brightness is available (quick query)
         self.get_brightness_wmi().ok().flatten().is_some()
+    }
+
+    fn get_displays(&self) -> Result<Vec<DisplayInfo>, String> {
+        self.hdr_manager.get_displays()
+    }
+
+    fn get_primary_display(&self) -> Option<DisplayInfo> {
+        self.hdr_manager.get_primary_display()
+    }
+
+    fn is_hdr_supported(&self, display_id: u32) -> bool {
+        self.hdr_manager.is_hdr_supported(display_id)
+    }
+
+    fn is_hdr_enabled(&self, display_id: u32) -> bool {
+        self.hdr_manager.is_hdr_enabled(display_id)
+    }
+
+    fn set_hdr_enabled(&self, display_id: u32, enabled: bool) -> Result<(), String> {
+        self.hdr_manager.set_hdr_enabled(display_id, enabled)
     }
 }
 

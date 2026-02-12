@@ -1,4 +1,4 @@
-use crate::domain::display::{BrightnessConfig, RefreshRateConfig};
+use crate::domain::display::{BrightnessConfig, DisplayInfo, RefreshRateConfig};
 
 /// Port defining display control capabilities.
 ///
@@ -125,4 +125,58 @@ pub trait DisplayPort {
     /// # Performance
     /// Fast check (<10ms). Call before attempting brightness changes.
     fn supports_brightness_control(&self) -> bool;
+
+    /// Gets information about all active displays with HDR capabilities.
+    ///
+    /// # Returns
+    /// Vector of `DisplayInfo` with HDR capabilities for each display.
+    ///
+    /// # Errors
+    /// Returns `Err` if display enumeration fails.
+    ///
+    /// # Performance
+    /// ~10ms on first call (initializes DisplayConfig), <5ms thereafter (cached).
+    fn get_displays(&self) -> Result<Vec<DisplayInfo>, String>;
+
+    /// Gets the primary display information.
+    ///
+    /// # Returns
+    /// `Some(DisplayInfo)` if a primary display exists, `None` otherwise.
+    fn get_primary_display(&self) -> Option<DisplayInfo>;
+
+    /// Checks if HDR is supported on a specific display.
+    ///
+    /// # Arguments
+    /// * `display_id` - Display ID from `DisplayInfo`
+    ///
+    /// # Returns
+    /// `true` if HDR is supported, `false` otherwise.
+    fn is_hdr_supported(&self, display_id: u32) -> bool;
+
+    /// Checks if HDR is currently enabled on a specific display.
+    ///
+    /// # Arguments
+    /// * `display_id` - Display ID from `DisplayInfo`
+    ///
+    /// # Returns
+    /// `true` if HDR is enabled, `false` otherwise.
+    fn is_hdr_enabled(&self, display_id: u32) -> bool;
+
+    /// Enables or disables HDR on a specific display.
+    ///
+    /// # Arguments
+    /// * `display_id` - Display ID from `DisplayInfo`
+    /// * `enabled` - Whether to enable or disable HDR
+    ///
+    /// # Returns
+    /// `Ok(())` if HDR state was set successfully.
+    ///
+    /// # Errors
+    /// - `Err("Display not found")` - Invalid display ID
+    /// - `Err("HDR not supported")` - Display doesn't support HDR
+    /// - `Err(...)` - Platform API error
+    ///
+    /// # Performance
+    /// ~10-20ms (immediate application, no restart required)
+    fn set_hdr_enabled(&self, display_id: u32, enabled: bool) -> Result<(), String>;
 }
