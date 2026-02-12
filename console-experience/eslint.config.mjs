@@ -8,7 +8,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', '.next', 'coverage', 'src-tauri', '*.config.ts', '*.config.mjs', 'e2e', 'wdio.conf.ts', 'wdio-fix-snippet.ts'] },
+  { ignores: ['dist', 'node_modules', '.next', 'coverage', 'src-tauri', '*.config.ts', '*.config.mjs', 'e2e', 'tests/e2e', 'wdio.conf.ts', 'wdio-fix-snippet.ts'] },
   {
     extends: [
       js.configs.recommended,

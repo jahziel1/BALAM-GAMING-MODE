@@ -30,5 +30,6 @@
     }
   },
   "include": ["src", "vitest.config.ts"],
+  "exclude": ["tests/e2e"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

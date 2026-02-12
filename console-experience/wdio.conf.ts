@@ -182,13 +182,27 @@ export const config: Options.Testrunner = {
     [
       'visual',
       {
-        compare: {
-          // defaults to 0
-          mismatchPercentage: 1.0,
-        },
+        baselineFolder: './tests/visual/baseline',
+        formatImageName: '{tag}-{logName}-{width}x{height}',
+        screenshotPath: './tests/visual/screenshots',
+        diffFolder: './tests/visual/diff',
+        savePerInstance: true,
+        autoSaveBaseline: true,
+        blockOutStatusBar: true,
+        blockOutToolBar: true,
         viewportChangePause: 300,
         viewports: [{ width: 1920, height: 1080 }],
         orientations: ['landscape'],
+        compare: {
+          // Allow 0.5% difference for anti-aliasing tolerance
+          misMatchPercentage: 0.5,
+          // Don't fail on size difference (responsive)
+          ignoreDimensions: false,
+          // Ignore anti-aliasing differences
+          ignoreAntialiasing: true,
+          // Ignore colors (focus on structure)
+          ignoreColors: false,
+        },
       },
     ],
   ],
