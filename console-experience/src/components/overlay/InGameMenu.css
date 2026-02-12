@@ -205,7 +205,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: calc(100% - 4var (--space-2));
+  width: calc(100% - 4 * var(--space-2));
   max-width: 360px;
   padding: 2var (--space-1);
   background: rgba(20, 20, 30, 0.98);
