@@ -1,5 +1,6 @@
+use crate::adapters::fps_service::FpsClient;
 use crate::adapters::performance_monitoring::{NVMLAdapter, PresentMonAdapter, RTSSAdapter};
-use crate::domain::performance::PerformanceMetrics;
+use crate::domain::performance::{FPSStats, PerformanceMetrics};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -11,12 +12,14 @@ use tracing::{info, warn};
 /// # Features
 /// - **CPU/RAM:** sysinfo (fast, cross-platform)
 /// - **GPU (NVIDIA):** `NVML` adapter (official API)
-/// - **FPS:** `PresentMon` adapter (`ETW` events)
-/// - **Fallback Chain:** If `NVML` fails, GPU shows 0% (graceful degradation)
+/// - **FPS (Primary):** `FpsClient` (Windows Service via Named Pipe)
+/// - **FPS (Fallback):** `PresentMon` adapter (`ETW` events)
+/// - **Fallback Chain:** FPS Service → PresentMon → None
 ///
 /// # Performance
 /// - CPU/RAM: <10ms per query
 /// - GPU (`NVML`): <5ms per query
+/// - FPS (Service): <1ms per query (cached, Named Pipe)
 /// - FPS (`PresentMon`): Background thread, no blocking
 /// - Total overhead: <2% CPU
 ///
@@ -24,7 +27,8 @@ use tracing::{info, warn};
 /// This is the main orchestrator that aggregates metrics from multiple adapters:
 /// - sysinfo for CPU/RAM
 /// - `NVML` for NVIDIA GPU
-/// - `PresentMon` for FPS
+/// - `FpsClient` for FPS (Windows Service priority)
+/// - `PresentMon` for FPS (fallback if service unavailable)
 ///
 /// All adapters are lazy-initialized and handle errors gracefully.
 ///
@@ -36,7 +40,9 @@ pub struct WindowsPerfMonitor {
     system: Arc<Mutex<System>>,
     /// `NVML` adapter for NVIDIA GPU metrics (lazy initialized)
     nvml: Arc<NVMLAdapter>,
-    /// `PresentMon` adapter for FPS monitoring (lazy initialized)
+    /// FPS Service client (Windows Service via Named Pipe) - PRIMARY FPS source
+    fps_client: Arc<FpsClient>,
+    /// `PresentMon` adapter for FPS monitoring (FALLBACK if service unavailable)
     presentmon: Arc<PresentMonAdapter>,
     /// `RTSS` adapter for fullscreen overlay (lazy initialized)
     rtss: Arc<Mutex<Option<RTSSAdapter>>>,
@@ -114,6 +120,7 @@ impl WindowsPerfMonitor {
         Self {
             system: system_arc,
             nvml: Arc::new(NVMLAdapter::new()),
+            fps_client: Arc::new(FpsClient::new()),
             presentmon: Arc::new(PresentMonAdapter::new()),
             rtss: Arc::new(Mutex::new(rtss)),
             fps_monitoring_active: Arc::new(Mutex::new(false)),
@@ -280,13 +287,19 @@ impl WindowsPerfMonitor {
         let gpu_temp_c = self.get_gpu_temp();
         let gpu_power_w = self.get_gpu_power();
 
-        // Get FPS from PresentMon
-        let fps = match self.presentmon.get_fps_stats() {
-            Ok(stats) => stats,
-            Err(e) => {
-                warn!("Failed to get FPS stats: {}", e);
-                None
-            },
+        // Get FPS - Priority: FPS Service → PresentMon → None
+        let fps = if let Some(service_fps) = self.fps_client.get_fps() {
+            // FPS Service available (Windows Service via Named Pipe)
+            Some(FPSStats::new(service_fps))
+        } else {
+            // FPS Service not available - fallback to PresentMon (ETW events)
+            match self.presentmon.get_fps_stats() {
+                Ok(stats) => stats,
+                Err(e) => {
+                    warn!("Failed to get FPS stats from PresentMon: {}", e);
+                    None
+                },
+            }
         };
 
         PerformanceMetrics {

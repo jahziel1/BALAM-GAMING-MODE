@@ -515,6 +515,7 @@ dependencies = [
  "libloading 0.8.9",
  "nvml-wrapper",
  "once_cell",
+ "parking_lot",
  "path-clean",
  "pelite",
  "proptest",

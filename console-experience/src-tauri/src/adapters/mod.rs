@@ -2,6 +2,7 @@ pub mod battlenet_scanner;
 pub mod bluetooth;
 pub mod display;
 pub mod epic_scanner;
+pub mod fps_service;
 pub mod game;
 pub mod gamepad_adapter;
 pub mod haptic;
