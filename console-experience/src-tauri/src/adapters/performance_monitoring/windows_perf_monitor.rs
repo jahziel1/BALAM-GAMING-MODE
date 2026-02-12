@@ -1,5 +1,5 @@
 use crate::adapters::fps_service::FpsClient;
-use crate::adapters::performance_monitoring::{NVMLAdapter, PresentMonAdapter, RTSSAdapter};
+use crate::adapters::performance_monitoring::NVMLAdapter;
 use crate::domain::performance::{FPSStats, PerformanceMetrics};
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -12,23 +12,19 @@ use tracing::{info, warn};
 /// # Features
 /// - **CPU/RAM:** sysinfo (fast, cross-platform)
 /// - **GPU (NVIDIA):** `NVML` adapter (official API)
-/// - **FPS (Primary):** `FpsClient` (Windows Service via Named Pipe)
-/// - **FPS (Fallback):** `PresentMon` adapter (`ETW` events)
-/// - **Fallback Chain:** FPS Service → PresentMon → None
+/// - **FPS:** `FpsClient` (Windows Service via Named Pipe)
 ///
 /// # Performance
 /// - CPU/RAM: <10ms per query
 /// - GPU (`NVML`): <5ms per query
 /// - FPS (Service): <1ms per query (cached, Named Pipe)
-/// - FPS (`PresentMon`): Background thread, no blocking
 /// - Total overhead: <2% CPU
 ///
 /// # Architecture
 /// This is the main orchestrator that aggregates metrics from multiple adapters:
 /// - sysinfo for CPU/RAM
 /// - `NVML` for NVIDIA GPU
-/// - `FpsClient` for FPS (Windows Service priority)
-/// - `PresentMon` for FPS (fallback if service unavailable)
+/// - `FpsClient` for FPS (Windows Service)
 ///
 /// All adapters are lazy-initialized and handle errors gracefully.
 ///
@@ -40,19 +36,11 @@ pub struct WindowsPerfMonitor {
     system: Arc<Mutex<System>>,
     /// `NVML` adapter for NVIDIA GPU metrics (lazy initialized)
     nvml: Arc<NVMLAdapter>,
-    /// FPS Service client (Windows Service via Named Pipe) - PRIMARY FPS source
+    /// FPS Service client (Windows Service via Named Pipe)
     fps_client: Arc<FpsClient>,
-    /// `PresentMon` adapter for FPS monitoring (FALLBACK if service unavailable)
-    presentmon: Arc<PresentMonAdapter>,
-    /// `RTSS` adapter for fullscreen overlay (lazy initialized)
-    rtss: Arc<Mutex<Option<RTSSAdapter>>>,
-    /// FPS monitoring active flag
-    fps_monitoring_active: Arc<Mutex<bool>>,
     /// Last time system metrics were refreshed (for rate limiting)
     #[allow(dead_code)]
     last_refresh: Arc<Mutex<Instant>>,
-    /// Whether to use `RTSS` for overlay (fullscreen mode)
-    use_rtss_overlay: Arc<Mutex<bool>>,
 }
 
 impl WindowsPerfMonitor {
@@ -102,82 +90,12 @@ impl WindowsPerfMonitor {
         // Wait for first refresh to complete (ensure we have baseline)
         thread::sleep(Duration::from_millis(600));
 
-        // Try to initialize RTSS (lazy, will be None if not available)
-        let rtss = if RTSSAdapter::is_available() {
-            info!("RTSS detected, fullscreen overlay support enabled");
-            match RTSSAdapter::new() {
-                Ok(adapter) => Some(adapter),
-                Err(e) => {
-                    warn!("RTSS detected but failed to initialize: {}", e);
-                    None
-                },
-            }
-        } else {
-            info!("RTSS not detected, overlay limited to borderless windowed mode");
-            None
-        };
-
         Self {
             system: system_arc,
             nvml: Arc::new(NVMLAdapter::new()),
             fps_client: Arc::new(FpsClient::new()),
-            presentmon: Arc::new(PresentMonAdapter::new()),
-            rtss: Arc::new(Mutex::new(rtss)),
-            fps_monitoring_active: Arc::new(Mutex::new(false)),
             last_refresh,
-            use_rtss_overlay: Arc::new(Mutex::new(false)),
         }
-    }
-
-    /// Starts FPS monitoring for a specific process.
-    ///
-    /// # Arguments
-    /// * `pid` - Process ID to monitor (0 = all processes)
-    ///
-    /// # Returns
-    /// - `Ok(())` - FPS monitoring started
-    /// - `Err(...)` - Failed to start (PresentMon not found, etc.)
-    pub fn start_fps_monitoring(&self, pid: u32) -> Result<(), String> {
-        info!("Starting FPS monitoring for PID {}", pid);
-
-        match self.presentmon.start_monitoring(pid) {
-            Ok(_) => {
-                if let Ok(mut active) = self.fps_monitoring_active.lock() {
-                    *active = true;
-                }
-                info!("FPS monitoring started successfully");
-                Ok(())
-            },
-            Err(e) => {
-                warn!("Failed to start FPS monitoring: {}", e);
-                Err(e)
-            },
-        }
-    }
-
-    /// Stops FPS monitoring.
-    pub fn stop_fps_monitoring(&self) -> Result<(), String> {
-        info!("Stopping FPS monitoring");
-
-        match self.presentmon.stop_monitoring() {
-            Ok(_) => {
-                if let Ok(mut active) = self.fps_monitoring_active.lock() {
-                    *active = false;
-                }
-                info!("FPS monitoring stopped successfully");
-                Ok(())
-            },
-            Err(e) => {
-                warn!("Failed to stop FPS monitoring: {}", e);
-                Err(e)
-            },
-        }
-    }
-
-    /// Checks if FPS monitoring is active.
-    #[must_use]
-    pub fn is_fps_monitoring_active(&self) -> bool {
-        self.fps_monitoring_active.lock().map(|active| *active).unwrap_or(false)
     }
 
     /// Gets CPU usage percentage (average across all cores).
@@ -279,7 +197,7 @@ impl WindowsPerfMonitor {
     /// All metrics use graceful fallbacks:
     /// - CPU/RAM: Always available (sysinfo)
     /// - GPU: 0% if `NVML` not available
-    /// - FPS: `None` if PresentMon not running
+    /// - FPS: `None` if FPS Service not available
     pub fn get_metrics(&self) -> PerformanceMetrics {
         let cpu_usage = self.get_cpu_usage();
         let (ram_used_gb, ram_total_gb) = self.get_ram_usage();
@@ -287,20 +205,8 @@ impl WindowsPerfMonitor {
         let gpu_temp_c = self.get_gpu_temp();
         let gpu_power_w = self.get_gpu_power();
 
-        // Get FPS - Priority: FPS Service → PresentMon → None
-        let fps = if let Some(service_fps) = self.fps_client.get_fps() {
-            // FPS Service available (Windows Service via Named Pipe)
-            Some(FPSStats::new(service_fps))
-        } else {
-            // FPS Service not available - fallback to PresentMon (ETW events)
-            match self.presentmon.get_fps_stats() {
-                Ok(stats) => stats,
-                Err(e) => {
-                    warn!("Failed to get FPS stats from PresentMon: {}", e);
-                    None
-                },
-            }
-        };
+        // Get FPS from FPS Service (Windows Service via Named Pipe)
+        let fps = self.fps_client.get_fps().map(FPSStats::new);
 
         PerformanceMetrics {
             cpu_usage,
@@ -318,66 +224,6 @@ impl WindowsPerfMonitor {
     #[must_use]
     pub fn is_nvml_available(&self) -> bool {
         self.nvml.is_available()
-    }
-
-    /// Checks if `RTSS` is available for fullscreen overlay.
-    #[must_use]
-    pub fn is_rtss_available(&self) -> bool {
-        self.rtss.lock().unwrap().is_some()
-    }
-
-    /// Enables `RTSS` overlay mode (for fullscreen games).
-    ///
-    /// When enabled, metrics are written to `RTSS` instead of the window overlay.
-    pub fn enable_rtss_overlay(&self) -> Result<(), String> {
-        if !self.is_rtss_available() {
-            return Err("RTSS not available".to_string());
-        }
-
-        *self.use_rtss_overlay.lock().unwrap() = true;
-        info!("RTSS overlay mode enabled");
-        Ok(())
-    }
-
-    /// Disables `RTSS` overlay mode (back to window overlay).
-    pub fn disable_rtss_overlay(&self) -> Result<(), String> {
-        *self.use_rtss_overlay.lock().unwrap() = false;
-
-        // Clear RTSS overlay
-        if let Some(rtss) = self.rtss.lock().unwrap().as_ref() {
-            rtss.clear()?;
-        }
-
-        info!("RTSS overlay mode disabled");
-        Ok(())
-    }
-
-    /// Checks if `RTSS` overlay mode is currently active.
-    #[must_use]
-    pub fn is_using_rtss_overlay(&self) -> bool {
-        *self.use_rtss_overlay.lock().unwrap()
-    }
-
-    /// Updates `RTSS` overlay with current metrics.
-    ///
-    /// This should be called periodically when `RTSS` mode is enabled.
-    pub fn update_rtss_overlay(&self) -> Result<(), String> {
-        let metrics = self.get_metrics();
-
-        let rtss_guard = self.rtss.lock().unwrap();
-        let rtss = rtss_guard.as_ref().ok_or("RTSS not available")?;
-
-        let fps = metrics.fps.as_ref().map(|f| f.current_fps).unwrap_or(0.0);
-
-        let frame_time = metrics.fps.as_ref().map(|f| f.frame_time_ms);
-
-        rtss.update(
-            fps,
-            metrics.cpu_usage,
-            metrics.gpu_usage,
-            metrics.ram_used_gb,
-            frame_time,
-        )
     }
 }
 

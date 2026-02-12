@@ -19,6 +19,11 @@ e2e/reports/
 *.wdio-*
 wdio-*.log
 
+# Build outputs and temporary files
+build_output.txt
+*_output.txt
+test_results*.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
