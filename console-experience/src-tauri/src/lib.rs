@@ -24,12 +24,15 @@ use crate::application::commands::{
     get_brightness,
     get_connected_bluetooth_devices,
     get_current_wifi,
+    // HDR commands
+    get_displays,
     // FPS Service commands
     get_fps_service_status,
     get_fps_stats,
     get_games,
     get_paired_bluetooth_devices,
     get_performance_metrics,
+    get_primary_display,
     get_refresh_rate,
     get_running_game,
     get_saved_networks,
@@ -65,6 +68,7 @@ use crate::application::commands::{
     set_bluetooth_enabled,
     set_brightness,
     set_default_audio_device,
+    set_hdr_enabled,
     set_refresh_rate,
     set_tdp,
     set_volume,
@@ -284,6 +288,10 @@ pub fn run() {
             set_refresh_rate,
             get_supported_refresh_rates,
             supports_brightness_control,
+            // HDR commands
+            get_displays,
+            get_primary_display,
+            set_hdr_enabled,
             // Performance commands
             get_tdp_config,
             set_tdp,

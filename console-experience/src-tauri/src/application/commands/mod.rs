@@ -1,3 +1,4 @@
+pub mod display;
 pub mod fps_service_manager;
 pub mod game;
 pub mod haptic;
@@ -6,6 +7,7 @@ pub mod performance;
 pub mod pip;
 pub mod system;
 
+pub use display::*;
 pub use fps_service_manager::*;
 pub use game::*;
 pub use haptic::*;
