@@ -111,6 +111,20 @@
     --glass-border: 1px solid rgba(255, 255, 255, 0.1);
     --glass-border-accent: 1px solid rgba(var(--color-accent-rgb), 0.2);
 
+    /* Standardized Opacity Tokens (NEW) */
+    /* White overlays (for borders, subtle backgrounds) */
+    --opacity-white-10: rgba(255, 255, 255, 0.1); /* Subtle borders, dividers */
+    --opacity-white-15: rgba(255, 255, 255, 0.15); /* Light backgrounds */
+    --opacity-white-20: rgba(255, 255, 255, 0.2); /* Hover states */
+
+    /* Black overlays (for shadows, gradients, overlays) */
+    --opacity-black-40: rgba(0, 0, 0, 0.4); /* Medium shadows */
+    --opacity-black-50: rgba(0, 0, 0, 0.5); /* Strong shadows */
+    --opacity-black-60: rgba(0, 0, 0, 0.6); /* Heavy shadows */
+    --opacity-black-80: rgba(0, 0, 0, 0.8); /* Dark overlays */
+    --opacity-black-85: rgba(0, 0, 0, 0.85); /* Very dark overlays */
+    --opacity-black-90: rgba(0, 0, 0, 0.9); /* Almost opaque overlays */
+
     /* ============================================================================
        SPACING SCALE (8-point grid)
        ============================================================================ */

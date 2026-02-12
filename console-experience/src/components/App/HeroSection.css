@@ -53,8 +53,8 @@
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(0, 0, 0, 0.3) 40%,
-    rgba(0, 0, 0, 0.9) 100%
+    var(--opacity-black-40) 40%,
+    var(--opacity-black-90) 100%
   );
   z-index: 1;
 }
@@ -79,7 +79,7 @@
   height: auto;
   object-fit: contain;
   object-position: left center;
-  filter: drop-shadow(0 6px 2var (--space-1) rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 6px calc(2 * var(--space-1)) var(--opacity-black-60));
   transition: transform 0.3s ease;
 }
 
@@ -94,8 +94,8 @@
   line-height: 1.1;
   color: var(--text-primary);
   text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.8),
-    0 4px 16px rgba(0, 0, 0, 0.6);
+    0 2px 8px var(--opacity-black-80),
+    0 4px 16px var(--opacity-black-60);
   margin: 0;
   max-width: 800px;
 }
@@ -112,7 +112,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--opacity-white-10);
   backdrop-filter: blur(10px);
   border-radius: 6px;
   text-transform: uppercase;
@@ -122,7 +122,7 @@
 /* Favorite Button */
 .btn-favorite {
   padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--opacity-white-10);
   backdrop-filter: blur(10px);
   border: 2px solid transparent;
   border-radius: var(--radius-md);
@@ -135,7 +135,7 @@
 }
 
 .btn-favorite:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--opacity-white-20);
   border-color: var(--color-text-muted);
   box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.4); /* Orange glow */
   transform: scale(1.05);
