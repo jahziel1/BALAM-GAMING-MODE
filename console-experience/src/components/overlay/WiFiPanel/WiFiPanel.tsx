@@ -1,10 +1,11 @@
 import './WiFiPanel.css';
 
 import { invoke } from '@tauri-apps/api/core';
-import { Lock, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { Lock, Wifi, WifiOff } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
+import { Skeleton } from '../../ui/Skeleton/Skeleton';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
 
 interface WiFiPanelProps {
@@ -187,9 +188,10 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
   const renderContent = () => {
     if (isScanning) {
       return (
-        <div className="wifi-state">
-          <RefreshCw className="wifi-icon-spin" size={32} />
-          <p>Scanning for networks...</p>
+        <div className="wifi-loading">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} height="60px" />
+          ))}
         </div>
       );
     }

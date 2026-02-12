@@ -165,6 +165,29 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: transform var(--transition-fast);
+  }
+
+  /* Icon animations on hover */
+  .btn:hover:not(:disabled) .btn-icon {
+    transform: scale(1.15);
+  }
+
+  /* Primary button icons pulse on hover */
+  .btn-primary:hover:not(:disabled) .btn-icon {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.85;
+    }
   }
 
   /* Text */

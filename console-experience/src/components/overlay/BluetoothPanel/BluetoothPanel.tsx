@@ -1,10 +1,11 @@
 import './BluetoothPanel.css';
 
 import { invoke } from '@tauri-apps/api/core';
-import { Bluetooth, BluetoothOff, RefreshCw } from 'lucide-react';
+import { Bluetooth, BluetoothOff } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
+import { Skeleton } from '../../ui/Skeleton/Skeleton';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
 
 interface BluetoothPanelProps {
@@ -258,9 +259,10 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
 
     if (isScanning) {
       return (
-        <div className="bluetooth-state">
-          <RefreshCw className="bluetooth-icon-spin" size={32} />
-          <p>Scanning for devices...</p>
+        <div className="bluetooth-loading">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} height="60px" />
+          ))}
         </div>
       );
     }

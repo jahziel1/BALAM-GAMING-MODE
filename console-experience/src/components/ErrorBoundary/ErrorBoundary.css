@@ -5,20 +5,36 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: var(--color-text-primary);
     padding: var(--space-8);
     text-align: center;
+    animation: fadeInUp 0.4s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .error-boundary-title {
     font-size: var(--font-4xl);
     margin-bottom: var(--space-4);
     color: var(--color-error);
+    animation: fadeIn 0.6s ease-out 0.2s both;
   }
 
   .error-boundary-message {
     margin-top: var(--space-4);
     color: var(--color-text-secondary);
     font-size: var(--font-lg);
+    animation: fadeIn 0.6s ease-out 0.4s both;
   }
 
   .error-boundary-button {
@@ -32,6 +48,7 @@
     font-size: var(--font-base);
     font-weight: var(--font-weight-semibold);
     transition: var(--transition-fast);
+    animation: fadeIn 0.6s ease-out 0.6s both;
   }
 
   .error-boundary-button:hover {
@@ -41,5 +58,14 @@
 
   .error-boundary-button:active {
     transform: translateY(0);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }

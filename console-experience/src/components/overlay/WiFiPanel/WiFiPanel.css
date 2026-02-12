@@ -26,6 +26,14 @@
   color: var(--color-error);
 }
 
+/* Loading state with skeleton placeholders */
+.wifi-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
 .wifi-icon-spin {
   animation: spin 1s linear infinite;
   color: var(--color-primary);

@@ -7,7 +7,10 @@
 
 import './ErrorBoundary.css';
 
+import { AlertTriangle } from 'lucide-react';
 import { Component, ErrorInfo, ReactNode } from 'react';
+
+import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 
 interface Props {
   children: ReactNode;
@@ -44,7 +47,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="error-boundary-container">
-          <h1 className="error-boundary-title">Something went wrong</h1>
+          <IconWrapper size="xxl">
+            <AlertTriangle />
+          </IconWrapper>
+          <h1 className="error-boundary-title">Oops! Something went wrong</h1>
           <p className="error-boundary-message">
             {this.state.error?.message ?? 'An unexpected error occurred'}
           </p>
