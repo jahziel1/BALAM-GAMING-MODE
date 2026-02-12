@@ -88,7 +88,7 @@
   background: transparent;
   border: none;
   padding: var(--space-5) var(--space-12) var(--space-5) var(--space-12); /* Space for icon and spinner */
-  color: #fff;
+  color: var(--color-text-primary);
   font-family: 'Inter', sans-serif;
   font-size: 1.5rem;
   outline: none;
@@ -112,7 +112,7 @@
   width: var(--space-5);
   height: var(--space-5);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #fff;
+  border-top-color: var(--color-text-primary);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -165,7 +165,7 @@
   width: var(--space-10);
   height: var(--space-10);
   border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #fff;
+  border-top-color: var(--color-text-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -260,17 +260,17 @@
 
 .result-item:hover,
 .result-item[aria-selected='true'] {
-  background: #fff;
-  color: #000;
+  background: rgba(var(--color-primary-rgb), 0.15);
+  color: var(--color-text-primary);
   transform: translateX(4px);
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
-  border-color: var(--color-primary, var(--color-primary));
+  box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.4);
+  border-color: var(--color-primary);
 }
 
 /* Thumbnail */
 .result-thumbnail {
   width: 80px;
-  height: 1var (--space-5);
+  height: 100px;
   object-fit: cover;
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.5);
@@ -323,22 +323,22 @@
 /* Source-specific colors */
 .result-source[data-source='steam'] {
   background: rgba(23, 26, 33, 0.8);
-  color: #66c0f4;
+  color: #66c0f4; /* Steam brand color */
 }
 
 .result-source[data-source='Epic'] {
   background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .result-source[data-source='Xbox'] {
   background: rgba(16, 124, 16, 0.8);
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .result-source[data-source='Manual'] {
   background: rgba(255, 87, 34, 0.8);
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .result-item:hover .result-source,

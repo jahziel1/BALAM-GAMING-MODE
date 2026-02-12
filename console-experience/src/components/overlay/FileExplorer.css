@@ -38,7 +38,7 @@
 .explorer-back-btn {
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--color-text-primary);
   cursor: pointer;
   padding: var(--space-2);
   border-radius: 50%;
@@ -77,40 +77,40 @@
 
 .explorer-item.focused {
   background: rgba(255, 255, 255, 0.1);
-  border-left-color: #0078d4;
+  border-left-color: var(--color-primary);
   padding-left: 35px;
 }
 
 .item-icon {
-  width: 2var (--space-1);
-  height: 2var (--space-1);
+  width: calc(2 * var(--space-1));
+  height: calc(2 * var(--space-1));
 }
 
 .item-icon.drive {
-  color: #5ec4ff;
+  color: var(--color-info);
 }
 
 .item-icon.folder {
-  color: #ffca28;
+  color: var(--color-warning);
 }
 
 .item-icon.file {
-  color: #90a4ae;
+  color: var(--color-text-tertiary);
 }
 
 .item-name {
   flex: 1;
   font-size: 1rem;
-  color: #eee;
+  color: var(--color-text-primary);
 }
 
 .explorer-item.is-exe {
-  color: #4caf50;
+  color: var(--color-success);
 }
 
 .explorer-item.is-exe .item-name {
   font-weight: 600;
-  color: #81c784;
+  color: var(--color-success);
 }
 
 .item-add-icon {
@@ -139,13 +139,13 @@
 }
 
 .key-badge {
-  background: #444;
-  color: #fff;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
   font-weight: 800;
   font-size: 0.8rem;
-  box-shadow: 0 2px 0 #222;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 @keyframes fadeIn {
