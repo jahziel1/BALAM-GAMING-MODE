@@ -1,5 +1,40 @@
 use serde::{Deserialize, Serialize};
 
+/// Domain entity representing HDR capabilities of a display.
+#[allow(clippy::struct_excessive_bools)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct HdrCapabilities {
+    /// Whether HDR is supported by the display
+    pub supported: bool,
+    /// Whether HDR is currently enabled
+    pub enabled: bool,
+    /// Whether wide color gamut is enforced
+    pub wide_color_enforced: bool,
+    /// Whether HDR is force-disabled (driver/policy)
+    pub force_disabled: bool,
+    /// Bits per color channel (8, 10, 12, 16)
+    pub bits_per_channel: u32,
+    /// Maximum luminance in nits
+    pub max_luminance_nits: f32,
+    /// Minimum luminance in nits
+    pub min_luminance_nits: f32,
+}
+
+/// Domain entity representing display information.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DisplayInfo {
+    /// Unique display identifier
+    pub id: u32,
+    /// Display name
+    pub name: String,
+    /// Whether this is the primary display
+    pub is_primary: bool,
+    /// Adapter ID (LUID: LowPart, HighPart)
+    pub adapter_id: (u32, i32),
+    /// HDR capabilities (None if query failed)
+    pub hdr: Option<HdrCapabilities>,
+}
+
 /// Domain entity representing display brightness configuration.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct BrightnessConfig {
