@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useHdrManager } from '../../../../../hooks/useHdrManager';
+import { StatusIndicator } from '../../../../core/StatusIndicator/StatusIndicator';
 import { SettingsItem, SettingsSection, SettingsToggle } from '../shared';
 
 export const DisplayTab: React.FC = () => {
@@ -35,7 +36,7 @@ export const DisplayTab: React.FC = () => {
     return (
       <SettingsSection title="Display">
         <SettingsItem label="Loading..." description="Detecting displays...">
-          <div style={{ color: '#888' }}>Please wait...</div>
+          <StatusIndicator status="neutral">Please wait...</StatusIndicator>
         </SettingsItem>
       </SettingsSection>
     );
@@ -45,7 +46,7 @@ export const DisplayTab: React.FC = () => {
     return (
       <SettingsSection title="Display">
         <SettingsItem label="Error" description={error}>
-          <div style={{ color: '#ff6b6b' }}>Failed to detect displays</div>
+          <StatusIndicator status="error">Failed to detect displays</StatusIndicator>
         </SettingsItem>
       </SettingsSection>
     );
@@ -55,7 +56,7 @@ export const DisplayTab: React.FC = () => {
     return (
       <SettingsSection title="Display">
         <SettingsItem label="No Display" description="Could not detect any displays">
-          <div style={{ color: '#ff6b6b' }}>No displays found</div>
+          <StatusIndicator status="error">No displays found</StatusIndicator>
         </SettingsItem>
       </SettingsSection>
     );
@@ -65,7 +66,7 @@ export const DisplayTab: React.FC = () => {
     <>
       <SettingsSection title="Display Information">
         <SettingsItem label="Primary Display" description={primary.name}>
-          <div style={{ color: '#7FFF7F' }}>Active</div>
+          <StatusIndicator status="success">Active</StatusIndicator>
         </SettingsItem>
 
         {Boolean(hdr) && hdr ? (
@@ -73,7 +74,7 @@ export const DisplayTab: React.FC = () => {
             label="Color Depth"
             description={`${hdr.bits_per_channel}-bit color per channel`}
           >
-            <div style={{ color: '#888' }}>{hdr.bits_per_channel} bpc</div>
+            <StatusIndicator status="neutral">{hdr.bits_per_channel} bpc</StatusIndicator>
           </SettingsItem>
         ) : null}
       </SettingsSection>
@@ -97,13 +98,13 @@ export const DisplayTab: React.FC = () => {
                 label="⚠️ HDR Disabled"
                 description="HDR is disabled by the system or driver"
               >
-                <div style={{ color: '#ff6b6b' }}>Force Disabled</div>
+                <StatusIndicator status="error">Force Disabled</StatusIndicator>
               </SettingsItem>
             )}
 
             {hdr.wide_color_enforced === true && (
               <SettingsItem label="Wide Color Gamut" description="Enhanced color range is enforced">
-                <div style={{ color: '#7FFF7F' }}>Enabled</div>
+                <StatusIndicator status="success">Enabled</StatusIndicator>
               </SettingsItem>
             )}
 
@@ -111,9 +112,9 @@ export const DisplayTab: React.FC = () => {
               label="ℹ️ HDR Information"
               description="HDR provides enhanced brightness and color accuracy. Toggle applies immediately without restart. Some games may need to be restarted to detect HDR."
             >
-              <div style={{ color: hdr.enabled ? '#7FFF7F' : '#888' }}>
+              <StatusIndicator status={hdr.enabled ? 'success' : 'neutral'}>
                 {hdr.enabled ? 'Active' : 'Inactive'}
-              </div>
+              </StatusIndicator>
             </SettingsItem>
           </>
         ) : (
@@ -121,7 +122,7 @@ export const DisplayTab: React.FC = () => {
             label="HDR Not Supported"
             description="Your display does not support HDR, or HDR is not available"
           >
-            <div style={{ color: '#888' }}>Not Available</div>
+            <StatusIndicator status="neutral">Not Available</StatusIndicator>
           </SettingsItem>
         )}
       </SettingsSection>
@@ -129,13 +130,13 @@ export const DisplayTab: React.FC = () => {
       {displays.length > 1 ? (
         <SettingsSection title="Multiple Displays">
           <SettingsItem label="Displays Detected" description={`${displays.length} displays found`}>
-            <div style={{ color: '#7FFF7F' }}>{displays.length}</div>
+            <StatusIndicator status="success">{displays.length}</StatusIndicator>
           </SettingsItem>
           <SettingsItem
             label="ℹ️ Multi-Monitor"
             description="Multi-monitor HDR control is coming in a future update"
           >
-            <div style={{ color: '#888' }}>Coming Soon</div>
+            <StatusIndicator status="neutral">Coming Soon</StatusIndicator>
           </SettingsItem>
         </SettingsSection>
       ) : null}
@@ -143,7 +144,7 @@ export const DisplayTab: React.FC = () => {
       {Boolean(error) && error ? (
         <SettingsSection title="Error">
           <SettingsItem label="Last Error" description={error}>
-            <div style={{ color: '#ff6b6b' }}>See description</div>
+            <StatusIndicator status="error">See description</StatusIndicator>
           </SettingsItem>
         </SettingsSection>
       ) : null}

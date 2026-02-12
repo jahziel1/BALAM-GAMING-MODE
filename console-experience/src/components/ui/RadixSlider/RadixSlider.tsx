@@ -77,10 +77,10 @@ export interface RadixSliderProps {
   onChange: (value: number) => void;
 
   /**
-   * Optional icon/emoji shown before label
-   * @example "🔊" for volume, "☀️" for brightness
+   * Optional icon shown before label
+   * @example <IconWrapper size="lg"><Volume2 /></IconWrapper>
    */
-  icon?: string;
+  icon?: React.ReactNode;
 
   /**
    * Unit suffix shown after value

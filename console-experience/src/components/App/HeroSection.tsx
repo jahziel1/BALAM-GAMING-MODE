@@ -15,6 +15,8 @@ import defaultCover from '../../assets/default_cover.png';
 import type { Game } from '../../domain/entities/game';
 import type { FocusArea } from '../../hooks/useNavigation';
 import { getCachedAssetSrc } from '../../utils/image-cache';
+import { Button } from '../core/Button/Button';
+import { IconWrapper } from '../core/IconWrapper/IconWrapper';
 import Badge from '../ui/Badge/Badge';
 
 /**
@@ -150,28 +152,38 @@ export const HeroSection = memo(function HeroSection({
 
         <div className="hero-actions">
           {isRunningCurrentGame ? (
-            <button
-              className="btn-hero-play"
+            <Button
+              variant="accent"
+              size="lg"
+              icon={
+                <IconWrapper size="lg">
+                  <RotateCcw />
+                </IconWrapper>
+              }
               data-focused={focusArea === 'HERO'}
               onClick={() => void handleResume()}
             >
-              <RotateCcw size={24} />
-              <span>RESUME</span>
-            </button>
+              RESUME
+            </Button>
           ) : (
             <div className="hero-btns-row">
-              <button
-                className="btn-hero-play"
+              <Button
+                variant="accent"
+                size="lg"
+                icon={
+                  <IconWrapper size="lg">
+                    <Play />
+                  </IconWrapper>
+                }
                 data-focused={focusArea === 'HERO'}
                 onClick={onLaunchGame}
               >
-                <Play size={24} fill="currentColor" />
-                <span>{isLaunching ? '...' : activeRunningGame ? 'SWITCH' : 'PLAY'}</span>
-              </button>
+                {isLaunching ? '...' : activeRunningGame ? 'SWITCH' : 'PLAY'}
+              </Button>
               {activeGame?.source === 'Manual' && (
-                <button className="btn-remove-manual" onClick={() => onRemoveGame(activeGame.id)}>
+                <Button variant="danger" size="md" onClick={() => onRemoveGame(activeGame.id)}>
                   DELETE
-                </button>
+                </Button>
               )}
             </div>
           )}

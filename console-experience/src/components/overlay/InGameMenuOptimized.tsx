@@ -5,7 +5,7 @@
  * Features improved visual design with game cover, stats, and Xbox-inspired layout.
  *
  * ## Architecture (2024-2026)
- * - **UI Framework**: Radix UI Dialog (positioned as sidebar)
+ * - **UI Framework**: OverlayPanel (unified design system)
  * - **State Management**: Zustand app-store (Slices Pattern)
  * - **Layout**: 30% left sidebar + improved visual design
  * - **Accessibility**: Full keyboard navigation and screen reader support
@@ -29,12 +29,16 @@
 
 import './InGameMenu.css';
 
-import * as Dialog from '@radix-ui/react-dialog';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { Play, Settings, X } from 'lucide-react';
 import { memo, useState } from 'react';
 
 import { useAppStore } from '@/application/providers/StoreProvider';
+import { Button } from '@/components/core/Button/Button';
+import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
+import { SectionHeader } from '@/components/core/SectionHeader/SectionHeader';
+import { OverlayPanel } from '@/components/overlay/OverlayPanel/OverlayPanel';
 import { usePerformanceMetrics } from '@/hooks/usePerformanceMetrics';
 import { getCachedAssetSrc } from '@/utils/image-cache';
 
@@ -178,117 +182,127 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
     setShowCloseConfirm(false);
   };
 
+  const handleClose = () => {
+    // Only close if QuickSettings is NOT open
+    // Otherwise clicking on QuickSettings would close everything
+    if (!isQuickSettingsOpen) {
+      void handleResume();
+    }
+  };
+
   return (
-    <Dialog.Root
-      open={isOpen}
-      onOpenChange={(open) => {
-        // Only resume if QuickSettings is NOT open
-        // Otherwise clicking on QuickSettings would close everything
-        if (!open && !isQuickSettingsOpen) {
-          void handleResume();
-        }
-      }}
-    >
-      <Dialog.Portal>
-        {/* Backdrop - only interactive when QuickSettings is closed */}
-        <Dialog.Overlay
-          className="in-game-overlay-backdrop"
-          onClick={() => {
-            // Only close if QuickSettings is not open (to avoid closing both accidentally)
-            if (!isQuickSettingsOpen) {
-              closeLeftSidebar();
-            }
-          }}
-          style={{
-            // Disable pointer events when QuickSettings is open
-            pointerEvents: isQuickSettingsOpen ? 'none' : 'auto',
-          }}
-        />
-
-        {/* Left Sidebar Content */}
-        <Dialog.Content className="in-game-sidebar-left">
-          {/* Game Header */}
-          <div className="game-header">
-            {activeGame?.game.image ? (
-              <img
-                src={getCachedAssetSrc(activeGame.game.image, activeGame.game.image)}
-                alt={`${activeGame.game.title} cover`}
-                className="game-cover"
-              />
-            ) : null}
-            <div className="game-info">
-              <Dialog.Title className="game-title">
-                {activeGame?.game.title ?? 'In-Game Menu'}
-              </Dialog.Title>
-              <p className="game-session">Playing now</p>
-            </div>
-          </div>
-
-          {/* Stats Bar (FPS, GPU temp) - Real-time metrics */}
-          <div className="game-stats">
-            <span className="stat-item">
-              {metrics?.fps?.current_fps ? `${Math.round(metrics.fps.current_fps)} FPS` : 'FPS N/A'}
-            </span>
-            <span className="stat-divider">•</span>
-            <span className="stat-item">
-              {metrics?.gpu_temp_c ? `GPU ${Math.round(metrics.gpu_temp_c)}°C` : 'GPU Temp N/A'}
-            </span>
-          </div>
-
-          {/* Menu Actions */}
-          <div className="menu-actions">
-            <button className="menu-button primary" onClick={() => void handleResume()} autoFocus>
-              <span className="button-icon">▶</span>
-              <span className="button-label">Resume Game</span>
-            </button>
-
-            <button className="menu-button" onClick={handleOpenQuickSettings}>
-              <span className="button-icon">⚙</span>
-              <span className="button-label">Quick Settings</span>
-            </button>
-
-            <button
-              className="menu-button danger"
-              onClick={handleCloseGameRequest}
-              disabled={isClosingGame}
-            >
-              <span className="button-icon">✕</span>
-              <span className="button-label">
-                {isClosingGame ? 'Closing Game...' : 'Close Game'}
-              </span>
-            </button>
-          </div>
-
-          {/* Confirmation Dialog */}
-          {showCloseConfirm ? (
-            <div className="confirm-dialog">
-              <h3>Close Game?</h3>
-              <p>Are you sure you want to close {activeGame?.game.title}?</p>
-              <div className="confirm-actions">
-                <button className="confirm-button cancel" onClick={handleCloseGameCancelled}>
-                  Cancel
-                </button>
-                <button
-                  className="confirm-button confirm"
-                  onClick={() => void handleCloseGameConfirmed()}
-                >
-                  Close Game
-                </button>
-              </div>
-            </div>
+    <OverlayPanel
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={activeGame?.game.title ?? 'In-Game Menu'}
+      side="left"
+      width="30%"
+      className="in-game-menu-panel"
+      enableBlur={!isQuickSettingsOpen}
+      enableBackground={!isQuickSettingsOpen}
+      header={
+        <div className="game-header">
+          {activeGame?.game.image ? (
+            <img
+              src={getCachedAssetSrc(activeGame.game.image, activeGame.game.image)}
+              alt={`${activeGame.game.title} cover`}
+              className="game-cover"
+            />
           ) : null}
-
-          {/* Button Hints (Gamepad) */}
-          <div className="button-hints">
-            <span className="hint">
-              <kbd>B</kbd> Back
-            </span>
-            <span className="hint">
-              <kbd>A</kbd> Select
-            </span>
+          <div className="game-info">
+            <h2 className="game-title">{activeGame?.game.title ?? 'In-Game Menu'}</h2>
+            <p className="game-session">Playing now</p>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+      }
+      footer={
+        <div className="button-hints">
+          <span className="hint">
+            <kbd>B</kbd> Back
+          </span>
+          <span className="hint">
+            <kbd>A</kbd> Select
+          </span>
+        </div>
+      }
+    >
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="game-stats">
+          <span className="stat-item">
+            {metrics?.fps?.current_fps ? `${Math.round(metrics.fps.current_fps)} FPS` : 'FPS N/A'}
+          </span>
+          <span className="stat-divider">•</span>
+          <span className="stat-item">
+            {metrics?.gpu_temp_c ? `GPU ${Math.round(metrics.gpu_temp_c)}°C` : 'GPU Temp N/A'}
+          </span>
+        </div>
+      </section>
+
+      {/* Actions Section */}
+      <section className="actions-section">
+        <div className="menu-actions">
+          <Button
+            variant="primary"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <Play />
+              </IconWrapper>
+            }
+            onClick={() => void handleResume()}
+            autoFocus
+            fullWidth
+          >
+            Resume Game
+          </Button>
+
+          <Button
+            variant="secondary"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <Settings />
+              </IconWrapper>
+            }
+            onClick={handleOpenQuickSettings}
+            fullWidth
+          >
+            Quick Settings
+          </Button>
+
+          <Button
+            variant="danger"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <X />
+              </IconWrapper>
+            }
+            onClick={handleCloseGameRequest}
+            disabled={isClosingGame}
+            fullWidth
+          >
+            {isClosingGame ? 'Closing Game...' : 'Close Game'}
+          </Button>
+        </div>
+      </section>
+
+      {/* Confirmation Dialog */}
+      {showCloseConfirm ? (
+        <div className="confirm-dialog">
+          <SectionHeader level={3}>Close Game?</SectionHeader>
+          <p>Are you sure you want to close {activeGame?.game.title}?</p>
+          <div className="confirm-actions">
+            <Button variant="secondary" size="md" onClick={handleCloseGameCancelled}>
+              Cancel
+            </Button>
+            <Button variant="danger" size="md" onClick={() => void handleCloseGameConfirmed()}>
+              Close Game
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </OverlayPanel>
   );
 });

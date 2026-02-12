@@ -1,8 +1,13 @@
 import './PowerModal.css';
 
 import { invoke } from '@tauri-apps/api/core';
-import { LogOut, Power, RotateCw, X } from 'lucide-react';
+import { LogOut, Power, RotateCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+
+import { Button } from '@/components/core/Button/Button';
+import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
+import { OverlayPanel } from '@/components/overlay/OverlayPanel/OverlayPanel';
+import ButtonHint from '@/components/ui/ButtonHint/ButtonHint';
 
 interface PowerModalProps {
   isOpen: boolean;
@@ -67,61 +72,81 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="power-modal-backdrop" onClick={handleCancel}>
-      <div className="power-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="power-modal-close" onClick={handleCancel}>
-          <X size={20} />
-        </button>
+    <OverlayPanel
+      isOpen={isOpen}
+      onClose={handleCancel}
+      title={selectedAction ? 'Confirmation' : 'Power Options'}
+      width="500px"
+      className="power-modal-centered"
+      footer={
+        !selectedAction ? (
+          <div className="button-hints-footer">
+            <ButtonHint action="BACK" type="KEYBOARD" label="Cancel" />
+            <ButtonHint action="CONFIRM" type="KEYBOARD" label="Select" />
+          </div>
+        ) : undefined
+      }
+    >
+      {!selectedAction ? (
+        // Action selection
+        <div className="power-modal-actions">
+          <Button
+            variant="danger"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <Power />
+              </IconWrapper>
+            }
+            onClick={() => setSelectedAction('shutdown')}
+            fullWidth
+          >
+            Shutdown
+          </Button>
 
-        {!selectedAction ? (
-          // Action selection
-          <>
-            <h2 className="power-modal-title">Power Options</h2>
-            <div className="power-modal-actions">
-              <button
-                className="power-action-button shutdown"
-                onClick={() => setSelectedAction('shutdown')}
-              >
-                <Power size={32} />
-                <span>Shutdown</span>
-              </button>
+          <Button
+            variant="primary"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <RotateCw />
+              </IconWrapper>
+            }
+            onClick={() => setSelectedAction('restart')}
+            fullWidth
+          >
+            Restart
+          </Button>
 
-              <button
-                className="power-action-button restart"
-                onClick={() => setSelectedAction('restart')}
-              >
-                <RotateCw size={32} />
-                <span>Restart</span>
-              </button>
-
-              <button
-                className="power-action-button logout"
-                onClick={() => setSelectedAction('logout')}
-              >
-                <LogOut size={32} />
-                <span>Logout</span>
-              </button>
-            </div>
-          </>
-        ) : (
-          // Confirmation countdown
-          <>
-            <h2 className="power-modal-title">Confirmation</h2>
-            <p className="power-modal-message">
-              {selectedAction === 'shutdown' && `Shutting down in ${countdown} seconds...`}
-              {selectedAction === 'restart' && `Restarting in ${countdown} seconds...`}
-              {selectedAction === 'logout' && `Logging out in ${countdown} seconds...`}
-            </p>
-            <div className="power-modal-countdown">{countdown}</div>
-            <button className="power-modal-cancel" onClick={handleCancel} disabled={isExecuting}>
-              Cancel
-            </button>
-          </>
-        )}
-      </div>
-    </div>
+          <Button
+            variant="secondary"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <LogOut />
+              </IconWrapper>
+            }
+            onClick={() => setSelectedAction('logout')}
+            fullWidth
+          >
+            Logout
+          </Button>
+        </div>
+      ) : (
+        // Confirmation countdown
+        <>
+          <p className="power-modal-message">
+            {selectedAction === 'shutdown' && `Shutting down in ${countdown} seconds...`}
+            {selectedAction === 'restart' && `Restarting in ${countdown} seconds...`}
+            {selectedAction === 'logout' && `Logging out in ${countdown} seconds...`}
+          </p>
+          <div className="power-modal-countdown">{countdown}</div>
+          <Button variant="secondary" size="md" onClick={handleCancel} disabled={isExecuting}>
+            Cancel
+          </Button>
+        </>
+      )}
+    </OverlayPanel>
   );
 };

@@ -158,41 +158,7 @@
   margin-top: 0.5rem;
 }
 
-.btn-hero-play {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 3rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  background: var(--accent-primary);
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.btn-hero-play:hover {
-  background: var(--accent-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-}
-
-.btn-hero-play[data-focused='true'] {
-  background: var(--accent-primary-hover);
-  transform: scale(1.05);
-  box-shadow:
-    0 0 0 4px rgba(59, 130, 246, 0.4),
-    0 8px 24px rgba(59, 130, 246, 0.5);
-}
-
-.btn-hero-play:active {
-  transform: translateY(0);
-}
+/* Hero play button now uses unified Button component from core */
 
 /* Responsive */
 @media (max-width: 102var(--space-1)) {
@@ -209,11 +175,6 @@
     max-width: 400px;
     max-height: 160px;
   }
-
-  .btn-hero-play {
-    padding: 1rem 2.5rem;
-    font-size: 1.125rem;
-  }
 }
 
 @media (max-width: 76var(--space-2)) {
@@ -229,10 +190,5 @@
   .hero-logo {
     max-width: 300px;
     max-height: 1var (--space-5);
-  }
-
-  .btn-hero-play {
-    padding: 0.875rem 2rem;
-    font-size: 1rem;
   }
 }

@@ -44,6 +44,8 @@
     --button-accent-bg: var(--color-accent);
     --button-accent-bg-hover: var(--color-accent-light);
     --button-accent-text: var(--primitive-gray-50);
+    --button-accent-border: transparent;
+    --button-accent-border-hover: var(--color-accent);
 
     /* ============================================================================
        BADGE SYSTEM

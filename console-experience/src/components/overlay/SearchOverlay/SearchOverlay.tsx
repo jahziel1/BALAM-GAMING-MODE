@@ -45,12 +45,14 @@
 import './SearchOverlay.css';
 
 import { Command } from 'cmdk';
-import { Search } from 'lucide-react';
+import { Clock, Lightbulb, Search } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import defaultCover from '../../../assets/default_cover.png';
 import type { Game } from '../../../domain/entities/game';
 import { getCachedAssetSrc } from '../../../utils/image-cache';
+import { IconWrapper } from '../../core/IconWrapper/IconWrapper';
+import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 
 /**
  * Props for SearchOverlay component
@@ -299,7 +301,12 @@ export const SearchOverlay = memo(function SearchOverlay({
 
         {/* Fix #10: Search hints */}
         <div id="search-hints" className="search-hints">
-          <span className="hint-text">💡 Supports fuzzy matching</span>
+          <span className="hint-text">
+            <IconWrapper size="md">
+              <Lightbulb />
+            </IconWrapper>{' '}
+            Supports fuzzy matching
+          </span>
           <span className="search-shortcut">ESC to close</span>
         </div>
 
@@ -315,7 +322,11 @@ export const SearchOverlay = memo(function SearchOverlay({
           {/* Fix #17: Enhanced empty state */}
           {!isSearching && totalResults === 0 && debouncedQuery.length > 0 && (
             <Command.Empty className="search-empty">
-              <div className="empty-icon">🔍</div>
+              <div className="empty-icon">
+                <IconWrapper size="xl">
+                  <Search />
+                </IconWrapper>
+              </div>
               <p className="empty-title">No games found</p>
               <p className="empty-hint">Try a different search term or add games to your library</p>
             </Command.Empty>
@@ -331,7 +342,11 @@ export const SearchOverlay = memo(function SearchOverlay({
                   onSelect={() => setSearchQuery(query)}
                   className="result-item recent-item"
                 >
-                  <span className="recent-icon">🕐</span>
+                  <span className="recent-icon">
+                    <IconWrapper size="md">
+                      <Clock />
+                    </IconWrapper>
+                  </span>
                   <span className="recent-query">{query}</span>
                 </Command.Item>
               ))}
@@ -380,11 +395,19 @@ export const SearchOverlay = memo(function SearchOverlay({
         </Command.List>
 
         {/* Results count footer */}
-        {totalResults > 0 && (
-          <div className="search-footer" role="status" aria-live="polite">
-            {totalResults} {totalResults === 1 ? 'game' : 'games'} found
+        <div className="search-footer">
+          {totalResults > 0 && (
+            <span role="status" aria-live="polite">
+              {totalResults} {totalResults === 1 ? 'game' : 'games'} found
+            </span>
+          )}
+
+          <div className="button-hints-footer">
+            <ButtonHint action="BACK" type="KEYBOARD" label="Close" />
+            <ButtonHint action="DPAD_VERTICAL" type="KEYBOARD" label="Navigate" />
+            <ButtonHint action="CONFIRM" type="KEYBOARD" label="Launch" />
           </div>
-        )}
+        </div>
       </Command>
     </div>
   );

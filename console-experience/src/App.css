@@ -338,26 +338,16 @@ body.input-keyboard .card {
   align-items: center;
 }
 
-.btn-remove-manual {
-  background: rgba(255, 68, 68, 0.15);
-  border: 1px solid rgba(255, 68, 68, 0.3);
-  color: #ff6060;
-  padding: var(--space-3) calc(2 * var(--space-1));
-  border-radius: var(--radius-sm);
-  /* match play button */
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+/* Remove manual button now uses unified Button component from core */
 
-.btn-remove-manual:hover {
-  background: rgba(255, 68, 68, 0.3);
-  border-color: #ff4444;
-  color: #fff;
-  transform: translateY(-2px);
+/* === BUTTON HINTS FOOTER (Shared) === */
+.button-hints-footer {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--color-background-elevated-2);
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* === SYSTEM MODAL === */
@@ -402,6 +392,11 @@ body.input-keyboard .card {
   color: var(--color-text-secondary);
   margin-bottom: 30px;
   font-size: 1.1rem;
+}
+
+.system-modal .danger-text {
+  color: var(--color-error);
+  font-weight: var(--font-weight-semibold);
 }
 
 .modal-actions {

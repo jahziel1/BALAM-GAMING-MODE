@@ -62,7 +62,7 @@ export function ConfirmationModal({
         <p>
           Launching <strong>{pendingGame.title}</strong> will close
           <br />
-          <span style={{ color: '#ff4444' }}>{activeRunningGame?.game.title}</span>.
+          <span className="danger-text">{activeRunningGame?.game.title}</span>.
           <br />
           <br />
           Any unsaved progress will be lost.

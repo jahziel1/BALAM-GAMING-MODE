@@ -129,6 +129,27 @@
     box-shadow: var(--focus-shadow), var(--focus-glow);
   }
 
+  /* Accent - Orange background for highlighted secondary actions */
+  .btn-accent {
+    background: var(--button-accent-bg);
+    color: var(--button-accent-text);
+    border: 1px solid var(--button-accent-border);
+  }
+
+  .btn-accent:hover:not(:disabled) {
+    background: var(--button-accent-bg-hover);
+    border-color: var(--button-accent-border-hover);
+  }
+
+  .btn-accent.btn-focused {
+    background: var(--button-accent-bg-hover);
+    box-shadow: var(--focus-shadow-accent), var(--focus-glow-accent);
+  }
+
+  .btn-accent:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
   /* ============================================================================
      BUTTON MODIFIERS
      ============================================================================ */

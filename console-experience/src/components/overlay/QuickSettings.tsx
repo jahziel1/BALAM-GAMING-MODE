@@ -1,9 +1,24 @@
 import './QuickSettings.css';
 
 import { invoke } from '@tauri-apps/api/core';
-import { Bluetooth, Cable, Headphones, Monitor, Speaker, Usb, Wifi } from 'lucide-react';
+import {
+  Bluetooth,
+  Cable,
+  Headphones,
+  Monitor,
+  RotateCw,
+  Speaker,
+  Sun,
+  Usb,
+  Volume2,
+  Wifi,
+  Zap,
+} from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Button } from '../core/Button/Button';
+import { IconWrapper } from '../core/IconWrapper/IconWrapper';
+import { SectionHeader } from '../core/SectionHeader/SectionHeader';
 import ButtonHint from '../ui/ButtonHint/ButtonHint';
 import { RadixSlider } from '../ui/RadixSlider/RadixSlider';
 import { OverlayPanel } from './OverlayPanel/OverlayPanel';
@@ -331,24 +346,36 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
     >
       {/* Quick Actions */}
       <div className="quick-actions">
-        <button
-          className="quick-action-button"
+        <Button
+          variant="ghost"
+          size="lg"
+          icon={
+            <IconWrapper size="lg">
+              <Wifi />
+            </IconWrapper>
+          }
           onClick={onOpenWiFiPanel}
           aria-label="Open WiFi settings"
           title="WiFi Settings (Ctrl+W)"
+          fullWidth
         >
-          <Wifi size={24} />
-          <span className="quick-action-label">WiFi</span>
-        </button>
-        <button
-          className="quick-action-button"
+          WiFi
+        </Button>
+        <Button
+          variant="ghost"
+          size="lg"
+          icon={
+            <IconWrapper size="lg">
+              <Bluetooth />
+            </IconWrapper>
+          }
           onClick={onOpenBluetoothPanel}
           aria-label="Open Bluetooth settings"
           title="Bluetooth Settings (Ctrl+B)"
+          fullWidth
         >
-          <Bluetooth size={24} />
-          <span className="quick-action-label">Bluetooth</span>
-        </button>
+          Bluetooth
+        </Button>
       </div>
 
       <RadixSlider
@@ -358,7 +385,11 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         max={100}
         step={5}
         onChange={(value) => void handleVolumeChange(value)}
-        icon="🔊"
+        icon={
+          <IconWrapper size="lg">
+            <Volume2 />
+          </IconWrapper>
+        }
         unit="%"
         isFocused={focusedSliderIndex === 0}
       />
@@ -366,7 +397,7 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
       {/* Audio Output Devices */}
       {audioDevices.length > 0 && (
         <div className="audio-devices-section">
-          <h3 className="section-title">Audio Output</h3>
+          <SectionHeader level={3}>Audio Output</SectionHeader>
           <div className="audio-devices-list">
             {audioDevices.map((device) => (
               <button
@@ -391,7 +422,11 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         max={100}
         step={5}
         onChange={(value) => void handleBrightnessChange(value)}
-        icon="☀️"
+        icon={
+          <IconWrapper size="lg">
+            <Sun />
+          </IconWrapper>
+        }
         unit="%"
         isFocused={focusedSliderIndex === 1}
         disabled={!supportsBrightness}
@@ -404,7 +439,11 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         max={Math.max(...supportedRates)}
         step={1}
         onChange={(value) => void handleRefreshRateChange(value)}
-        icon="🔄"
+        icon={
+          <IconWrapper size="lg">
+            <RotateCw />
+          </IconWrapper>
+        }
         unit="Hz"
         isFocused={focusedSliderIndex === 2}
       />
@@ -416,7 +455,11 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         max={tdpConfig.max_watts}
         step={1}
         onChange={(value) => void handleTDPChange(value)}
-        icon="⚡"
+        icon={
+          <IconWrapper size="lg">
+            <Zap />
+          </IconWrapper>
+        }
         unit="W"
         isFocused={focusedSliderIndex === 3}
         disabled={!supportsTDP}

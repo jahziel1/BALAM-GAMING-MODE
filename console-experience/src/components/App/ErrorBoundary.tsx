@@ -5,6 +5,8 @@
  * Prevents component errors from crashing the entire Windows shell.
  */
 
+import './ErrorBoundary.css';
+
 import { Component, type ReactNode } from 'react';
 
 /**
@@ -62,37 +64,12 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100vh',
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-            color: '#fff',
-            padding: '2rem',
-            textAlign: 'center',
-          }}
-        >
-          <h1 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#ff4444' }}>
-            Oops! Something went wrong
-          </h1>
-          <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.8 }}>
+        <div className="error-boundary-container">
+          <h1 className="error-boundary-title">Oops! Something went wrong</h1>
+          <p className="error-boundary-message">
             {this.state.error?.message ?? 'An unexpected error occurred'}
           </p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              padding: '1rem 2rem',
-              fontSize: '1.1rem',
-              background: '#0066ff',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-            }}
-          >
+          <button className="error-boundary-button" onClick={() => window.location.reload()}>
             Reload Application
           </button>
         </div>

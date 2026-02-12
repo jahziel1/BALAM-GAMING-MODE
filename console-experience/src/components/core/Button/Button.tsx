@@ -33,7 +33,7 @@ import React, { forwardRef } from 'react';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button visual style */
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'accent';
   /** Button size */
   size?: 'sm' | 'md' | 'lg';
   /** Stretch to full width of container */

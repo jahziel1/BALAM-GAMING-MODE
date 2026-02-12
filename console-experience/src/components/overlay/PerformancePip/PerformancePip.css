@@ -17,7 +17,7 @@
 .pip-container {
   padding: var(--space-2) var(--space-3);
   background: rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
+  border-radius: var(--space-1-5);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow:
@@ -31,10 +31,10 @@
 .pip-row {
   display: flex;
   align-items: baseline;
-  gap: 5px;
+  gap: var(--space-1);
   white-space: nowrap;
   line-height: 1.4;
-  font-size: 12px;
+  font-size: var(--font-xs);
   color: var(--color-text-primary);
 }
 
@@ -46,7 +46,7 @@
 .fps-value {
   color: var(--color-accent);
   font-weight: 700;
-  font-size: 24px;
+  font-size: var(--font-2xl);
   letter-spacing: -0.8px;
   text-shadow:
     0 0 20px rgba(var(--color-accent-rgb), 0.6),
@@ -57,7 +57,7 @@
 /* Frame time */
 .frame-time {
   color: var(--color-text-primary);
-  font-size: 12px;
+  font-size: var(--font-xs);
   font-weight: 600;
   text-shadow:
     0 2px 4px rgba(0, 0, 0, 0.8),
@@ -67,11 +67,11 @@
 /* Metric labels */
 .metric-label {
   color: rgba(255, 255, 255, 0.75);
-  font-size: 10px;
+  font-size: var(--space-2-5);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  min-width: 30px;
+  min-width: var(--space-7-5);
   text-shadow:
     0 1px 3px rgba(0, 0, 0, 0.9),
     0 0 2px rgba(0, 0, 0, 1);
@@ -81,7 +81,7 @@
 .metric-value {
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--font-xs);
   font-variant-numeric: tabular-nums;
   text-shadow:
     0 0 16px rgba(var(--color-primary-rgb), 0.5),
@@ -92,7 +92,7 @@
 /* Temperature values */
 .temp-value {
   color: #a5f3fc;
-  font-size: 10px;
+  font-size: var(--space-2-5);
   font-weight: 600;
   margin-left: 3px;
   text-shadow:
@@ -110,14 +110,14 @@
 .pip-error {
   padding: var(--space-2) var(--space-3);
   background: rgba(239, 68, 68, 0.3);
-  border-radius: 6px;
+  border-radius: var(--space-1-5);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow:
     0 4px 16px rgba(239, 68, 68, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   color: #fecaca;
-  font-size: 11px;
+  font-size: var(--font-xxs);
   font-weight: 600;
   text-shadow:
     0 1px 3px rgba(0, 0, 0, 0.9),
@@ -128,14 +128,14 @@
 .pip-loading {
   padding: var(--space-2) var(--space-3);
   background: rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
+  border-radius: var(--space-1-5);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   color: var(--color-text-secondary);
-  font-size: 11px;
+  font-size: var(--font-xxs);
   font-weight: 600;
   text-shadow:
     0 1px 3px rgba(0, 0, 0, 0.9),

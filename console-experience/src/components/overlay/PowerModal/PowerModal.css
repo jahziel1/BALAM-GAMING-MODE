@@ -1,40 +1,19 @@
-.power-modal-backdrop {
+/* Power Modal - Centered OverlayPanel
+ * Note: Backdrop, close button, and title are provided by OverlayPanel.
+ * This file contains power-specific styling only.
+ */
+
+/* Center the modal (override OverlayPanel's default side positioning) */
+.power-modal-centered.overlay-panel {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-.power-modal {
-  background: var(--color-background);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   min-width: 400px;
-  max-width: 500px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  position: relative;
 }
 
-.power-modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.power-modal-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: var(--color-text);
+.power-modal-centered .overlay-panel-content {
+  padding: var(--space-6);
 }
 
 .power-modal-actions {
@@ -43,32 +22,7 @@
   gap: 1rem;
 }
 
-.power-action-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem 1rem;
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.power-action-button:hover {
-  border-color: var(--color-primary);
-  background: var(--color-surface-hover);
-}
-
-.power-action-button.shutdown {
-  color: var(--color-error);
-}
-
-.power-action-button.restart {
-  color: var(--color-warning);
-}
+/* Power action buttons now use unified Button component from core */
 
 .power-modal-message {
   font-size: 1.1rem;
@@ -85,25 +39,4 @@
   margin-bottom: 1.5rem;
 }
 
-.power-modal-cancel {
-  width: 100%;
-  padding: 0.75rem;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.power-modal-cancel:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-primary);
-}
-
-.power-modal-cancel:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+/* Cancel button now uses unified Button component from core */

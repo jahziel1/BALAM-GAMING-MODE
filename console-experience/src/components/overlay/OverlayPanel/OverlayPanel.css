@@ -110,7 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-10) 40px var(--space-5);
+  padding: var(--space-10) var(--space-10) var(--space-5);
   margin-bottom: 0;
   border-bottom: 1px solid rgba(45, 115, 255, 0.2);
   flex-shrink: 0;
@@ -154,7 +154,7 @@
 .overlay-panel-content {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-2-5);
   flex: 1;
   padding: var(--space-10);
   overflow-y: auto;
@@ -162,7 +162,7 @@
 }
 
 .overlay-panel-content::-webkit-scrollbar {
-  width: 6px;
+  width: var(--space-1-5);
 }
 
 .overlay-panel-content::-webkit-scrollbar-track {
@@ -181,7 +181,7 @@
 /* Footer */
 .overlay-panel-footer {
   margin-top: auto;
-  padding: 2var (--space-1) var(--space-10) 40px;
+  padding: var(--space-6) var(--space-10) var(--space-10);
   flex-shrink: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -195,7 +195,7 @@
   }
 
   .overlay-panel-header {
-    padding: 30px var(--space-5) 15px;
+    padding: var(--space-7-5) var(--space-5) var(--space-3-75);
   }
 
   .overlay-panel-header h2 {
@@ -203,19 +203,19 @@
   }
 
   .overlay-panel-content {
-    padding: 30px var(--space-5);
+    padding: var(--space-7-5) var(--space-5);
     gap: var(--space-2);
   }
 
   .overlay-panel-footer {
-    padding: var(--space-5) 20px 30px;
+    padding: var(--space-5) var(--space-5) var(--space-7-5);
   }
 }
 
 /* Very small screens (phones in landscape) */
 @media (max-width: 600px) {
   .overlay-panel-header {
-    padding: var(--space-5) 15px 15px;
+    padding: var(--space-5) var(--space-3-75) var(--space-3-75);
   }
 
   .overlay-panel-header h2 {
@@ -223,11 +223,11 @@
   }
 
   .overlay-panel-content {
-    padding: var(--space-5) 15px;
-    gap: 6px;
+    padding: var(--space-5) var(--space-3-75);
+    gap: var(--space-1-5);
   }
 
   .overlay-panel-footer {
-    padding: var(--space-5) 15px 20px;
+    padding: var(--space-5) var(--space-3-75) var(--space-5);
   }
 }

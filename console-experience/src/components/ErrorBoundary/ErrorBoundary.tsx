@@ -5,6 +5,8 @@
  * Displays fallback UI instead of white screen.
  */
 
+import './ErrorBoundary.css';
+
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
@@ -41,33 +43,12 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100vh',
-            padding: '2rem',
-            textAlign: 'center',
-          }}
-        >
-          <h1>Something went wrong</h1>
-          <p style={{ marginTop: '1rem', color: 'var(--color-text-secondary)' }}>
+        <div className="error-boundary-container">
+          <h1 className="error-boundary-title">Something went wrong</h1>
+          <p className="error-boundary-message">
             {this.state.error?.message ?? 'An unexpected error occurred'}
           </p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              marginTop: '2rem',
-              padding: '0.75rem 1.5rem',
-              backgroundColor: 'var(--color-primary)',
-              color: 'var(--color-text)',
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-            }}
-          >
+          <button className="error-boundary-button" onClick={() => window.location.reload()}>
             Reload Application
           </button>
         </div>

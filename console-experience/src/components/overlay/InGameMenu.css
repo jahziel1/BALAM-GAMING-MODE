@@ -3,67 +3,37 @@
  *
  * Xbox-style left sidebar overlay for in-game menu.
  * Features game cover, stats, and improved visual hierarchy.
+ *
+ * Note: Backdrop and panel positioning are provided by OverlayPanel component.
+ * This file only contains game-specific styling.
  */
 
-/* ===== Backdrop ===== */
-.in-game-overlay-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  /* Removed blur - was causing QuickSettings to appear blurry */
-  z-index: 9998;
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* ===== Left Sidebar ===== */
-.in-game-sidebar-left {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 30%;
-  min-width: 3var (--space-5);
+/* ===== Panel Customization ===== */
+.in-game-menu-panel {
+  min-width: calc(3 * var(--space-5));
   max-width: 480px;
-  background: linear-gradient(135deg, rgba(20, 20, 30, 0.98) 0%, rgba(30, 30, 45, 0.98) 100%);
-  /* Removed blur - was causing QuickSettings to appear blurry */
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
-  z-index: 9999;
+}
+
+.in-game-menu-panel .overlay-panel-content {
   display: flex;
   flex-direction: column;
-  padding: 2var (--space-1);
-  gap: 2var (--space-1);
-  animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-y: auto;
+  gap: var(--space-4);
 }
 
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+/* ===== Game Header (Custom Header in OverlayPanel) ===== */
+.in-game-menu-panel .overlay-panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-background-elevated-2);
 }
 
-/* ===== Game Header ===== */
 .game-header {
   display: flex;
   gap: var(--space-4);
   align-items: flex-start;
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--color-background-elevated-2);
+  width: 100%;
 }
 
 .game-cover {
@@ -132,72 +102,7 @@
   gap: var(--space-3);
 }
 
-.menu-button {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: 1var (--space-1) var(--space-5);
-  background: var(--color-background-elevated-2);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-md);
-  color: var(--color-text-primary);
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-}
-
-.menu-button:hover:not(:disabled) {
-  background: var(--color-background-elevated-3);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateX(4px);
-}
-
-.menu-button:focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.8);
-  outline-offset: 2px;
-}
-
-.menu-button:active:not(:disabled) {
-  transform: scale(0.98) translateX(4px);
-}
-
-.menu-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Primary button (Resume Game) */
-.menu-button.primary {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  border-color: rgba(99, 102, 241, 0.5);
-}
-
-.menu-button.primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-  border-color: rgba(99, 102, 241, 0.8);
-}
-
-/* Danger button (Close Game) */
-.menu-button.danger {
-  background: linear-gradient(135deg, var(--color-error) 0%, var(--color-error) 100%);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.menu-button.danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-error) 0%, #b91c1c 100%);
-  border-color: rgba(239, 68, 68, 0.8);
-}
-
-.button-icon {
-  font-size: 1.25rem;
-  flex-shrink: 0;
-}
-
-.button-label {
-  flex: 1;
-}
+/* Button components now use unified Button component from core */
 
 /* ===== Confirmation Dialog ===== */
 .confirm-dialog {
@@ -205,9 +110,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: calc(100% - 4 * var(--space-2));
+  width: calc(100% - calc(4 * var(--space-2)));
   max-width: 360px;
-  padding: 2var (--space-1);
+  padding: var(--space-6);
   background: rgba(20, 20, 30, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-lg);
@@ -227,11 +132,8 @@
   }
 }
 
-.confirm-dialog h3 {
+.confirm-dialog .section-header {
   margin: 0 0 var(--space-2) 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
 }
 
 .confirm-dialog p {
@@ -246,47 +148,7 @@
   gap: var(--space-3);
 }
 
-.confirm-button {
-  flex: 1;
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-md);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
-}
-
-.confirm-button:focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.8);
-  outline-offset: 2px;
-}
-
-.confirm-button:active {
-  transform: scale(0.98);
-}
-
-.confirm-button.cancel {
-  background: var(--color-background-elevated-2);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: var(--color-text-primary);
-}
-
-.confirm-button.cancel:hover {
-  background: var(--color-background-elevated-3);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.confirm-button.confirm {
-  background: linear-gradient(135deg, var(--color-error) 0%, var(--color-error) 100%);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: var(--color-text-primary);
-}
-
-.confirm-button.confirm:hover {
-  background: linear-gradient(135deg, var(--color-error) 0%, #b91c1c 100%);
-  border-color: rgba(239, 68, 68, 0.8);
-}
+/* Confirmation buttons now use unified Button component from core */
 
 /* ===== Button Hints (Gamepad) ===== */
 .button-hints {
@@ -309,8 +171,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2var (--space-1);
-  height: 2var (--space-1);
+  min-width: var(--space-6);
+  height: var(--space-6);
   padding: 0 var(--space-2);
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -322,17 +184,16 @@
 }
 
 /* ===== Responsive Adjustments ===== */
-@media (max-width: 76var(--space-2)) {
-  .in-game-sidebar-left {
-    width: 80%;
+@media (max-width: 768px) {
+  .in-game-menu-panel {
+    width: 80% !important;
     min-width: unset;
   }
 }
 
 @media (max-height: 600px) {
-  .in-game-sidebar-left {
-    padding: var(--space-4);
-    gap: var(--space-4);
+  .in-game-menu-panel .overlay-panel-content {
+    gap: var(--space-3);
   }
 
   .game-cover {
@@ -343,27 +204,4 @@
   .game-title {
     font-size: 1.125rem;
   }
-
-  .menu-button {
-    padding: 10px var(--space-4);
-  }
-}
-
-/* ===== Scrollbar Styling ===== */
-.in-game-sidebar-left::-webkit-scrollbar {
-  width: var(--space-2);
-}
-
-.in-game-sidebar-left::-webkit-scrollbar-track {
-  background: var(--color-background-elevated-1);
-  border-radius: var(--radius-sm);
-}
-
-.in-game-sidebar-left::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-sm);
-}
-
-.in-game-sidebar-left::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
 }

@@ -8,11 +8,14 @@ import {
   Bell,
   Bluetooth,
   Gamepad2,
+  Plug,
   Volume2,
   Wifi,
   WifiOff,
 } from 'lucide-react';
 import React, { memo, useEffect, useState } from 'react';
+
+import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 
 interface SystemStatus {
   battery_level: number | null;
@@ -151,15 +154,21 @@ const TopBar: React.FC<TopBarProps> = ({
           >
             {status?.connection_type === 'WiFi' ? (
               <span title={status.network_name ?? 'WiFi'}>
-                <Wifi size={20} className="icon active" />
+                <IconWrapper size="md">
+                  <Wifi className="icon active" />
+                </IconWrapper>
               </span>
             ) : status?.connection_type === 'Ethernet' ? (
               <span className="icon active" title="Ethernet Connected">
-                🔌
+                <IconWrapper size="md">
+                  <Plug />
+                </IconWrapper>
               </span>
             ) : (
               <span title="Disconnected">
-                <WifiOff size={20} className="icon disabled" />
+                <IconWrapper size="md">
+                  <WifiOff className="icon disabled" />
+                </IconWrapper>
               </span>
             )}
           </div>
