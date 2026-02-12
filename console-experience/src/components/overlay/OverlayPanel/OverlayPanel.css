@@ -58,7 +58,7 @@
   position: relative;
   max-width: 90vw;
   height: 100vh;
-  background: var(--overlay-panel-bg, var(--color-surface, #0f1419));
+  background: var(--overlay-panel-bg, var(--color-surface));
   /* Removed backdrop-filter - wrapper already provides blur */
   box-shadow: var(--shadow-lg);
   display: flex;
@@ -70,13 +70,13 @@
 
 /* Right panel needs stronger background when no backdrop */
 .overlay-panel-right {
-  background: linear-gradient(135deg, rgba(15, 20, 25, 0.98) 0%, rgba(20, 25, 35, 0.98) 100%);
+  background: var(--glass-bg-heavy);
 }
 
 /* Left panel (InGameMenu) */
 .overlay-panel-left {
   justify-self: flex-start;
-  border-right: 1px solid var(--color-border, rgba(59, 130, 246, 0.3));
+  border-right: 1px solid var(--color-border);
   animation: slideInLeft var(--transition-slow);
 }
 
@@ -92,7 +92,7 @@
 /* Right panel (QuickSettings) */
 .overlay-panel-right {
   margin-left: auto;
-  border-left: 1px solid var(--color-border, rgba(59, 130, 246, 0.3));
+  border-left: 1px solid var(--color-border);
   animation: slideInRight var(--transition-slow);
 }
 
@@ -112,7 +112,7 @@
   justify-content: space-between;
   padding: var(--space-10) var(--space-10) var(--space-5);
   margin-bottom: 0;
-  border-bottom: 1px solid rgba(45, 115, 255, 0.2);
+  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.2);
   flex-shrink: 0;
 }
 
@@ -175,7 +175,7 @@
 }
 
 .overlay-panel-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 115, 255, 0.5);
+  background: rgba(var(--color-primary-rgb), 0.5);
 }
 
 /* Footer */

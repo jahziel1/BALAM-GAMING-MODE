@@ -12,14 +12,14 @@
 
 /* Individual Toast */
 .toast {
-  background: rgba(20, 20, 20, 0.95);
+  background: var(--glass-bg-heavy);
   border-radius: var(--radius-lg);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(16px);
   overflow: hidden;
-  min-width: 3var (--space-5);
+  min-width: calc(3 * var(--space-5));
   max-width: 400px;
   pointer-events: auto;
   animation: toast-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -43,19 +43,19 @@
 }
 
 .toast-icon-success {
-  color: #4caf50;
+  color: var(--color-success);
 }
 
 .toast-icon-error {
-  color: #f44336;
+  color: var(--color-error);
 }
 
 .toast-icon-warning {
-  color: #ff9800;
+  color: var(--color-warning);
 }
 
 .toast-icon-info {
-  color: #2196f3;
+  color: var(--color-info);
 }
 
 .toast-text {
@@ -66,7 +66,7 @@
 .toast-title {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary);
   margin-bottom: var(--space-1);
   line-height: 1.4;
 }
@@ -112,36 +112,36 @@
 }
 
 .toast-success .toast-progress-bar {
-  background: #4caf50;
+  background: var(--color-success);
 }
 
 .toast-error .toast-progress-bar {
-  background: #f44336;
+  background: var(--color-error);
 }
 
 .toast-warning .toast-progress-bar {
-  background: #ff9800;
+  background: var(--color-warning);
 }
 
 .toast-info .toast-progress-bar {
-  background: #2196f3;
+  background: var(--color-info);
 }
 
 /* Type-specific borders */
 .toast-success {
-  border-left: 3px solid #4caf50;
+  border-left: 3px solid var(--color-success);
 }
 
 .toast-error {
-  border-left: 3px solid #f44336;
+  border-left: 3px solid var(--color-error);
 }
 
 .toast-warning {
-  border-left: 3px solid #ff9800;
+  border-left: 3px solid var(--color-warning);
 }
 
 .toast-info {
-  border-left: 3px solid #2196f3;
+  border-left: 3px solid var(--color-info);
 }
 
 /* Animations */
@@ -168,7 +168,7 @@
 }
 
 /* Responsive */
-@media (max-width: 6var(--space-10)) {
+@media (max-width: 600px) {
   .toast-container {
     top: 10px;
     right: 10px;

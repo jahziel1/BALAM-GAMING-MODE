@@ -13,10 +13,10 @@
 }
 
 .osd-pill {
-  background: rgba(15, 15, 20, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: var(--space-3) 2var (--space-1);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding: var(--space-3) calc(2 * var(--space-1));
   border-radius: 40px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -29,7 +29,7 @@
 }
 
 .osd-icon {
-  color: #fff;
+  color: var(--color-text-primary);
   filter: drop-shadow(0 0 5px var(--color-text-muted));
 }
 
@@ -47,9 +47,9 @@
   left: 0;
   top: 0;
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
   border-radius: 3px;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
   transition: width 0.15s ease-out;
 }
 
@@ -57,7 +57,7 @@
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
-  color: #fff;
+  color: var(--color-text-primary);
   min-width: var(--space-10);
   text-align: right;
 }
