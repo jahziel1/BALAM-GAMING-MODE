@@ -155,7 +155,17 @@
 .wifi-bar {
   width: var(--space-1);
   border-radius: 2px;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  box-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.3); /* Glow effect */
+}
+
+.wifi-network:hover .wifi-bar,
+.wifi-network.focused .wifi-bar {
+  box-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.5); /* Stronger glow on hover/focus */
+}
+
+.wifi-network.connected .wifi-bar {
+  box-shadow: 0 0 10px rgba(var(--color-success-rgb), 0.4); /* Green glow when connected */
 }
 
 .wifi-bar:nth-child(1) {
@@ -176,7 +186,7 @@
 }
 
 /* Responsive */
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   .wifi-ssid {
     font-size: var(--font-sm);
   }

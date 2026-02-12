@@ -2,7 +2,7 @@
 /* Base item styling is handled by SelectableItem component */
 
 .slider-item {
-  padding: 1var (--space-2) 25px;
+  padding: 18px 25px;
   flex-direction: column;
   align-items: stretch;
   gap: var(--space-3);

@@ -75,7 +75,7 @@
 }
 
 /* Responsive */
-@media (max-width: 102var(--space-1)) {
+@media (max-width: 1024px) {
   .carousel-title {
     font-size: 1.25rem;
     margin-left: 1.5rem;
@@ -87,7 +87,7 @@
   }
 
   .carousel-item {
-    width: 2var (--space-5);
+    width: 200px;
   }
 
   .carousel-item .card {
@@ -95,7 +95,7 @@
   }
 }
 
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   .carousel-section {
     margin-bottom: 2rem;
   }

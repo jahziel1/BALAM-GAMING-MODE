@@ -466,7 +466,7 @@
 }
 
 /* Fix #19: Responsive Design */
-@media (max-width: 102var(--space-1)) {
+@media (max-width: 1024px) {
   .search-command {
     width: 80%;
   }
@@ -477,7 +477,7 @@
   }
 }
 
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   :root {
     --search-padding-top: 10vh;
   }
@@ -545,7 +545,7 @@
 
   .search-input {
     font-size: 1rem;
-    padding: 1var (--space-1) 45px 14px 45px;
+    padding: 14px 45px 14px 45px;
   }
 
   .search-icon {

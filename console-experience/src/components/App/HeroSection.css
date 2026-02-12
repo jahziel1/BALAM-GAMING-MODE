@@ -74,7 +74,7 @@
 /* Logo */
 .hero-logo {
   max-width: 550px;
-  max-height: 2var (--space-5);
+  max-height: 200px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -164,7 +164,7 @@
 /* Hero play button now uses unified Button component from core */
 
 /* Responsive */
-@media (max-width: 102var(--space-1)) {
+@media (max-width: 1024px) {
   .hero-section {
     height: 55vh;
     min-height: 400px;
@@ -180,7 +180,7 @@
   }
 }
 
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   .hero-section {
     height: 50vh;
     min-height: 350px;
@@ -192,6 +192,6 @@
 
   .hero-logo {
     max-width: 300px;
-    max-height: 1var (--space-5);
+    max-height: 150px;
   }
 }

@@ -103,13 +103,13 @@
   }
 
   .button-icon {
-    width: 2var (--space-1);
-    height: 2var (--space-1);
+    width: calc(2 * var(--space-1));
+    height: calc(2 * var(--space-1));
     font-size: 0.7rem;
   }
 
   .generic-key {
-    min-width: 2var (--space-1);
+    min-width: calc(2 * var(--space-1));
     padding: 0 var(--space-1);
     font-size: 0.65rem;
   }

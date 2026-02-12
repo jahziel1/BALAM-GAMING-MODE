@@ -216,8 +216,8 @@
 
 /* Key Buttons */
 .key-btn {
-  min-width: 4var (--space-2);
-  height: 4var (--space-2);
+  min-width: calc(4 * var(--space-2));
+  height: calc(4 * var(--space-2));
   padding: 0 var(--space-2-5);
   border-radius: var(--radius-sm);
   border: 2px solid rgba(255, 255, 255, 0.1);
@@ -242,7 +242,7 @@
   border-color: rgba(var(--color-primary-rgb), 0.3);
   font-size: 0.85rem;
   min-width: auto;
-  padding: 0 1var (--space-1);
+  padding: 0 calc(1 * var(--space-1));
 }
 
 .key-btn.space {
@@ -359,14 +359,14 @@
 }
 
 /* Responsive */
-@media (max-width: 102var(--space-1)) {
+@media (max-width: 1024px) {
   .virtual-keyboard-overlay {
     height: 48vh; /* Fix #16: Reduced from 55vh */
   }
 
   .key-btn {
-    min-width: 4var (--space-1); /* Fix #15: Increased from 45px */
-    height: 4var (--space-1);
+    min-width: calc(4 * var(--space-1)); /* Fix #15: Increased from 45px */
+    height: calc(4 * var(--space-1));
     font-size: 0.95rem;
   }
 
@@ -375,7 +375,7 @@
   }
 }
 
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   .virtual-keyboard-overlay {
     height: 50vh; /* Fix #16: Reduced from 60vh */
     padding: var(--space-3);
@@ -392,8 +392,8 @@
   }
 
   .key-btn {
-    min-width: 4var (--space-1); /* Fix #15: Maintained at 44px (was 40px) */
-    height: 4var (--space-1);
+    min-width: calc(4 * var(--space-1)); /* Fix #15: Maintained at 44px (was 40px) */
+    height: calc(4 * var(--space-1));
     font-size: 0.9rem;
     padding: 0 var(--space-2);
   }
@@ -404,7 +404,7 @@
   }
 
   .key-btn.space {
-    min-width: 1var (--space-10);
+    min-width: calc(1 * var(--space-10));
   }
 
   .keyboard-hints {
@@ -423,8 +423,10 @@
   }
 
   .key-btn {
-    min-width: 4var (--space-1); /* Fix #15: Increased from 35px to meet touch target standards */
-    height: 4var (--space-1);
+    min-width: calc(
+      4 * var(--space-1)
+    ); /* Fix #15: Increased from 35px to meet touch target standards */
+    height: calc(4 * var(--space-1));
     font-size: 0.85rem;
   }
 
@@ -434,7 +436,7 @@
   }
 
   .key-btn.space {
-    min-width: 1var (--space-5);
+    min-width: calc(1 * var(--space-5));
   }
 
   .keyboard-hints {

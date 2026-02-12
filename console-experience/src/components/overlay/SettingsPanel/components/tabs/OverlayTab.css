@@ -1,7 +1,7 @@
 /* Overlay Settings Tab - Native Overlay UI */
 
 .overlay-tab {
-  padding: 2var (--space-1);
+  padding: calc(2 * var(--space-1));
   max-width: 900px;
   margin: 0 auto;
   color: var(--color-text-primary);
@@ -15,7 +15,7 @@
 }
 
 .overlay-description {
-  margin: 0 0 2var (--space-1) 0;
+  margin: 0 0 calc(2 * var(--space-1)) 0;
   color: var(--color-text-secondary);
   font-size: 15px;
   line-height: 1.6;
@@ -76,8 +76,8 @@
 .overlay-toggle input[type='checkbox']:before {
   content: '';
   position: absolute;
-  width: 2var (--space-1);
-  height: 2var (--space-1);
+  width: calc(2 * var(--space-1));
+  height: calc(2 * var(--space-1));
   border-radius: 50%;
   background: white;
   top: 2px;

@@ -21,7 +21,7 @@
 
 /* ... existing styles ... */
 
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   .username {
     display: none;
   }
