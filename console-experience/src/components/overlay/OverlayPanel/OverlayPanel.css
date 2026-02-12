@@ -110,7 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 40px 40px 20px;
+  padding: var(--space-10) 40px var(--space-5);
   margin-bottom: 0;
   border-bottom: 1px solid rgba(45, 115, 255, 0.2);
   flex-shrink: 0;
@@ -128,9 +128,9 @@
 .overlay-panel-close {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 2px solid var(--color-border);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-background-elevated-1);
   color: var(--color-text);
   font-size: 1.25rem;
   cursor: pointer;
@@ -141,7 +141,7 @@
 }
 
 .overlay-panel-close:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-background-elevated-3);
   border-color: var(--color-primary);
   transform: scale(1.05);
 }
@@ -156,7 +156,7 @@
   flex-direction: column;
   gap: 10px;
   flex: 1;
-  padding: 40px;
+  padding: var(--space-10);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -166,11 +166,11 @@
 }
 
 .overlay-panel-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-background-elevated-1);
 }
 
 .overlay-panel-content::-webkit-scrollbar-thumb {
-  background: rgba(45, 115, 255, 0.3);
+  background: rgba(var(--color-primary-rgb), 0.3);
   border-radius: 3px;
 }
 
@@ -181,7 +181,7 @@
 /* Footer */
 .overlay-panel-footer {
   margin-top: auto;
-  padding: 24px 40px 40px;
+  padding: 2var (--space-1) var(--space-10) 40px;
   flex-shrink: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -195,7 +195,7 @@
   }
 
   .overlay-panel-header {
-    padding: 30px 20px 15px;
+    padding: 30px var(--space-5) 15px;
   }
 
   .overlay-panel-header h2 {
@@ -203,19 +203,19 @@
   }
 
   .overlay-panel-content {
-    padding: 30px 20px;
-    gap: 8px;
+    padding: 30px var(--space-5);
+    gap: var(--space-2);
   }
 
   .overlay-panel-footer {
-    padding: 20px 20px 30px;
+    padding: var(--space-5) 20px 30px;
   }
 }
 
 /* Very small screens (phones in landscape) */
 @media (max-width: 600px) {
   .overlay-panel-header {
-    padding: 20px 15px 15px;
+    padding: var(--space-5) 15px 15px;
   }
 
   .overlay-panel-header h2 {
@@ -223,11 +223,11 @@
   }
 
   .overlay-panel-content {
-    padding: 20px 15px;
+    padding: var(--space-5) 15px;
     gap: 6px;
   }
 
   .overlay-panel-footer {
-    padding: 20px 15px 20px;
+    padding: var(--space-5) 15px 20px;
   }
 }

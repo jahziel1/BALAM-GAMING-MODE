@@ -1,7 +1,7 @@
 .fps-service-toggle {
   padding: 1.5rem;
   background: rgba(30, 30, 35, 0.95);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 1.5rem;
 }
@@ -28,10 +28,10 @@
 
 .fps-service-version {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary);
   background: rgba(255, 255, 255, 0.1);
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 /* Toggle Switch */
@@ -39,7 +39,7 @@
   position: relative;
   display: inline-block;
   width: 52px;
-  height: 28px;
+  height: 2var (--space-2);
 }
 
 .toggle-switch input {
@@ -63,10 +63,10 @@
 .toggle-slider:before {
   position: absolute;
   content: '';
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
+  height: var(--space-5);
+  width: var(--space-5);
+  left: var(--space-1);
+  bottom: var(--space-1);
   background-color: white;
   transition: 0.3s;
   border-radius: 50%;
@@ -94,7 +94,7 @@ input:disabled + .toggle-slider {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
 }
 
 /* Warning */
@@ -104,7 +104,7 @@ input:disabled + .toggle-slider {
   padding: 1rem;
   background: rgba(255, 193, 7, 0.1);
   border: 1px solid rgba(255, 193, 7, 0.3);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 1rem;
 }
 
@@ -115,7 +115,7 @@ input:disabled + .toggle-slider {
 
 .warning-text strong {
   display: block;
-  color: #ffc107;
+  color: var(--color-warning);
   margin-bottom: 0.25rem;
   font-size: 0.875rem;
 }
@@ -123,7 +123,7 @@ input:disabled + .toggle-slider {
 .warning-text p {
   margin: 0;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
 }
 
 /* Error */
@@ -133,7 +133,7 @@ input:disabled + .toggle-slider {
   padding: 1rem;
   background: rgba(244, 67, 54, 0.1);
   border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 1rem;
 }
 
@@ -153,8 +153,8 @@ input:disabled + .toggle-slider {
   gap: 1.5rem;
   margin-bottom: 1rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  background: var(--color-background-elevated-1);
+  border-radius: var(--radius-md);
 }
 
 .status-item {
@@ -165,13 +165,13 @@ input:disabled + .toggle-slider {
 
 .status-label {
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-tertiary);
 }
 
 .status-badge {
   font-size: 0.75rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -219,7 +219,7 @@ input:disabled + .toggle-slider {
   margin: 0 0 0.75rem 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary);
 }
 
 .fps-service-features ul {
@@ -230,7 +230,7 @@ input:disabled + .toggle-slider {
 
 .fps-service-features li {
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   padding: 0.25rem 0;
   line-height: 1.5;
 }
@@ -243,14 +243,14 @@ input:disabled + .toggle-slider {
   padding: 1rem;
   background: rgba(33, 150, 243, 0.1);
   border: 1px solid rgba(33, 150, 243, 0.3);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-top: 1rem;
 }
 
 .loading-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: var(--space-5);
+  height: var(--space-5);
+  border: 2px solid var(--color-text-muted);
   border-top-color: #2196f3;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -264,5 +264,5 @@ input:disabled + .toggle-slider {
 
 .fps-service-loading span {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary);
 }

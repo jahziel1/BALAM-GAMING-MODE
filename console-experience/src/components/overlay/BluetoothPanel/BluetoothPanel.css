@@ -2,7 +2,7 @@
 .bluetooth-devices {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .bluetooth-device {
@@ -27,8 +27,8 @@
 .bluetooth-device-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 .bluetooth-device-name {
@@ -41,7 +41,7 @@
 .bluetooth-badge {
   background: var(--color-success, #4caf50);
   color: white;
-  padding: 2px 8px;
+  padding: 2px var(--space-2);
   border-radius: var(--radius-sm, 4px);
   font-size: 0.75rem;
   font-weight: 600;
@@ -55,10 +55,10 @@
 .bluetooth-device-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   font-size: 0.85rem;
   color: var(--color-text-secondary, #aaa);
-  padding-left: 32px;
+  padding-left: var(--space-8);
 }
 
 .bluetooth-address {
@@ -71,7 +71,7 @@
 
 .bluetooth-action {
   margin-left: auto;
-  color: var(--color-primary, #2d73ff);
+  color: var(--color-primary, var(--color-primary));
   font-weight: 600;
 }
 
@@ -81,15 +81,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 48px 24px;
+  gap: var(--space-4);
+  padding: 4var (--space-2) 2var (--space-1);
   text-align: center;
   color: var(--color-text-secondary, #aaa);
 }
 
 .bluetooth-icon-spin {
   animation: spin 1s linear infinite;
-  color: var(--color-primary, #2d73ff);
+  color: var(--color-primary, var(--color-primary));
 }
 
 @keyframes spin {
@@ -102,8 +102,8 @@
 }
 
 .bluetooth-button {
-  padding: 12px 24px;
-  background: var(--color-primary, #2d73ff);
+  padding: var(--space-3) 2var (--space-1);
+  background: var(--color-primary, var(--color-primary));
   color: white;
   border: none;
   border-radius: var(--radius-md, 8px);
@@ -124,7 +124,7 @@
 .bluetooth-footer {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
@@ -134,13 +134,13 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 76var(--space-2)) {
   .bluetooth-device-name {
     font-size: 0.9rem;
   }
 
   .bluetooth-device-meta {
-    padding-left: 20px;
+    padding-left: var(--space-5);
     flex-wrap: wrap;
   }
 }

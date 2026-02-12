@@ -5,31 +5,31 @@
   font-weight: 400;
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #0f0f0f;
+  background-color: var(--color-background-base);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
   /* Color Palette (Global Theme) */
-  --color-primary: #2d73ff;
+  --color-primary: var(--color-primary);
   --color-primary-light: #06bfff;
   --color-primary-rgb: 45, 115, 255;
   --color-primary-light-rgb: 6, 191, 255;
 
-  --color-background: #0f0f0f;
+  --color-background: var(--color-background-base);
   --color-background-card: #1e1e24;
   --color-background-elevated: rgba(20, 20, 30, 0.6);
 
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.8);
-  --color-text-tertiary: rgba(255, 255, 255, 0.6);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
 
   --color-border: rgba(255, 255, 255, 0.1);
   --color-border-focus: var(--color-primary);
 
-  --color-success: #4ade80;
-  --color-danger: #ef4444;
+  --color-success: var(--color-success);
+  --color-danger: var(--color-error);
   --color-warning: #ffca28;
 
   /* Design System - Unified Visual Language */
@@ -37,7 +37,7 @@
   --glass-bg: rgba(15, 17, 21, 0.85);
   --glass-bg-light: rgba(20, 22, 28, 0.6);
   --glass-blur: blur(40px);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  --glass-border: 1px solid var(--color-background-elevated-2);
 
   /* Focus States (Unified) */
   --focus-border: 2px solid var(--color-primary);
@@ -63,7 +63,7 @@
 
   /* UI Scaling Vars (Dynamic Fluid) */
   /* Min: 160px (Mobile), Ideal: 14vw, Max: 320px (UltraWide) */
-  --card-width: clamp(160px, 15vw, 320px);
+  --card-width: clamp(160px, 15vw, 3var (--space-5));
   --card-height: calc(var(--card-width) * 1.5);
   /* Always 2:3 ratio */
   --card-gap: clamp(15px, 1.5vw, 30px);
@@ -72,7 +72,7 @@
 
 /* Remove fixed media queries to allow fluid scaling */
 /* @media (max-width: 1200px) ... REMOVED */
-/* @media (min-width: 1920px) ... REMOVED */
+/* @media (min-width: 19var(--space-5)) ... REMOVED */
 
 body {
   margin: 0;
@@ -183,23 +183,23 @@ body {
   max-width: clamp(200px, 30vw, 450px);
   max-height: 180px;
   object-fit: contain;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
   filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
 }
 
 .hero-meta {
   display: flex;
-  gap: 20px;
+  gap: var(--space-5);
   margin-bottom: 3vh;
   font-size: clamp(0.8rem, 1.2vw, 1.2rem);
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   font-weight: 500;
   flex-wrap: wrap;
 }
 
 .hero-actions {
   display: flex;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .btn-play {
@@ -208,13 +208,13 @@ body {
   padding: 1.5vh 3vw;
   font-size: clamp(1rem, 1.5vw, 1.5rem);
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: none;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px var(--color-text-muted);
   transition: transform 0.2s;
   cursor: pointer;
 }
@@ -223,7 +223,7 @@ body {
 .btn-play:hover {
   transform: scale(1.05);
   background: #f0f0f0;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 30px var(--color-text-tertiary);
 }
 
 /* === LIBRARY SECTION (Ribbon) === */
@@ -264,7 +264,7 @@ body {
   position: fixed;
   left: 0;
   top: 0;
-  width: 40px;
+  width: var(--space-10);
   height: 100%;
   z-index: 9999;
   /* Always on top to catch hover/click */
@@ -277,17 +277,17 @@ body {
 }
 
 .menu-glow-line {
-  width: 4px;
+  width: var(--space-1);
   height: 40vh;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   opacity: 0.5;
 }
 
 .menu-hint-area:hover .menu-glow-line {
-  background: #2d73ff;
+  background: var(--color-primary);
   box-shadow: 0 0 20px rgba(45, 115, 255, 0.6);
   opacity: 1;
   height: 50vh;
@@ -318,8 +318,8 @@ body.input-keyboard .card {
 /* Gamepad Status Tag */
 .gamepad-status-tag {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: var(--space-5);
+  right: var(--space-5);
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(10px);
   padding: 5px 15px;
@@ -327,7 +327,7 @@ body.input-keyboard .card {
   font-size: 0.75rem;
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary);
   z-index: 10000;
   pointer-events: none;
   letter-spacing: 1px;
@@ -343,8 +343,8 @@ body.input-keyboard .card {
   background: rgba(255, 68, 68, 0.15);
   border: 1px solid rgba(255, 68, 68, 0.3);
   color: #ff6060;
-  padding: 12px 24px;
-  border-radius: 4px;
+  padding: var(--space-3) 2var (--space-1);
+  border-radius: var(--radius-sm);
   /* match play button */
   font-weight: 700;
   font-size: 0.9rem;
@@ -381,10 +381,10 @@ body.input-keyboard .card {
 .system-modal {
   background: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 40px;
+  padding: var(--space-10);
   width: 90%;
   max-width: 500px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   transform: scale(0.95);
@@ -396,11 +396,11 @@ body.input-keyboard .card {
   font-family: 'Rajdhani', sans-serif;
   text-transform: uppercase;
   font-size: 2rem;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .system-modal p {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   margin-bottom: 30px;
   font-size: 1.1rem;
 }
@@ -408,15 +408,15 @@ body.input-keyboard .card {
 .modal-actions {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .btn-modal {
-  padding: 12px 30px;
+  padding: var(--space-3) 30px;
   font-size: 1rem;
   font-weight: 700;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   text-transform: uppercase;
   transition: all 0.2s;
@@ -425,7 +425,7 @@ body.input-keyboard .card {
 .btn-modal.cancel {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-tertiary);
 }
 
 .btn-modal.cancel:hover {

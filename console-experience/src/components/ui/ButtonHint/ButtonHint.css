@@ -3,7 +3,7 @@
   align-items: center;
   gap: 10px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -77,13 +77,13 @@
 /* D-Pad specific styling */
 .dpad-key {
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--color-text-muted);
   border-radius: 6px;
-  padding: 2px 8px;
+  padding: 2px var(--space-2);
   font-size: 0.75rem;
   min-width: auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary);
 }
 
 .button-label {
@@ -92,7 +92,7 @@
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary);
 }
 
 /* Responsive */
@@ -103,14 +103,14 @@
   }
 
   .button-icon {
-    width: 24px;
-    height: 24px;
+    width: 2var (--space-1);
+    height: 2var (--space-1);
     font-size: 0.7rem;
   }
 
   .generic-key {
-    min-width: 24px;
-    padding: 0 4px;
+    min-width: 2var (--space-1);
+    padding: 0 var(--space-1);
     font-size: 0.65rem;
   }
 }

@@ -10,7 +10,7 @@
   min-height: 500px;
   overflow: hidden;
   margin-bottom: 2rem;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 
 /* Background Image */
@@ -74,12 +74,12 @@
 /* Logo */
 .hero-logo {
   max-width: 550px;
-  max-height: 220px;
+  max-height: 2var (--space-5);
   width: auto;
   height: auto;
   object-fit: contain;
   object-position: left center;
-  filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 6px 2var (--space-1) rgba(0, 0, 0, 0.6));
   transition: transform 0.3s ease;
 }
 
@@ -125,7 +125,7 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -136,12 +136,12 @@
 
 .btn-favorite:hover {
   background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--color-text-muted);
   transform: scale(1.05);
 }
 
 .btn-favorite.favorited {
-  color: #fbbf24;
+  color: var(--color-warning);
   background: rgba(251, 191, 36, 0.2);
   border-color: rgba(251, 191, 36, 0.3);
 }
@@ -168,7 +168,7 @@
   color: var(--text-primary);
   background: var(--accent-primary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
@@ -195,7 +195,7 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (max-width: 102var(--space-1)) {
   .hero-section {
     height: 55vh;
     min-height: 400px;
@@ -216,7 +216,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 76var(--space-2)) {
   .hero-section {
     height: 50vh;
     min-height: 350px;
@@ -228,7 +228,7 @@
 
   .hero-logo {
     max-width: 300px;
-    max-height: 120px;
+    max-height: 1var (--space-5);
   }
 
   .btn-hero-play {

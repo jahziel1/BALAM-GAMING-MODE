@@ -21,7 +21,7 @@
 
 /* ... existing styles ... */
 
-@media (max-width: 768px) {
+@media (max-width: 76var(--space-2)) {
   .username {
     display: none;
   }
@@ -44,11 +44,11 @@
 }
 
 .avatar-small {
-  width: 40px;
-  height: 40px;
+  width: var(--space-10);
+  height: var(--space-10);
   border-radius: 50%;
-  background: #2d73ff;
-  border: 2px solid rgba(255, 255, 255, 0.8);
+  background: var(--color-primary);
+  border: 2px solid var(--color-text-secondary);
   box-shadow: 0 0 10px rgba(45, 115, 255, 0.5);
 }
 
@@ -61,8 +61,8 @@
 
 .level-badge {
   background: rgba(255, 255, 255, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-weight: 600;
   color: #ffd700;
@@ -77,13 +77,13 @@
 
 .status-icons {
   display: flex;
-  gap: 20px;
-  color: rgba(255, 255, 255, 0.5);
+  gap: var(--space-5);
+  color: var(--color-text-tertiary);
 }
 
 .status-icons .icon.active {
   color: #fff;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  filter: drop-shadow(0 0 5px var(--color-text-tertiary));
 }
 
 .status-item.clickable {
@@ -103,28 +103,28 @@
 .status-label {
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary);
 }
 
 .icon.charging {
-  color: #22c55e;
+  color: var(--color-success);
   animation: pulse-glow 2s infinite ease-in-out;
 }
 
 .icon.low {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 @keyframes pulse-glow {
   0%,
   100% {
     opacity: 1;
-    filter: drop-shadow(0 0 2px #22c55e);
+    filter: drop-shadow(0 0 2px var(--color-success));
   }
 
   50% {
     opacity: 0.7;
-    filter: drop-shadow(0 0 8px #22c55e);
+    filter: drop-shadow(0 0 8px var(--color-success));
   }
 }
 

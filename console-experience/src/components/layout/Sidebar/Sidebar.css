@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   z-index: 5000;
-  width: 320px;
+  width: 3var (--space-5);
   height: 100%;
 
   /* Estado por defecto (Oculto/Invisible) */
@@ -13,7 +13,7 @@
 
   display: flex;
   flex-direction: column;
-  padding: 40px 0;
+  padding: var(--space-10) 0;
 
   /* Movemos fuera de pantalla totalmente */
   transform: translateX(-100%);
@@ -34,7 +34,7 @@
 
 .sidebar-header {
   padding: 0 30px;
-  margin-bottom: 40px;
+  margin-bottom: var(--space-10);
   display: flex;
   align-items: center;
   gap: 15px;
@@ -50,8 +50,8 @@
 }
 
 .avatar-large {
-  width: 64px;
-  height: 64px;
+  width: 6var (--space-1);
+  height: 6var (--space-1);
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
   box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.5);
@@ -95,7 +95,7 @@
   position: relative;
   z-index: 10;
   pointer-events: auto;
-  border-left: 4px solid transparent;
+  border-left: var(--space-1) solid transparent;
 
   /* Animación de entrada escalonada */
   opacity: 0;
@@ -112,7 +112,7 @@
 .menu-item .icon {
   width: 30px;
   text-align: center;
-  margin-right: 20px;
+  margin-right: var(--space-5);
   font-size: 1.2rem;
   display: flex;
   justify-content: center;

@@ -26,12 +26,12 @@
 }
 
 .explorer-header {
-  padding: 20px 30px;
+  padding: var(--space-5) 30px;
   background: rgba(255, 255, 255, 0.03);
   display: flex;
   align-items: center;
-  gap: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: var(--space-5);
+  border-bottom: 1px solid var(--color-background-elevated-1);
 }
 
 .explorer-back-btn {
@@ -39,7 +39,7 @@
   border: none;
   color: #fff;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-2);
   border-radius: 50%;
   display: flex;
   transition: background 0.2s;
@@ -52,7 +52,7 @@
 .explorer-path {
   font-size: 1.2rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -65,13 +65,13 @@
 }
 
 .explorer-item {
-  padding: 12px 30px;
+  padding: var(--space-3) 30px;
   display: flex;
   align-items: center;
   gap: 15px;
   cursor: pointer;
   transition: all 0.2s;
-  border-left: 4px solid transparent;
+  border-left: var(--space-1) solid transparent;
 }
 
 .explorer-item.focused {
@@ -81,8 +81,8 @@
 }
 
 .item-icon {
-  width: 24px;
-  height: 24px;
+  width: 2var (--space-1);
+  height: 2var (--space-1);
 }
 
 .item-icon.drive {
@@ -126,7 +126,7 @@
   background: rgba(0, 0, 0, 0.2);
   display: flex;
   gap: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--color-background-elevated-1);
 }
 
 .hint-item {
@@ -134,14 +134,14 @@
   align-items: center;
   gap: 10px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-tertiary);
 }
 
 .key-badge {
   background: #444;
   color: #fff;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
   font-weight: 800;
   font-size: 0.8rem;
   box-shadow: 0 2px 0 #222;

@@ -122,7 +122,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding-left: calc(20px + var(--spacing-sm)); /* Icon size + gap */
+  padding-left: calc(var(--space-5) + var(--spacing-sm)); /* Icon size + gap */
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
 }
@@ -131,26 +131,26 @@
   display: flex;
   align-items: flex-end;
   gap: 2px;
-  height: 16px;
+  height: var(--space-4);
 }
 
 .wifi-bar {
-  width: 4px;
+  width: var(--space-1);
   border-radius: 2px;
   transition: background-color var(--transition-fast);
 }
 
 .wifi-bar:nth-child(1) {
-  height: 4px;
+  height: var(--space-1);
 }
 .wifi-bar:nth-child(2) {
-  height: 8px;
+  height: var(--space-2);
 }
 .wifi-bar:nth-child(3) {
-  height: 12px;
+  height: var(--space-3);
 }
 .wifi-bar:nth-child(4) {
-  height: 16px;
+  height: var(--space-4);
 }
 
 .wifi-security {
@@ -158,12 +158,12 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 76var(--space-2)) {
   .wifi-ssid {
     font-size: var(--font-sm);
   }
 
   .wifi-network-meta {
-    padding-left: calc(16px + var(--spacing-xs));
+    padding-left: calc(var(--space-4) + var(--spacing-xs));
   }
 }

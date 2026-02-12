@@ -13,21 +13,21 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-background-elevated-1);
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .level-option:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-background-elevated-2);
   border-color: rgba(0, 217, 255, 0.3);
 }
 
 .level-option.selected {
   background: rgba(0, 217, 255, 0.1);
-  border-color: #00d9ff;
+  border-color: var(--color-primary);
 }
 
 .level-option input[type='radio'] {
@@ -49,25 +49,25 @@
 .level-label {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 .level-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 2var (--space-1);
+  height: 2var (--space-1);
   background: rgba(0, 217, 255, 0.2);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
   font-weight: 700;
-  color: #00d9ff;
+  color: var(--color-primary);
 }
 
 .level-description {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-tertiary);
   margin: 0 0 0.75rem 0;
 }
 
@@ -82,6 +82,6 @@
 .metric-item {
   padding: 0.25rem 0.5rem;
   background: rgba(0, 0, 0, 0.4);
-  border-radius: 4px;
-  color: #4ade80;
+  border-radius: var(--radius-sm);
+  color: var(--color-success);
 }

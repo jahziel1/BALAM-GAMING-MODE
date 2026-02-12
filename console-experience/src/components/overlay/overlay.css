@@ -87,8 +87,8 @@
     position: absolute;
     top: var(--spacing-md);
     right: var(--spacing-md);
-    width: 32px;
-    height: 32px;
+    width: var(--space-8);
+    height: var(--space-8);
     border-radius: 50%;
     border: none;
     background: var(--color-surface);

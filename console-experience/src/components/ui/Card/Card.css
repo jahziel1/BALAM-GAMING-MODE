@@ -155,10 +155,10 @@
 /* Favorite Badge */
 .card-favorite-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: var(--space-8);
+  height: var(--space-8);
   background: rgba(251, 191, 36, 0.9);
   backdrop-filter: blur(8px);
   border-radius: 50%;
