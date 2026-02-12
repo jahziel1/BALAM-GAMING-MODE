@@ -42,14 +42,14 @@
   margin-top: 2px;
 }
 
-/* FPS value - Large and prominent */
+/* FPS value - Large and prominent (NEW: Orange accent) */
 .fps-value {
-  color: var(--color-info);
+  color: var(--color-accent);
   font-weight: 700;
   font-size: 24px;
   letter-spacing: -0.8px;
   text-shadow:
-    0 0 20px rgba(94, 234, 212, 0.6),
+    0 0 20px rgba(var(--color-accent-rgb), 0.6),
     0 2px 4px rgba(0, 0, 0, 0.8),
     0 0 2px rgba(0, 0, 0, 1);
 }
@@ -77,14 +77,14 @@
     0 0 2px rgba(0, 0, 0, 1);
 }
 
-/* Metric values */
+/* Metric values (CPU/GPU stay cyan) */
 .metric-value {
-  color: var(--color-info);
+  color: var(--color-primary);
   font-weight: 700;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   text-shadow:
-    0 0 16px rgba(94, 234, 212, 0.5),
+    0 0 16px rgba(var(--color-primary-rgb), 0.5),
     0 1px 3px rgba(0, 0, 0, 0.9),
     0 0 2px rgba(0, 0, 0, 1);
 }
