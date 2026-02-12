@@ -1,5 +1,5 @@
 use crate::adapters::fps_service::FpsClient;
-use crate::adapters::performance_monitoring::NVMLAdapter;
+use crate::adapters::performance_monitoring::{NVMLAdapter, PdhAdapter};
 use crate::domain::performance::{FPSStats, PerformanceMetrics};
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -11,22 +11,30 @@ use tracing::{info, warn};
 ///
 /// # Features
 /// - **CPU/RAM:** sysinfo (fast, cross-platform)
-/// - **GPU (NVIDIA):** `NVML` adapter (official API)
+/// - **GPU (NVIDIA):** `NVML` adapter (official API, full metrics)
+/// - **GPU (AMD/Intel):** `PDH` adapter (Performance Counters, usage only)
 /// - **FPS:** `FpsClient` (Windows Service via Named Pipe)
 ///
 /// # Performance
 /// - CPU/RAM: <10ms per query
 /// - GPU (`NVML`): <5ms per query
+/// - GPU (`PDH`): <10ms per query
 /// - FPS (Service): <1ms per query (cached, Named Pipe)
 /// - Total overhead: <2% CPU
 ///
 /// # Architecture
 /// This is the main orchestrator that aggregates metrics from multiple adapters:
 /// - sysinfo for CPU/RAM
-/// - `NVML` for NVIDIA GPU
+/// - `NVML` for NVIDIA GPU (primary, full metrics)
+/// - `PDH` for AMD/Intel GPU (fallback, usage only)
 /// - `FpsClient` for FPS (Windows Service)
 ///
 /// All adapters are lazy-initialized and handle errors gracefully.
+///
+/// # GPU Monitoring Strategy
+/// 1. Try NVML first (NVIDIA only) - provides usage, temp, power
+/// 2. Fallback to PDH (universal) - provides usage only
+/// 3. This ensures AMD/Intel users get GPU usage percentage
 ///
 /// # Important Note on CPU Usage
 /// sysinfo requires TWO snapshots with a delay to calculate CPU usage correctly.
@@ -36,6 +44,8 @@ pub struct WindowsPerfMonitor {
     system: Arc<Mutex<System>>,
     /// `NVML` adapter for NVIDIA GPU metrics (lazy initialized)
     nvml: Arc<NVMLAdapter>,
+    /// `PDH` adapter for universal GPU metrics (lazy initialized)
+    pdh: Arc<PdhAdapter>,
     /// FPS Service client (Windows Service via Named Pipe)
     fps_client: Arc<FpsClient>,
     /// Last time system metrics were refreshed (for rate limiting)
@@ -47,7 +57,7 @@ impl WindowsPerfMonitor {
     /// Creates a new Windows performance monitor.
     ///
     /// Initializes sysinfo System and creates adapter instances (lazy initialization).
-    /// `NVML` and `PresentMon` are not initialized until first use.
+    /// `NVML` and `PDH` are not initialized until first use.
     ///
     /// # Important
     /// This also starts a background thread that refreshes sysinfo metrics every 500ms.
@@ -93,6 +103,7 @@ impl WindowsPerfMonitor {
         Self {
             system: system_arc,
             nvml: Arc::new(NVMLAdapter::new()),
+            pdh: Arc::new(PdhAdapter::new()),
             fps_client: Arc::new(FpsClient::new()),
             last_refresh,
         }
@@ -150,22 +161,46 @@ impl WindowsPerfMonitor {
 
     /// Gets GPU usage percentage (0-100).
     ///
-    /// Uses `NVML` for NVIDIA GPUs. Returns 0.0 if not available.
+    /// Uses a two-tier fallback strategy:
+    /// 1. **NVML** (NVIDIA GPUs) - Highest priority, most accurate
+    /// 2. **PDH** (AMD/Intel GPUs) - Fallback, uses Performance Counters
     ///
     /// # Returns
-    /// GPU usage percentage (0-100), or 0.0 if `NVML` not available.
+    /// GPU usage percentage (0-100), or 0.0 if no GPU monitoring available.
+    ///
+    /// # Strategy
+    /// - NVIDIA users: Get data from NVML (vendor-specific, precise)
+    /// - AMD/Intel users: Get data from PDH (universal, Task Manager source)
+    /// - This ensures all users get GPU usage regardless of vendor
     fn get_gpu_usage(&self) -> f32 {
+        // Try NVML first (NVIDIA only, but provides full metrics)
         match self.nvml.get_gpu_usage() {
-            Ok(Some(usage)) => usage,
+            Ok(Some(usage)) => {
+                return usage;
+            },
             Ok(None) => {
-                // GPU metric not supported
-                0.0
+                // NVML available but no GPU usage metric
             },
             Err(_) => {
-                // NVML not available (not NVIDIA GPU, drivers missing, etc.)
-                0.0
+                // NVML not available (not NVIDIA, drivers missing, etc.)
             },
         }
+
+        // Fallback to PDH (universal - works with AMD, Intel, NVIDIA)
+        match self.pdh.get_gpu_usage() {
+            Ok(Some(usage)) => {
+                return usage;
+            },
+            Ok(None) => {
+                // PDH counter not available (old driver, no GPU)
+            },
+            Err(_) => {
+                // PDH query failed
+            },
+        }
+
+        // No GPU monitoring available
+        0.0
     }
 
     /// Gets GPU temperature in Celsius.
@@ -224,6 +259,30 @@ impl WindowsPerfMonitor {
     #[must_use]
     pub fn is_nvml_available(&self) -> bool {
         self.nvml.is_available()
+    }
+
+    /// Checks if `PDH` (Performance Counters GPU) is available.
+    #[must_use]
+    pub fn is_pdh_available(&self) -> bool {
+        self.pdh.is_available()
+    }
+
+    /// Gets GPU vendor information for debugging.
+    ///
+    /// # Returns
+    /// String describing which GPU monitoring is active:
+    /// - "NVML (NVIDIA)" - NVIDIA GPU with full metrics
+    /// - "PDH (AMD/Intel)" - Non-NVIDIA GPU with PDH fallback
+    /// - "None" - No GPU monitoring available
+    #[must_use]
+    pub fn get_gpu_vendor_info(&self) -> String {
+        if self.is_nvml_available() {
+            "NVML (NVIDIA)".to_string()
+        } else if self.is_pdh_available() {
+            "PDH (AMD/Intel/Universal)".to_string()
+        } else {
+            "None".to_string()
+        }
     }
 }
 
