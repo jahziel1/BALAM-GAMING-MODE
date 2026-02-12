@@ -72,25 +72,35 @@
 
 .wifi-network {
   padding: var(--spacing-md);
-  background: var(--card-bg);
-  border: 2px solid transparent;
+  background: var(--glass-bg); /* Glassmorphism */
+  backdrop-filter: var(--glass-blur);
+  border: 2px solid var(--glass-border);
   border-radius: var(--card-radius);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .wifi-network:hover {
-  background: var(--color-surface);
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow */
 }
 
 .wifi-network.focused {
   border-color: var(--color-primary);
-  background: var(--color-surface);
+  background: rgba(var(--color-primary-rgb), 0.15);
+  box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.4); /* Blue glow dramático */
 }
 
 .wifi-network.connected {
   border-color: var(--color-success);
-  background: rgba(40, 167, 69, 0.1);
+  background: rgba(var(--color-success-rgb), 0.1);
+  box-shadow: 0 0 15px rgba(var(--color-success-rgb), 0.3); /* Green glow */
+}
+
+/* Connecting state (loading opacity) */
+.wifi-network.connecting {
+  opacity: 0.6;
 }
 
 .wifi-network-header {

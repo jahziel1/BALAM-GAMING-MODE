@@ -7,21 +7,35 @@
 
 .bluetooth-device {
   padding: var(--spacing-md);
-  background: var(--card-bg);
-  border: 2px solid transparent;
+  background: var(--glass-bg); /* Glassmorphism */
+  backdrop-filter: var(--glass-blur);
+  border: 2px solid var(--glass-border);
   border-radius: var(--card-radius);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
+.bluetooth-device:hover {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow */
+}
+
 .bluetooth-device.focused {
   border-color: var(--color-primary);
-  background: rgba(45, 115, 255, 0.1);
+  background: rgba(var(--color-primary-rgb), 0.15);
+  box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.4); /* Blue glow dramático */
 }
 
 .bluetooth-device.connected {
   border-color: var(--color-success);
-  background: rgba(var(--color-success-rgb, 76, 175, 80), 0.05);
+  background: rgba(var(--color-success-rgb), 0.1);
+  box-shadow: 0 0 15px rgba(var(--color-success-rgb), 0.3); /* Green glow */
+}
+
+/* Operating state (loading opacity) */
+.bluetooth-device.operating {
+  opacity: 0.6;
 }
 
 .bluetooth-device-header {

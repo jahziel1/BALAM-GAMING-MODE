@@ -228,12 +228,11 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
             ref={(el) => {
               networkRefs.current[index] = el;
             }}
-            className={`wifi-network ${index === selectedIndex ? 'focused' : ''} ${network.is_connected ? 'connected' : ''}`}
+            className={`wifi-network ${index === selectedIndex ? 'focused' : ''} ${network.is_connected ? 'connected' : ''} ${isConnecting ? 'connecting' : ''}`}
             onClick={() => {
               setSelectedIndex(index);
               void handleConnect(network);
             }}
-            style={{ opacity: isConnecting ? 0.6 : 1 }}
           >
             <div className="wifi-network-header">
               <Wifi

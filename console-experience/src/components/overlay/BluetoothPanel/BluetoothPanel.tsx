@@ -299,12 +299,11 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
             ref={(el) => {
               deviceRefs.current[index] = el;
             }}
-            className={`bluetooth-device ${index === selectedIndex ? 'focused' : ''} ${device.is_connected ? 'connected' : ''}`}
+            className={`bluetooth-device ${index === selectedIndex ? 'focused' : ''} ${device.is_connected ? 'connected' : ''} ${isOperating ? 'operating' : ''}`}
             onClick={() => {
               setSelectedIndex(index);
               void handleDeviceAction(device);
             }}
-            style={{ opacity: isOperating ? 0.6 : 1 }}
           >
             <div className="bluetooth-device-header">
               {getDeviceIcon(device.device_type)}
