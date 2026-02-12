@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 
 import { OverlayLevelSelector } from '../OverlayLevelSelector';
 import { OverlayPreview } from '../OverlayPreview';
+import { ServiceStatusCard } from '../ServiceStatusCard';
 import { SettingsItem, SettingsSection, SettingsToggle } from '../shared';
-import { FpsServiceToggle } from './FpsServiceToggle';
 
 interface PerformanceTabProps {
   // General Performance
@@ -132,8 +132,8 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
         ) : null}
       </SettingsSection>
 
-      <SettingsSection title="FPS Monitoring">
-        <FpsServiceToggle />
+      <SettingsSection title="FPS Monitoring Service">
+        <ServiceStatusCard />
       </SettingsSection>
     </>
   );
