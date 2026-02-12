@@ -21,7 +21,7 @@
 }
 
 /* Responsive Footer */
-@media (max-width: 76var(--space-2)) {
+@media (max-width: 768px) {
   .prompts-container {
     gap: 15px;
   }
@@ -45,7 +45,7 @@
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: 1px;
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 /* Keyboard Icons */
@@ -56,60 +56,60 @@
   padding: 2px var(--space-2);
   font-size: 0.8rem;
   font-weight: 700;
-  min-width: 2var (--space-1);
+  min-width: calc(2 * var(--space-1));
   text-align: center;
 }
 
 /* Gamepad Icons (Xbox Style) */
 .btn-icon {
-  width: 2var (--space-1);
-  height: 2var (--space-1);
+  width: calc(2 * var(--space-1));
+  height: calc(2 * var(--space-1));
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 800;
   font-size: 0.9rem;
-  color: #000;
+  color: var(--color-background-base);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .xbox-a {
-  background: #107c10;
-  color: #fff;
+  background: #107c10; /* Xbox brand green */
+  color: var(--color-text-primary);
 }
 .xbox-b {
-  background: #d93025;
-  color: #fff;
+  background: #d93025; /* Xbox brand red */
+  color: var(--color-text-primary);
 }
 .xbox-x {
-  background: #0050b5;
-  color: #fff;
+  background: #0050b5; /* Xbox brand blue */
+  color: var(--color-text-primary);
 }
 .xbox-y {
-  background: #f9c02e;
-  color: #000;
+  background: #f9c02e; /* Xbox brand yellow */
+  color: var(--color-background-base);
 }
 .xbox-menu {
-  background: #333;
-  color: #fff;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
   font-size: 0.7rem;
 }
 
 /* PlayStation Style */
 .ps-cross {
-  background: #333;
-  color: #8da9e4;
+  background: var(--color-surface-secondary);
+  color: #8da9e4; /* PS brand blue */
   border: 1px solid #8da9e4;
 }
 .ps-circle {
-  background: #333;
-  color: #e78d95;
+  background: var(--color-surface-secondary);
+  color: #e78d95; /* PS brand red */
   border: 1px solid #e78d95;
 }
 .ps-triangle {
-  background: #333;
-  color: #64c59e;
+  background: var(--color-surface-secondary);
+  color: #64c59e; /* PS brand green */
   border: 1px solid #64c59e;
 }
 .ps-options {
@@ -117,27 +117,27 @@
   padding: 0 var(--space-2);
   border-radius: 10px;
   font-size: 0.6rem;
-  background: #333;
-  color: #fff;
-  border: 1px solid #666;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-text-muted);
 }
 
 /* Nintendo Style */
 .ns-a {
-  background: #d93025;
-  color: #fff;
+  background: #d93025; /* Nintendo brand red */
+  color: var(--color-text-primary);
 }
 .ns-b {
-  background: #f9c02e;
-  color: #000;
+  background: #f9c02e; /* Nintendo brand yellow */
+  color: var(--color-background-base);
 }
 .ns-x {
-  background: #333;
-  color: #fff;
-  border: 1px solid #666;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-text-muted);
 }
 .ns-plus {
-  background: #333;
-  color: #fff;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
   font-size: 1rem;
 }

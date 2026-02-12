@@ -19,7 +19,7 @@
 .card-image-container {
   width: 100%;
   height: 100%;
-  background: #1a1a1a;
+  background: var(--color-background-elevated-1);
   /* Placeholder color */
   position: relative;
   overflow: hidden;
@@ -40,7 +40,12 @@
 
 /* Skeleton Loading Animation */
 .card.skeleton .card-image-container {
-  background: linear-gradient(90deg, #1f2229 25%, #2a2e38 50%, #1f2229 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-background-elevated-1) 25%,
+    var(--color-background-elevated-2) 50%,
+    var(--color-background-elevated-1) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -57,12 +62,12 @@
 
 /* Error State / Fallback */
 .card.error .card-image-container {
-  background: #222;
+  background: var(--color-background-elevated-1);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .fallback-icon {
@@ -80,7 +85,7 @@
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
   font-size: 0.9rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary);
   text-align: center;
 }
 
@@ -174,7 +179,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primitive-gray-50);
+  color: var(--color-text-primary);
   box-shadow: 0 2px 8px rgba(var(--color-accent-rgb), 0.4);
   z-index: 10;
   animation: favorite-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
