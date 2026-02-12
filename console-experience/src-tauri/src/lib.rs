@@ -122,12 +122,20 @@ pub fn run() {
             tauri_plugin_sql::Builder::default()
                 .add_migrations(
                     "sqlite:balam.db",
-                    vec![tauri_plugin_sql::Migration {
-                        version: 1,
-                        description: "initial schema",
-                        sql: include_str!("../migrations/001_initial.sql"),
-                        kind: tauri_plugin_sql::MigrationKind::Up,
-                    }],
+                    vec![
+                        tauri_plugin_sql::Migration {
+                            version: 1,
+                            description: "initial schema",
+                            sql: include_str!("../migrations/001_initial.sql"),
+                            kind: tauri_plugin_sql::MigrationKind::Up,
+                        },
+                        tauri_plugin_sql::Migration {
+                            version: 2,
+                            description: "add executable_name column",
+                            sql: include_str!("../migrations/002_executable_name.sql"),
+                            kind: tauri_plugin_sql::MigrationKind::Up,
+                        },
+                    ],
                 )
                 .build(),
         )

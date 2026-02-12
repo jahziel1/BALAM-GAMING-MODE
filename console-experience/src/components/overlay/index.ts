@@ -6,7 +6,7 @@ export { BluetoothPanel } from './BluetoothPanel';
 export { default as FileExplorer } from './FileExplorer';
 export { InGameMenuOptimized } from './InGameMenuOptimized';
 export { OverlayPanel } from './OverlayPanel/OverlayPanel';
-export { PerformancePip } from './PerformancePip';
+export { PerformancePip, PipWindowContent } from './PerformancePip';
 export { PowerModal } from './PowerModal';
 export { QuickSettings } from './QuickSettings';
 export { default as SearchOverlay } from './SearchOverlay/SearchOverlay';

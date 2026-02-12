@@ -17,7 +17,7 @@ import {
 } from './components/App';
 import { Footer, Sidebar, TopBar } from './components/layout';
 import { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
-import { PerformancePip, SystemOSD } from './components/overlay';
+import { PipWindowContent, SystemOSD } from './components/overlay';
 import { FilterChips, type FilterType } from './components/ui/FilterChips';
 
 // Lazy load heavy overlay components
@@ -30,12 +30,27 @@ import { useHaptic } from './hooks/useHaptic';
 import { useInputDevice } from './hooks/useInputDevice';
 // Hooks
 import { useNavigation } from './hooks/useNavigation';
+import { usePipWindow } from './hooks/usePipWindow';
 import { useVirtualKeyboard } from './hooks/useVirtualKeyboard';
 // Database
 import { addPlayTime, initDatabase, toggleFavorite } from './services/database';
 import { getCachedAssetSrc } from './utils/image-cache';
 
 function App() {
+  // ============================================================================
+  // PIP WINDOW DETECTION
+  // ============================================================================
+  const [isPipWindow] = useState<boolean>(() => {
+    try {
+      const currentWindow = getCurrentWindow();
+      const windowLabel = currentWindow.label;
+      return windowLabel === 'performance-pip';
+    } catch (error) {
+      console.error('Failed to get window label:', error);
+      return false;
+    }
+  });
+
   // ============================================================================
   // STORES & DATA
   // ============================================================================
@@ -51,7 +66,10 @@ function App() {
     loadGames,
   } = useGameStore();
 
-  const { openRightSidebar, openLeftSidebar, performance } = useAppStore();
+  const { openRightSidebar, openLeftSidebar } = useAppStore();
+
+  // PiP window management (auto-detects if running in main window)
+  usePipWindow();
 
   // Haptic feedback
   const { hapticEvent } = useHaptic();
@@ -537,12 +555,18 @@ function App() {
   // ============================================================================
   // RENDER
   // ============================================================================
+
+  // PiP Window: Only render the performance overlay
+  if (isPipWindow) {
+    return <PipWindowContent />;
+  }
+
+  // Main Window: Render full app
   return (
     <ErrorBoundary>
       <div className="app-background" style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className="app-overlay" />
       <SystemOSD type="volume" value={osdValue} isVisible={isOsdVisible} />
-      <PerformancePip level={performance.config.level} opacity={performance.config.opacity} />
 
       {!isSidebarOpen && (
         <div

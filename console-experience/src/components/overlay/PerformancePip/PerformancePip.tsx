@@ -74,48 +74,53 @@ export const PerformancePip: React.FC<PerformancePipProps> = React.memo(({ level
   return (
     <div className="performance-pip">
       <div className="pip-container" style={{ opacity }}>
-        {/* Level 1+: FPS */}
+        {/* Level 1+: FPS - Compact inline display */}
         {level >= 1 ? (
-          <div className="pip-row">
-            <span className="fps-value">{Math.round(fps)} FPS</span>
+          <div className="pip-row" style={{ gap: '4px' }}>
+            <span className="fps-value">{Math.round(fps)}</span>
+            <span className="frame-time" style={{ fontSize: '11px', alignSelf: 'center' }}>
+              FPS
+            </span>
           </div>
         ) : null}
 
         {/* Level 2+: Frame time */}
         {level >= 2 ? (
           <div className="pip-row">
-            <span className="frame-time">{frameTime.toFixed(1)} ms</span>
+            <span className="frame-time" style={{ fontSize: '11px' }}>
+              {frameTime.toFixed(1)}ms
+            </span>
           </div>
         ) : null}
 
-        {/* Level 3+: CPU/GPU usage */}
+        {/* Level 3+: CPU/GPU usage - Compact */}
         {level >= 3 ? (
           <>
             <div className="pip-row">
-              <span className="metric-label">CPU:</span>
+              <span className="metric-label">CPU</span>
               <span className="metric-value">{cpuUsage.toFixed(0)}%</span>
-              {cpuTemp ? <span className="temp-value">({cpuTemp.toFixed(0)}°C)</span> : null}
+              {cpuTemp ? <span className="temp-value">{cpuTemp.toFixed(0)}°</span> : null}
             </div>
             <div className="pip-row">
-              <span className="metric-label">GPU:</span>
+              <span className="metric-label">GPU</span>
               <span className="metric-value">{gpuUsage.toFixed(0)}%</span>
-              {gpuTemp ? <span className="temp-value">({gpuTemp.toFixed(0)}°C)</span> : null}
+              {gpuTemp ? <span className="temp-value">{gpuTemp.toFixed(0)}°</span> : null}
             </div>
           </>
         ) : null}
 
-        {/* Level 4: RAM + GPU Power */}
+        {/* Level 4: RAM + GPU Power - Compact */}
         {level >= 4 ? (
           <>
             <div className="pip-row">
-              <span className="metric-label">RAM:</span>
+              <span className="metric-label">RAM</span>
               <span className="metric-value">
-                {ramUsed.toFixed(1)}/{ramTotal.toFixed(1)} GB
+                {ramUsed.toFixed(1)}/{ramTotal.toFixed(0)}GB
               </span>
             </div>
             {gpuPower ? (
               <div className="pip-row">
-                <span className="metric-label">GPU Power:</span>
+                <span className="metric-label">PWR</span>
                 <span className="metric-value">{gpuPower.toFixed(0)}W</span>
               </div>
             ) : null}

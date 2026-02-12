@@ -40,5 +40,10 @@
       "icons/icon.ico"
     ],
     "resources": ["libryzenadj.dll", "inpoutx64.dll", "WinRing0x64.dll"]
+  },
+  "plugins": {
+    "sql": {
+      "preload": ["sqlite:balam.db"]
+    }
   }
 }

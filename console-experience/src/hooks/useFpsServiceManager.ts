@@ -33,11 +33,22 @@ export const useFpsServiceManager = (): UseFpsServiceManagerReturn => {
   const refresh = useCallback(async () => {
     try {
       setError(null);
-      const installed = await invoke<boolean>('is_fps_service_installed');
-      const running = await invoke<boolean>('is_fps_service_running');
-      const version = await invoke<string | null>('get_fps_service_version');
+      const statusData = await invoke<{
+        installed: boolean;
+        running: boolean;
+        version: string | null;
+        error: string | null;
+      }>('get_fps_service_status');
 
-      setStatus({ installed, running, version });
+      setStatus({
+        installed: statusData.installed,
+        running: statusData.running,
+        version: statusData.version,
+      });
+
+      if (statusData.error) {
+        setError(statusData.error);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setStatus(null);

@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
+import { PerformanceTab } from './components/tabs/PerformanceTab';
 
 interface SettingsPanelProps {
   isOpen: boolean;
@@ -95,7 +96,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   useEffect(() => {
     if (isOpen) {
       // TODO: Load settings from backend or localStorage
-      console.log('📋 Loading settings...');
     }
   }, [isOpen]);
 
@@ -323,39 +323,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
       case 'performance':
         return (
-          <div className="settings-section">
-            <h3 className="settings-section-title">Performance</h3>
-
-            <div className="settings-item">
-              <div className="settings-item-info">
-                <span className="settings-item-label">Hardware Acceleration</span>
-                <span className="settings-item-description">
-                  Use GPU for rendering (recommended)
-                </span>
-              </div>
-              <label className="settings-toggle">
-                <input
-                  type="checkbox"
-                  checked={hardwareAcceleration}
-                  onChange={(e) => setHardwareAcceleration(e.target.checked)}
-                />
-                <span className="settings-toggle-slider" />
-              </label>
-            </div>
-
-            <div className="settings-item">
-              <div className="settings-item-info">
-                <span className="settings-item-label">Background Behavior</span>
-                <span className="settings-item-description">
-                  Continue running when game launches
-                </span>
-              </div>
-              <label className="settings-toggle">
-                <input type="checkbox" defaultChecked />
-                <span className="settings-toggle-slider" />
-              </label>
-            </div>
-          </div>
+          <PerformanceTab
+            hardwareAcceleration={hardwareAcceleration}
+            setHardwareAcceleration={setHardwareAcceleration}
+          />
         );
 
       case 'system':

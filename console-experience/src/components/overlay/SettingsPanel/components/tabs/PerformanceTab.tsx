@@ -16,9 +16,8 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
   hardwareAcceleration,
   setHardwareAcceleration,
 }) => {
-  const { performance, setPerformanceLevel, setPerformanceOpacity } = useAppStore();
+  const { performance, setPerformanceLevel } = useAppStore();
   const overlayLevel = performance.config.level;
-  const overlayOpacity = performance.config.opacity;
   const pipVisible = overlayLevel > 0;
 
   return (
@@ -69,30 +68,12 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
               </div>
             </SettingsItem>
 
-            <SettingsItem label="Opacity" description="Adjust overlay transparency">
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '200px' }}
-              >
-                <input
-                  type="range"
-                  min="50"
-                  max="100"
-                  value={overlayOpacity * 100}
-                  onChange={(e) => setPerformanceOpacity(Number(e.target.value) / 100)}
-                  style={{ flex: 1 }}
-                />
-                <span style={{ minWidth: '45px', textAlign: 'right' }}>
-                  {Math.round(overlayOpacity * 100)}%
-                </span>
-              </div>
-            </SettingsItem>
-
             <SettingsItem
               label="Preview"
               description="Visual preview of your overlay configuration"
             >
               <div style={{ width: '100%' }}>
-                <OverlayPreview level={overlayLevel} opacity={overlayOpacity} />
+                <OverlayPreview level={overlayLevel} opacity={1} />
               </div>
             </SettingsItem>
 

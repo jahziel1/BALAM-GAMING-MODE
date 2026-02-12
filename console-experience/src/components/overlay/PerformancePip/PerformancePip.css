@@ -1,67 +1,103 @@
 .performance-pip {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
   z-index: 9999;
   pointer-events: none;
   user-select: none;
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 12px;
 }
 
 .pip-container {
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 4px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: opacity 0.2s ease;
   will-change: opacity;
+  min-width: 140px;
 }
 
 .pip-row {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: baseline;
+  gap: 5px;
   white-space: nowrap;
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: 1.4;
+  font-size: 12px;
   color: #ffffff;
 }
 
 .pip-row + .pip-row {
-  margin-top: 0.25rem;
+  margin-top: 2px;
 }
 
 /* FPS value - Large and prominent */
 .fps-value {
-  color: #4ade80;
+  color: #5eead4;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 24px;
+  letter-spacing: -0.8px;
+  text-shadow:
+    0 0 20px rgba(94, 234, 212, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Frame time */
 .frame-time {
-  color: #60a5fa;
-  font-size: 13px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Metric labels */
 .metric-label {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 30px;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Metric values */
 .metric-value {
-  color: #4ade80;
-  font-weight: 600;
-  font-size: 13px;
+  color: #5eead4;
+  font-weight: 700;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-shadow:
+    0 0 16px rgba(94, 234, 212, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Temperature values */
 .temp-value {
-  color: #60a5fa;
-  font-size: 12px;
+  color: #a5f3fc;
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 3px;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Separator between metrics */
@@ -73,19 +109,48 @@
 /* Error state */
 .pip-error {
   padding: 8px 12px;
-  background: rgba(239, 68, 68, 0.8);
-  border-radius: 4px;
-  color: #ffffff;
-  font-size: 12px;
+  background: rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 4px 16px rgba(239, 68, 68, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  color: #fecaca;
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Loading state */
 .pip-loading {
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 2px rgba(0, 0, 0, 1);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* GPU acceleration */
