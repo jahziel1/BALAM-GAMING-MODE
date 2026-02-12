@@ -42,13 +42,14 @@
 /* Enhanced hover for active accent items */
 .settings-category.active:hover {
   background: rgba(var(--color-accent-rgb), 0.2);
-  box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.15);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.4); /* Glow más fuerte */
 }
 
 .settings-category.active {
   background: rgba(var(--color-accent-rgb), 0.15);
   border-color: var(--color-accent);
   color: var(--color-text-primary, #fff);
+  box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.3); /* Glow siempre visible */
 }
 
 .settings-category.focused {
@@ -64,6 +65,7 @@
 
 .settings-category.active .settings-category-icon {
   color: var(--color-accent);
+  filter: drop-shadow(0 0 8px rgba(var(--color-accent-rgb), 0.5)); /* Icon glow */
 }
 
 .settings-category-label {

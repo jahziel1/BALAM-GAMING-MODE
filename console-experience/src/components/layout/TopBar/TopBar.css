@@ -83,7 +83,8 @@
 
 .status-icons .icon.active {
   color: #fff;
-  filter: drop-shadow(0 0 5px var(--color-text-tertiary));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)); /* Glow más fuerte */
+  transition: filter var(--transition-fast);
 }
 
 .status-item.clickable {
@@ -94,6 +95,10 @@
 
 .status-item.clickable:hover {
   transform: scale(1.1);
+}
+
+.status-item.clickable:hover .icon {
+  filter: drop-shadow(0 0 12px rgba(var(--color-primary-rgb), 0.8)); /* Blue glow en hover */
 }
 
 .status-item.clickable:active {

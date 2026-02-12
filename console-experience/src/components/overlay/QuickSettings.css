@@ -45,8 +45,9 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background: var(--card-bg, var(--color-background-elevated-1));
-  border: 2px solid transparent;
+  background: var(--glass-bg); /* Glassmorphism */
+  backdrop-filter: var(--glass-blur);
+  border: 2px solid var(--glass-border);
   border-radius: var(--card-radius, 8px);
   cursor: pointer;
   transition: all var(--transition-fast, 0.2s ease);
@@ -58,6 +59,7 @@
 .audio-device-item:hover {
   background: rgba(45, 115, 255, 0.1);
   border-color: var(--color-primary, var(--color-primary));
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow */
   transform: translateX(4px);
 }
 
