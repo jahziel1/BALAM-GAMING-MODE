@@ -27,12 +27,15 @@
 
 import './StatusIndicator.css';
 
+import { AlertCircle, AlertTriangle, Check, Info, Minus } from 'lucide-react';
 import React from 'react';
+
+type StatusType = 'success' | 'warning' | 'error' | 'neutral' | 'info';
 
 export interface StatusIndicatorProps {
   /** Semantic status state */
-  status: 'success' | 'warning' | 'error' | 'neutral' | 'info';
-  /** Optional icon element */
+  status: StatusType;
+  /** Optional icon element. If not provided, a default icon for the status type will be used. */
   icon?: React.ReactNode;
   /** Enable pulse animation (for loading/active states) */
   pulse?: boolean;
@@ -42,11 +45,21 @@ export interface StatusIndicatorProps {
   children: React.ReactNode;
 }
 
+// Default icons by status type
+const DEFAULT_STATUS_ICONS: Record<StatusType, React.ReactNode> = {
+  success: <Check size={14} />,
+  warning: <AlertTriangle size={14} />,
+  error: <AlertCircle size={14} />,
+  info: <Info size={14} />,
+  neutral: <Minus size={14} />,
+};
+
 /**
  * StatusIndicator Component
  *
  * Unified status display component for consistent feedback across the app.
  * Color-coded backgrounds with optional icons and pulse animation.
+ * If no icon is provided, a default icon for the status type will be displayed.
  */
 export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   status,
@@ -59,9 +72,12 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     .filter(Boolean)
     .join(' ');
 
+  // Use provided icon or default icon for status type
+  const displayIcon = icon !== undefined ? icon : DEFAULT_STATUS_ICONS[status];
+
   return (
     <div className={classNames}>
-      {icon ? <span className="status-icon">{icon}</span> : null}
+      {displayIcon ? <span className="status-icon">{displayIcon}</span> : null}
       <span className="status-text">{children}</span>
     </div>
   );

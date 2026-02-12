@@ -113,6 +113,17 @@
   z-index: 10;
 }
 
+/* Enhanced hover effect (mouse only) */
+.card:hover:not(.focused) {
+  transform: translateY(calc(-1 * var(--space-2-5))) scale(1.05);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 2px var(--color-primary),
+    0 0 20px rgba(var(--color-primary-rgb), 0.3);
+  z-index: 10;
+  filter: brightness(1);
+}
+
 .card.focused::after {
   left: 150%;
   transition: left 1s ease-in-out;
@@ -145,10 +156,8 @@
   transition: all 0.3s ease;
 }
 
-/* Add subtle hover effect to all cards */
-.card:hover:not(.focused) {
-  transform: scale(1.02);
-  filter: brightness(0.9);
+/* Cursor pointer for all cards */
+.card {
   cursor: pointer;
 }
 
