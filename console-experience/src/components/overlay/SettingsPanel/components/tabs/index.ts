@@ -1,5 +1,6 @@
 export * from './AboutTab';
 export * from './AppearanceTab';
+export * from './DisplayTab';
 export * from './GeneralTab';
 export * from './InputTab';
 export * from './LibraryTab';

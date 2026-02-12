@@ -6,6 +6,7 @@ import {
   Gamepad2,
   Globe,
   Info,
+  Monitor,
   Palette,
   Settings as SettingsIcon,
   Zap,
@@ -14,6 +15,7 @@ import React, { useEffect, useState } from 'react';
 
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
+import { DisplayTab } from './components/tabs/DisplayTab';
 import { PerformanceTab } from './components/tabs/PerformanceTab';
 
 interface SettingsPanelProps {
@@ -28,6 +30,7 @@ type SettingsCategory =
   | 'appearance'
   | 'library'
   | 'input'
+  | 'display'
   | 'performance'
   | 'system'
   | 'about';
@@ -43,6 +46,7 @@ const CATEGORIES: CategoryItem[] = [
   { id: 'appearance', icon: <Palette size={20} />, label: 'Appearance' },
   { id: 'library', icon: <BookOpen size={20} />, label: 'Library' },
   { id: 'input', icon: <Gamepad2 size={20} />, label: 'Input' },
+  { id: 'display', icon: <Monitor size={20} />, label: 'Display' },
   { id: 'performance', icon: <Bolt size={20} />, label: 'Performance' },
   { id: 'system', icon: <Zap size={20} />, label: 'System' },
   { id: 'about', icon: <Info size={20} />, label: 'About' },
@@ -320,6 +324,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
           </div>
         );
+
+      case 'display':
+        return <DisplayTab />;
 
       case 'performance':
         return (
