@@ -6,7 +6,6 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 
 // Zustand stores
 import { useAppStore, useGameStore } from './application/providers/StoreProvider';
-import { usePerformanceOverlayStore } from './application/stores/performance-overlay-store';
 import defaultCover from './assets/default_cover.png';
 // Modular Components
 import {
@@ -22,7 +21,6 @@ import { SystemOSD } from './components/overlay';
 import { FilterChips, type FilterType } from './components/ui/FilterChips';
 
 // Lazy load heavy overlay components
-const PerformanceOverlay = lazy(() => import('./components/overlay/PerformanceOverlay'));
 const PowerModal = lazy(() =>
   import('./components/overlay/PowerModal/PowerModal').then((m) => ({ default: m.PowerModal }))
 );
@@ -124,9 +122,6 @@ function App() {
   const [isOsdVisible, setIsOsdVisible] = useState(false);
   const osdTimeout = useRef<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
-
-  // Performance overlay configuration (persistent via Zustand)
-  const perfOverlayConfig = usePerformanceOverlayStore((state) => state.config);
 
   // Fix #8: Global keyboard shortcuts for search (Ctrl+K, Ctrl+F)
   useEffect(() => {
@@ -547,14 +542,6 @@ function App() {
       <div className="app-background" style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className="app-overlay" />
       <SystemOSD type="volume" value={osdValue} isVisible={isOsdVisible} />
-      <Suspense fallback={null}>
-        <PerformanceOverlay
-          enabled={perfOverlayConfig.enabled}
-          position={perfOverlayConfig.position}
-          mode={perfOverlayConfig.mode}
-          updateInterval={perfOverlayConfig.updateInterval}
-        />
-      </Suspense>
 
       {!isSidebarOpen && (
         <div

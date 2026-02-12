@@ -34,8 +34,5 @@ export { createGameStore } from './game-store';
 export { useOverlayStore } from './overlay-store';
 
 // @deprecated Use createAppStore instead
-export { usePerformanceOverlayStore } from './performance-overlay-store';
-
-// @deprecated Use createAppStore instead
 export type { SystemStore } from './system-store';
 export { createSystemStore } from './system-store';

@@ -1,1 +1,0 @@
-export { PerformancePip } from './PerformancePip';
