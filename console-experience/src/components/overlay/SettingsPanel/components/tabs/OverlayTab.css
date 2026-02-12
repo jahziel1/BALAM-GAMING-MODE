@@ -86,8 +86,9 @@
 }
 
 .overlay-toggle input[type='checkbox']:checked {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  border-color: var(--color-primary);
+  /* Specific blue-to-purple gradient for overlay toggle (brand identity) */
+  background: linear-gradient(135deg, #4a9eff 0%, #8a2be2 100%);
+  border-color: #4a9eff;
 }
 
 .overlay-toggle input[type='checkbox']:checked:before {
@@ -114,12 +115,13 @@
 
 /* Warning Banner */
 .overlay-warning {
-  background: rgba(var(--color-warning-rgb), 0.15);
-  border: 1px solid var(--color-warning);
+  /* Specific bright yellow for warnings (high visibility) */
+  background: rgba(255, 212, 59, 0.15);
+  border: 1px solid #ffd43b;
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
   margin-bottom: var(--space-5);
-  color: var(--color-warning);
+  color: #ffd43b;
   font-size: 14px;
   line-height: 1.5;
 }
