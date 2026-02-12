@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   z-index: 5000;
-  width: 3var (--space-5);
+  width: 15rem; /* 240px - fixed width instead of calc */
   height: 100%;
 
   /* Estado por defecto (Oculto/Invisible) */
@@ -18,8 +18,8 @@
   /* Movemos fuera de pantalla totalmente */
   transform: translateX(-100%);
   transition:
-    transform 0.25s cubic-bezier(0.19, 1, 0.22, 1),
-    background 0.2s ease;
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    /* Slower, more dramatic */ background 0.3s ease;
 }
 
 .sidebar.expanded {
@@ -50,8 +50,8 @@
 }
 
 .avatar-large {
-  width: 6var (--space-1);
-  height: 6var (--space-1);
+  width: 1.5rem; /* 24px - 6 * 0.25rem */
+  height: 1.5rem;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
   box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.5);
@@ -121,19 +121,42 @@
 .menu-item:hover {
   background: rgba(var(--color-primary-rgb), 0.08);
   color: var(--color-text-primary);
-  border-left-color: rgba(var(--color-primary-rgb), 0.5);
+  border-left-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow on hover */
 }
 
 .menu-item.focused {
-  background: var(--focus-bg);
-  color: var(--color-text-primary) !important;
-  border-left-color: var(--color-primary);
+  background: rgba(var(--color-accent-rgb), 0.15); /* ORANGE background */
+  color: var(--color-accent) !important; /* ORANGE text */
+  border-left-color: var(--color-accent); /* ORANGE border */
   padding-left: 26px;
   transform: translateX(5px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.4); /* ORANGE glow - dramatic */
 }
 
 .menu-item.focused .icon {
-  color: var(--color-primary);
-  filter: drop-shadow(0 0 5px rgba(var(--color-primary-rgb), 0.6));
+  color: var(--color-accent); /* ORANGE icon */
+  filter: drop-shadow(0 0 8px rgba(var(--color-accent-rgb), 0.6)); /* ORANGE glow */
+  animation: pulse 2s ease-in-out infinite; /* Pulse animation */
+}
+
+/* Pulse animation for active item */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Danger variant (Power button) */
+.menu-item.danger {
+  color: var(--color-error);
+}
+
+.menu-item.danger:hover {
+  background: rgba(var(--color-error-rgb), 0.1);
+  box-shadow: 0 0 15px rgba(var(--color-error-rgb), 0.3); /* Red glow */
 }

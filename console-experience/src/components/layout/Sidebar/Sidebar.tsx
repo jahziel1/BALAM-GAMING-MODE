@@ -1,5 +1,6 @@
 import './Sidebar.css';
 
+import { Home, Library, Monitor, Plus, Power, Search, Settings } from 'lucide-react';
 import React, { memo } from 'react';
 
 interface SidebarProps {
@@ -11,13 +12,13 @@ interface SidebarProps {
 }
 
 export const MENU_ITEMS = [
-  { id: 'home', icon: '🏠', label: 'INICIO' },
-  { id: 'library', icon: '📚', label: 'BIBLIOTECA' },
-  { id: 'add-game', icon: '➕', label: 'AÑADIR JUEGO' },
-  { id: 'search', icon: '🔍', label: 'BUSCAR' },
-  { id: 'settings', icon: '⚙️', label: 'AJUSTES' },
-  { id: 'desktop', icon: '💻', label: 'ESCRITORIO' },
-  { id: 'power', icon: '⭕', label: 'APAGAR', danger: true },
+  { id: 'home', icon: <Home size={24} />, label: 'INICIO' },
+  { id: 'library', icon: <Library size={24} />, label: 'BIBLIOTECA' },
+  { id: 'add-game', icon: <Plus size={24} />, label: 'AÑADIR JUEGO' },
+  { id: 'search', icon: <Search size={24} />, label: 'BUSCAR' },
+  { id: 'settings', icon: <Settings size={24} />, label: 'AJUSTES' },
+  { id: 'desktop', icon: <Monitor size={24} />, label: 'ESCRITORIO' },
+  { id: 'power', icon: <Power size={24} />, label: 'APAGAR', danger: true },
 ];
 
 const Sidebar: React.FC<SidebarProps> = memo(({ isOpen, focusedIndex, onAction, onFocusItem }) => {
@@ -35,8 +36,7 @@ const Sidebar: React.FC<SidebarProps> = memo(({ isOpen, focusedIndex, onAction, 
         {MENU_ITEMS.map((item, index) => (
           <div
             key={item.id}
-            className={`menu-item ${index === focusedIndex ? 'focused' : ''}`}
-            style={item.danger ? { color: '#ef4444' } : {}}
+            className={`menu-item ${index === focusedIndex ? 'focused' : ''} ${item.danger ? 'danger' : ''}`}
             onMouseEnter={() => onFocusItem(index)}
             onClick={() => onAction(item.id)}
             role="button"

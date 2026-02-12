@@ -44,13 +44,23 @@
 }
 
 .game-cover {
-  width: 80px;
-  height: 80px;
+  width: 120px; /* Larger for more impact */
+  height: 120px;
   object-fit: cover;
   border-radius: var(--radius-md);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(var(--color-primary-rgb), 0.2); /* Blue glow */
   flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.game-cover:hover {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(var(--color-primary-rgb), 0.4); /* Stronger glow on hover */
+  transform: scale(1.02);
 }
 
 .game-info {
@@ -95,6 +105,13 @@
 
 .stat-item {
   font-weight: 500;
+}
+
+/* Highlight FPS with orange accent - like PerformancePip */
+.stat-item:first-child {
+  color: var(--color-accent); /* Orange */
+  font-weight: 700;
+  text-shadow: 0 0 16px rgba(var(--color-accent-rgb), 0.5); /* Orange glow */
 }
 
 .stat-divider {
