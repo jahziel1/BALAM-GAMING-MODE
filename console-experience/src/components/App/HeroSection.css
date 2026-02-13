@@ -195,3 +195,71 @@
     max-height: 150px;
   }
 }
+
+/* Delete Confirmation Dialog */
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay-backdrop);
+  backdrop-filter: var(--glass-blur);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+.delete-confirm-dialog {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2xl);
+  padding: var(--space-6);
+  max-width: 450px;
+  width: 90%;
+  animation: slideInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.delete-confirm-dialog h3 {
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-4);
+}
+
+.delete-confirm-dialog p {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin: 0 0 var(--space-3);
+}
+
+.delete-confirm-warning {
+  color: var(--color-error);
+  font-weight: 500;
+  margin-bottom: var(--space-5) !important;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.delete-confirm-actions button {
+  flex: 1;
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

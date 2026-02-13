@@ -93,6 +93,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const [defaultTDP, setDefaultTDP] = useState(15);
   const [defaultRefreshRate, setDefaultRefreshRate] = useState(60);
 
+  // Reset confirmation
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
   // Version info
   const version = '0.1.0';
 
@@ -136,6 +139,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, focusedIndex, onClose]);
+
+  // Reset all settings to defaults
+  const handleResetConfirmed = () => {
+    // Reset all state to defaults
+    setLanguage('en');
+    setStartWithWindows(false);
+    setStartMinimized(false);
+    setAnimationsEnabled(true);
+    setBlurEffects(true);
+    setCardSize('medium');
+    setHardwareAcceleration(true);
+    setDefaultTDP(15);
+    setDefaultRefreshRate(60);
+
+    // TODO: Clear localStorage or backend settings
+    // TODO: Show success toast
+
+    setShowResetConfirm(false);
+  };
 
   const renderCategoryContent = () => {
     switch (selectedCategory) {
@@ -396,6 +418,19 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <option value="144">144 Hz</option>
               </select>
             </div>
+
+            {/* Reset All Settings */}
+            <div className="settings-item settings-item-danger">
+              <div className="settings-item-info">
+                <span className="settings-item-label">Reset All Settings</span>
+                <span className="settings-item-description">
+                  Restore all settings to their default values
+                </span>
+              </div>
+              <button className="settings-button-danger" onClick={() => setShowResetConfirm(true)}>
+                Reset to Defaults
+              </button>
+            </div>
           </div>
         );
 
@@ -447,36 +482,61 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   );
 
   return (
-    <OverlayPanel
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Settings"
-      side="left"
-      width="900px"
-      footer={footer}
-    >
-      <div className="settings-container">
-        {/* Category Sidebar */}
-        <div className="settings-sidebar">
-          {CATEGORIES.map((category, index) => (
-            <button
-              key={category.id}
-              className={`settings-category ${selectedCategory === category.id ? 'active' : ''} ${focusedIndex === index ? 'focused' : ''}`}
-              onClick={() => {
-                setSelectedCategory(category.id);
-                setFocusedIndex(index);
-              }}
-            >
-              <span className="settings-category-icon">{category.icon}</span>
-              <span className="settings-category-label">{category.label}</span>
-            </button>
-          ))}
-        </div>
+    <>
+      <OverlayPanel
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Settings"
+        side="left"
+        width="900px"
+        footer={footer}
+      >
+        <div className="settings-container">
+          {/* Category Sidebar */}
+          <div className="settings-sidebar">
+            {CATEGORIES.map((category, index) => (
+              <button
+                key={category.id}
+                className={`settings-category ${selectedCategory === category.id ? 'active' : ''} ${focusedIndex === index ? 'focused' : ''}`}
+                onClick={() => {
+                  setSelectedCategory(category.id);
+                  setFocusedIndex(index);
+                }}
+              >
+                <span className="settings-category-icon">{category.icon}</span>
+                <span className="settings-category-label">{category.label}</span>
+              </button>
+            ))}
+          </div>
 
-        {/* Content Area */}
-        <div className="settings-content">{renderCategoryContent()}</div>
-      </div>
-    </OverlayPanel>
+          {/* Content Area */}
+          <div className="settings-content">{renderCategoryContent()}</div>
+        </div>
+      </OverlayPanel>
+
+      {/* Reset Confirmation Dialog */}
+      {showResetConfirm ? (
+        <div className="settings-reset-overlay" onClick={() => setShowResetConfirm(false)}>
+          <div className="settings-reset-dialog" onClick={(e) => e.stopPropagation()}>
+            <h3>Reset All Settings?</h3>
+            <p>All custom settings will be restored to their default values.</p>
+            <p className="settings-reset-warning">This action cannot be undone.</p>
+            <div className="settings-reset-actions">
+              <button
+                className="settings-button"
+                onClick={() => setShowResetConfirm(false)}
+                autoFocus
+              >
+                Cancel
+              </button>
+              <button className="settings-button-danger" onClick={handleResetConfirmed}>
+                Reset to Defaults
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 };
 

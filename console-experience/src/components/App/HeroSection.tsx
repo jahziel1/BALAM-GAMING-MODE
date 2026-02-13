@@ -9,7 +9,7 @@ import './HeroSection.css';
 
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Play, RotateCcw, Star } from 'lucide-react';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import defaultCover from '../../assets/default_cover.png';
 import type { Game } from '../../domain/entities/game';
@@ -79,6 +79,9 @@ export const HeroSection = memo(function HeroSection({
   onRemoveGame,
   onToggleFavorite,
 }: HeroSectionProps) {
+  // Delete confirmation state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   /**
    * Memoized asset source getter
    * Prevents function recreation on every render
@@ -95,6 +98,30 @@ export const HeroSection = memo(function HeroSection({
     onSetInGameMenuOpen(false);
     await getCurrentWindow().hide();
   }, [onSetInGameMenuOpen]);
+
+  /**
+   * Handle delete request - shows confirmation dialog
+   */
+  const handleDeleteRequest = useCallback(() => {
+    setShowDeleteConfirm(true);
+  }, []);
+
+  /**
+   * Handle confirmed delete
+   */
+  const handleDeleteConfirmed = useCallback(() => {
+    if (activeGame) {
+      onRemoveGame(activeGame.id);
+      setShowDeleteConfirm(false);
+    }
+  }, [activeGame, onRemoveGame]);
+
+  /**
+   * Handle delete cancellation
+   */
+  const handleDeleteCancelled = useCallback(() => {
+    setShowDeleteConfirm(false);
+  }, []);
 
   /**
    * Memoized running game check
@@ -181,7 +208,7 @@ export const HeroSection = memo(function HeroSection({
                 {isLaunching ? '...' : activeRunningGame ? 'SWITCH' : 'PLAY'}
               </Button>
               {activeGame?.source === 'Manual' && (
-                <Button variant="danger" size="md" onClick={() => onRemoveGame(activeGame.id)}>
+                <Button variant="danger" size="md" onClick={handleDeleteRequest}>
                   DELETE
                 </Button>
               )}
@@ -189,6 +216,27 @@ export const HeroSection = memo(function HeroSection({
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && activeGame ? (
+        <div className="delete-confirm-overlay" onClick={handleDeleteCancelled}>
+          <div className="delete-confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete Game?</h3>
+            <p>
+              Are you sure you want to remove <strong>{activeGame.title}</strong> from your library?
+            </p>
+            <p className="delete-confirm-warning">This action cannot be undone.</p>
+            <div className="delete-confirm-actions">
+              <Button variant="secondary" size="md" onClick={handleDeleteCancelled} autoFocus>
+                Cancel
+              </Button>
+              <Button variant="danger" size="md" onClick={handleDeleteConfirmed}>
+                Delete Game
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 });
