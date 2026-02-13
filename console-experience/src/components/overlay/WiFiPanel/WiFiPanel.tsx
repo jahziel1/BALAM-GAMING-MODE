@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast';
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 import { Skeleton } from '../../ui/Skeleton/Skeleton';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
+import WiFiPasswordModal from './WiFiPasswordModal';
 
 interface WiFiPanelProps {
   isOpen: boolean;
@@ -41,6 +42,8 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
   const [isScanning, setIsScanning] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState<WiFiNetwork | null>(null);
   const networkRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Toast notifications
@@ -92,6 +95,7 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
     async (network: WiFiNetwork) => {
       if (network.is_connected) return;
 
+      // Open networks can connect immediately
       if (network.security === 'Open') {
         try {
           setIsConnecting(true);
@@ -109,13 +113,60 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
           setIsConnecting(false);
         }
       } else {
-        const errorMsg =
-          'Password input not yet implemented. Use Windows Settings for secured networks.';
-        showErrorToast(errorMsg, 'This feature will be available soon');
-        setErrorMessage(errorMsg);
+        // Secured networks need password modal
+        setSelectedNetwork(network);
+        setPasswordModalOpen(true);
       }
     },
     [loadNetworks, success, showErrorToast]
+  );
+
+  const handleConnectWithPassword = useCallback(
+    async (password: string, remember: boolean) => {
+      if (!selectedNetwork) return;
+
+      try {
+        setIsConnecting(true);
+        setErrorMessage(null);
+        await invoke('connect_wifi', {
+          ssid: selectedNetwork.ssid,
+          password: password,
+        });
+        success('Connected successfully', `Connected to ${selectedNetwork.ssid}`);
+        setPasswordModalOpen(false);
+        await loadNetworks();
+      } catch (error) {
+        console.error('Connection failed:', error);
+
+        const errorMsg = `Failed to connect to ${selectedNetwork.ssid}`;
+        let hint = 'Check your password and try again';
+
+        const errorStr =
+          error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+        if (
+          errorStr.includes('password') ||
+          errorStr.includes('incorrect') ||
+          errorStr.includes('invalid')
+        ) {
+          hint = 'Incorrect password. Check your router settings for the correct password';
+        } else if (errorStr.includes('timeout')) {
+          hint = 'Connection timed out. The network may be out of range';
+        } else if (errorStr.includes('not found')) {
+          hint = 'Network not found. It may have moved out of range';
+        }
+
+        showErrorToast(errorMsg, hint);
+        setErrorMessage(errorMsg);
+      } finally {
+        setIsConnecting(false);
+      }
+
+      // TODO: Implement "remember network" functionality
+      if (remember) {
+        console.log('Remember network feature not yet implemented');
+      }
+    },
+    [selectedNetwork, success, showErrorToast, loadNetworks]
   );
 
   useEffect(() => {
@@ -282,16 +333,28 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
   };
 
   return (
-    <OverlayPanel
-      isOpen={isOpen}
-      onClose={onClose}
-      title="WiFi Networks"
-      side="left"
-      width="500px"
-      footer={footer}
-    >
-      {renderContent()}
-    </OverlayPanel>
+    <>
+      <OverlayPanel
+        isOpen={isOpen}
+        onClose={onClose}
+        title="WiFi Networks"
+        side="left"
+        width="500px"
+        footer={footer}
+      >
+        {renderContent()}
+      </OverlayPanel>
+
+      {/* Password Modal for Secured Networks */}
+      <WiFiPasswordModal
+        isOpen={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        onConnect={(password, remember) => void handleConnectWithPassword(password, remember)}
+        ssid={selectedNetwork?.ssid ?? ''}
+        securityType={selectedNetwork?.security ?? 'WPA2'}
+        isConnecting={isConnecting}
+      />
+    </>
   );
 };
 
