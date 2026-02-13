@@ -6,6 +6,9 @@ dist/
 src-tauri/target/
 src-tauri/gen/
 
+# FPS Service build artifacts
+fps-service/target/
+
 # E2E test artifacts
 e2e/screenshots/
 e2e/reports/

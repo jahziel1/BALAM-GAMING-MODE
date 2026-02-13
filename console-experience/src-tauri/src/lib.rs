@@ -5,7 +5,7 @@ pub mod adapters;
 pub mod application;
 pub mod config;
 pub mod domain;
-mod heartbeat;
+// mod heartbeat; // DISABLED: Watchdog not running
 pub mod infrastructure;
 pub mod ports;
 
@@ -119,7 +119,7 @@ pub fn run() {
 
     // Initialize Dependency Injection Container
     let container = DIContainer::new();
-    let container_clone = container.clone();
+    let _container_clone = container.clone(); // Unused while WindowMonitor is disabled
 
     tauri::Builder::default()
         .plugin(
@@ -225,24 +225,23 @@ pub fn run() {
             // Native Gamepad: Windows.Gaming.Input Engine
             crate::adapters::gamepad_adapter::start_gamepad_listener(app.handle().clone());
 
-            // Initialize Window Monitor for launcher dialog detection (Nivel 3)
-            let mut window_monitor = crate::adapters::window_monitor::WindowMonitor::new(
-                container_clone.active_games_tracker.clone(),
-                app.handle().clone(),
-            );
+            // DISABLED: WMI Window Monitor (requires special permissions)
+            // TODO: Replace with alternative process monitoring method
+            // let mut window_monitor = crate::adapters::window_monitor::WindowMonitor::new(
+            //     container_clone.active_games_tracker.clone(),
+            //     app.handle().clone(),
+            // );
+            // if let Err(e) = window_monitor.start() {
+            //     tracing::error!("Failed to start window monitor: {}", e);
+            // } else {
+            //     tracing::info!("Window monitor started successfully (Level 3 Robustness)");
+            // }
+            // app.manage(window_monitor);
 
-            if let Err(e) = window_monitor.start() {
-                tracing::error!("Failed to start window monitor: {}", e);
-            } else {
-                tracing::info!("Window monitor started successfully (Level 3 Robustness)");
-            }
-
-            // Store monitor in app state to keep it alive
-            app.manage(window_monitor);
-
-            // Start heartbeat thread for crash watchdog
-            heartbeat::start_heartbeat_thread();
-            tracing::info!("Heartbeat thread started for crash recovery");
+            // DISABLED: Heartbeat watchdog (watchdog process not running)
+            // TODO: Launch watchdog process separately or remove this feature
+            // heartbeat::start_heartbeat_thread();
+            // tracing::info!("Heartbeat thread started for crash recovery");
 
             // Start System Monitor Thread (Volume, Battery, etc.)
             let app_handle = app.handle().clone();
