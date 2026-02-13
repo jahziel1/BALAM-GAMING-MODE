@@ -36,6 +36,26 @@ interface BluetoothDevice {
 }
 
 /**
+ * Bluetooth error hints for user-friendly feedback
+ * Maps error scenarios to helpful troubleshooting hints
+ */
+const BLUETOOTH_ERROR_HINTS: Record<string, string> = {
+  pairing_failed: 'Make sure the device is in pairing mode and within range (< 10 meters)',
+  pairing_timeout: 'Pairing timed out. Try restarting both devices and pair again',
+  pairing_rejected: 'Pairing was rejected. Check if the device requires a PIN code',
+  connection_failed: 'Connection failed. The device may be out of range or connected elsewhere',
+  connection_timeout: 'Connection timed out. Move the device closer and try again',
+  disconnect_failed: 'Disconnect failed. Try turning the device off or forgetting the device',
+  device_not_found: 'Device not found. Make sure the device is powered on and nearby',
+  bluetooth_off: 'Bluetooth is turned off. Enable Bluetooth to connect devices',
+  adapter_unavailable: 'Bluetooth adapter not available. Check if your device has Bluetooth',
+  service_unavailable: 'Bluetooth service is not running. Restart Windows Bluetooth service',
+  already_paired: 'This device is already paired. Try connecting instead of pairing',
+  permission_denied: 'Permission denied. Run the app as administrator for Bluetooth access',
+  default: 'An unexpected error occurred. Try restarting Bluetooth or the device',
+};
+
+/**
  * Bluetooth Panel - Device management overlay
  *
  * Follows established architecture:
@@ -156,17 +176,47 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
         console.error('Bluetooth operation failed:', error);
 
         let errorMsg = 'Operation failed';
-        let hint = '';
+        let hint = BLUETOOTH_ERROR_HINTS.default;
 
+        // Parse error message for specific error types
+        const errorStr =
+          error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+
+        if (errorStr.includes('timeout')) {
+          hint =
+            device.pairing_state === 'Unpaired'
+              ? BLUETOOTH_ERROR_HINTS.pairing_timeout
+              : BLUETOOTH_ERROR_HINTS.connection_timeout;
+        } else if (errorStr.includes('rejected') || errorStr.includes('denied')) {
+          hint = errorStr.includes('permission')
+            ? BLUETOOTH_ERROR_HINTS.permission_denied
+            : BLUETOOTH_ERROR_HINTS.pairing_rejected;
+        } else if (errorStr.includes('not found')) {
+          hint = BLUETOOTH_ERROR_HINTS.device_not_found;
+        } else if (errorStr.includes('bluetooth is off') || errorStr.includes('disabled')) {
+          hint = BLUETOOTH_ERROR_HINTS.bluetooth_off;
+        } else if (errorStr.includes('adapter') || errorStr.includes('unavailable')) {
+          hint = BLUETOOTH_ERROR_HINTS.adapter_unavailable;
+        } else if (errorStr.includes('already paired')) {
+          hint = BLUETOOTH_ERROR_HINTS.already_paired;
+        } else {
+          // Fallback to context-based hints
+          if (device.pairing_state === 'Unpaired') {
+            hint = BLUETOOTH_ERROR_HINTS.pairing_failed;
+          } else if (device.is_connected) {
+            hint = BLUETOOTH_ERROR_HINTS.disconnect_failed;
+          } else {
+            hint = BLUETOOTH_ERROR_HINTS.connection_failed;
+          }
+        }
+
+        // Set user-friendly error message
         if (device.pairing_state === 'Unpaired') {
           errorMsg = `Failed to pair with ${device.name}`;
-          hint = 'Make sure the device is in pairing mode and nearby';
         } else if (device.is_connected) {
           errorMsg = `Failed to disconnect from ${device.name}`;
-          hint = 'Try turning the device off and on again';
         } else {
           errorMsg = `Failed to connect to ${device.name}`;
-          hint = 'The device may be out of range or already connected to another device';
         }
 
         showErrorToast(errorMsg, hint);
@@ -182,17 +232,37 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
   const toggleBluetooth = useCallback(async () => {
     try {
       setIsOperating(true);
-      await invoke('set_bluetooth_enabled', { enabled: !bluetoothEnabled });
+      setErrorMessage(null);
+      const newState = !bluetoothEnabled;
+      await invoke('set_bluetooth_enabled', { enabled: newState });
       await checkBluetoothStatus();
-      if (!bluetoothEnabled) {
+
+      if (newState) {
+        success('Bluetooth enabled', 'Scanning for nearby devices...');
         await loadDevices();
+      } else {
+        success('Bluetooth disabled', 'All devices disconnected');
       }
     } catch (error) {
-      setErrorMessage(`Failed to toggle Bluetooth: ${String(error)}`);
+      console.error('Failed to toggle Bluetooth:', error);
+      const errorStr =
+        error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+      let hint = BLUETOOTH_ERROR_HINTS.default;
+
+      if (errorStr.includes('adapter') || errorStr.includes('not found')) {
+        hint = BLUETOOTH_ERROR_HINTS.adapter_unavailable;
+      } else if (errorStr.includes('permission') || errorStr.includes('denied')) {
+        hint = BLUETOOTH_ERROR_HINTS.permission_denied;
+      } else if (errorStr.includes('service')) {
+        hint = BLUETOOTH_ERROR_HINTS.service_unavailable;
+      }
+
+      showErrorToast('Failed to toggle Bluetooth', hint);
+      setErrorMessage('Bluetooth toggle failed');
     } finally {
       setIsOperating(false);
     }
-  }, [bluetoothEnabled, checkBluetoothStatus, loadDevices]);
+  }, [bluetoothEnabled, checkBluetoothStatus, loadDevices, success, showErrorToast]);
 
   // Keyboard navigation
   useEffect(() => {

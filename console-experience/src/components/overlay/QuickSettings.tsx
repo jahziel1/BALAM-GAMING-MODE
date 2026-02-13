@@ -60,6 +60,41 @@ interface AudioDevice {
 }
 
 /**
+ * Error message mapping for user-friendly feedback
+ * Maps backend error types to readable messages with helpful hints
+ */
+const ERROR_MESSAGES: Record<string, { message: string; hint: string }> = {
+  volume_failed: {
+    message: 'Volume adjustment failed',
+    hint: 'Check your audio drivers or restart the audio service',
+  },
+  brightness_failed: {
+    message: 'Brightness adjustment failed',
+    hint: 'Your device may not support brightness control or drivers are outdated',
+  },
+  refresh_rate_failed: {
+    message: 'Refresh rate change failed',
+    hint: 'Make sure your monitor supports this refresh rate',
+  },
+  tdp_failed: {
+    message: 'TDP adjustment failed',
+    hint: 'TDP control requires administrator privileges and compatible hardware',
+  },
+  audio_device_failed: {
+    message: 'Audio device switch failed',
+    hint: 'The device may be disconnected, disabled, or in use by another application',
+  },
+  audio_list_failed: {
+    message: 'Failed to load audio devices',
+    hint: 'Audio service may be stopped. Check Windows Audio service status',
+  },
+  default: {
+    message: 'Operation failed',
+    hint: 'An unexpected error occurred. Try restarting the application',
+  },
+};
+
+/**
  * Quick Settings overlay for adjusting system performance and display settings.
  * Fully controllable with gamepad (D-Pad navigation) and mouse.
  *
@@ -134,10 +169,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         setAudioDevices(devices);
       } catch (audioError) {
         console.error('❌ Failed to load audio devices:', audioError);
-        showErrorToast(
-          'Failed to load audio devices',
-          'Audio device switching may not be available'
-        );
+        const errorInfo = ERROR_MESSAGES.audio_list_failed;
+        showErrorToast(errorInfo.message, errorInfo.hint);
       }
     } catch (error) {
       console.error('Failed to load Quick Settings values:', error);
@@ -162,7 +195,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         await invoke('set_volume', { level: value });
       } catch (error) {
         console.error('Failed to set volume:', error);
-        showErrorToast('Volume adjustment failed', 'Check your audio drivers');
+        const errorInfo = ERROR_MESSAGES.volume_failed;
+        showErrorToast(errorInfo.message, errorInfo.hint);
       }
     },
     [showErrorToast]
@@ -175,10 +209,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         await invoke('set_brightness', { level: value });
       } catch (error) {
         console.error('Failed to set brightness:', error);
-        showErrorToast(
-          'Brightness adjustment failed',
-          'Your device may not support brightness control'
-        );
+        const errorInfo = ERROR_MESSAGES.brightness_failed;
+        showErrorToast(errorInfo.message, errorInfo.hint);
       }
     },
     [showErrorToast]
@@ -191,10 +223,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         await invoke('set_refresh_rate', { hz: value });
       } catch (error) {
         console.error('Failed to set refresh rate:', error);
-        showErrorToast(
-          'Refresh rate change failed',
-          'Make sure your monitor supports this refresh rate'
-        );
+        const errorInfo = ERROR_MESSAGES.refresh_rate_failed;
+        showErrorToast(errorInfo.message, errorInfo.hint);
       }
     },
     [showErrorToast]
@@ -207,7 +237,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         await invoke('set_tdp', { watts: value });
       } catch (error) {
         console.error('Failed to set TDP:', error);
-        showErrorToast('TDP adjustment failed', 'TDP control may require administrator privileges');
+        const errorInfo = ERROR_MESSAGES.tdp_failed;
+        showErrorToast(errorInfo.message, errorInfo.hint);
       }
     },
     [showErrorToast]
@@ -222,7 +253,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         setAudioDevices(devices);
       } catch (error) {
         console.error('Failed to change audio device:', error);
-        showErrorToast('Audio device switch failed', 'The device may be disconnected or in use');
+        const errorInfo = ERROR_MESSAGES.audio_device_failed;
+        showErrorToast(errorInfo.message, errorInfo.hint);
       }
     },
     [showErrorToast]
