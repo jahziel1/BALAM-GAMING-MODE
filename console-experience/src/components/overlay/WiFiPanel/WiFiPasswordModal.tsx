@@ -1,12 +1,14 @@
 import './WiFiPasswordModal.css';
 
-import { Eye, EyeOff, Lock, Wifi } from 'lucide-react';
+import { Eye, EyeOff, Lock, Settings, Wifi } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/core/Button/Button';
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 import { SectionHeader } from '@/components/core/SectionHeader/SectionHeader';
 import { TooltipWrapper } from '@/components/ui/Tooltip';
+
+import { type AdvancedWiFiConfig, AdvancedWiFiSettings } from './AdvancedWiFiSettings';
 
 interface WiFiPasswordModalProps {
   isOpen: boolean;
@@ -50,6 +52,8 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false);
+  const [advancedConfig, setAdvancedConfig] = useState<AdvancedWiFiConfig | null>(null);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -181,6 +185,19 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
           <span>Remember this network</span>
         </label>
 
+        {/* Advanced Settings Button */}
+        <button
+          className="wifi-password-advanced"
+          onClick={() => setAdvancedSettingsOpen(true)}
+          disabled={isConnecting}
+          type="button"
+        >
+          <IconWrapper size="sm">
+            <Settings />
+          </IconWrapper>
+          <span>Advanced network settings...</span>
+        </button>
+
         {/* Actions */}
         <div className="wifi-password-actions">
           <Button variant="secondary" size="md" onClick={onClose} disabled={isConnecting}>
@@ -202,6 +219,14 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
           the password.
         </p>
       </div>
+
+      {/* Advanced Settings Modal */}
+      <AdvancedWiFiSettings
+        isOpen={advancedSettingsOpen}
+        onClose={() => setAdvancedSettingsOpen(false)}
+        onSave={(config) => setAdvancedConfig(config)}
+        initialConfig={advancedConfig ?? undefined}
+      />
     </div>
   );
 };
