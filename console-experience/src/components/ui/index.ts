@@ -8,3 +8,4 @@ export { default as Card } from './Card/Card';
 export { RadixSlider } from './RadixSlider/RadixSlider';
 export { SelectableItem } from './SelectableItem/SelectableItem';
 export { Slider } from './Slider/Slider';
+export { Tooltip, type TooltipPlacement, type TooltipProps, TooltipWrapper } from './Tooltip';

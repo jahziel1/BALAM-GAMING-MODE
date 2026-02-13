@@ -1,0 +1,155 @@
+/**
+ * Tooltip Styles
+ *
+ * Glassmorphism tooltip with smooth animations.
+ * Auto-positioning with placement indicators (arrows).
+ */
+
+/* Base Tooltip */
+.tooltip {
+  /* Glassmorphism */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-lg);
+
+  /* Layout */
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  max-width: 250px;
+  width: max-content;
+
+  /* Typography */
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 500;
+  text-align: center;
+
+  /* Positioning */
+  z-index: 10003; /* Above KeyboardShortcutsPanel (10002) */
+  pointer-events: none; /* Don't interfere with mouse events */
+
+  /* Animation */
+  animation: tooltipFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+}
+
+/* Placement-specific styles (for arrow positioning) */
+.tooltip-top::before,
+.tooltip-bottom::before,
+.tooltip-left::before,
+.tooltip-right::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Top placement arrow (points down) */
+.tooltip-top::before {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0 6px;
+  border-color: rgba(255, 255, 255, 0.1) transparent transparent transparent;
+}
+
+/* Bottom placement arrow (points up) */
+.tooltip-bottom::before {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* Left placement arrow (points right) */
+.tooltip-left::before {
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px 0 6px 6px;
+  border-color: transparent transparent transparent rgba(255, 255, 255, 0.1);
+}
+
+/* Right placement arrow (points left) */
+.tooltip-right::before {
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px 6px 6px 0;
+  border-color: transparent rgba(255, 255, 255, 0.1) transparent transparent;
+}
+
+/* Animations */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Hover effect (subtle glow) */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-primary-rgb), 0.1),
+    rgba(var(--color-primary-rgb), 0.05)
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tooltip {
+    max-width: 200px;
+    font-size: 0.8125rem;
+    padding: var(--space-1-5) var(--space-2-5);
+  }
+}
+
+/* Dark mode optimization (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .tooltip {
+    /* Already optimized for dark by default */
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .tooltip {
+    border: 2px solid var(--color-text-primary);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    animation: none;
+    transition: none;
+  }
+
+  @keyframes tooltipFadeIn {
+    from,
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

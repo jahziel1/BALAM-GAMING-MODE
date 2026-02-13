@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import React from 'react';
 
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
+import { TooltipWrapper } from '@/components/ui/Tooltip';
 
 interface OverlayPanelProps {
   isOpen: boolean;
@@ -55,11 +56,13 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
           {header ?? (
             <>
               <h2>{title}</h2>
-              <button className="overlay-panel-close" onClick={onClose} aria-label="Close">
-                <IconWrapper size="md">
-                  <X />
-                </IconWrapper>
-              </button>
+              <TooltipWrapper content="Close (Esc)" placement="bottom">
+                <button className="overlay-panel-close" onClick={onClose} aria-label="Close">
+                  <IconWrapper size="md">
+                    <X />
+                  </IconWrapper>
+                </button>
+              </TooltipWrapper>
             </>
           )}
         </header>

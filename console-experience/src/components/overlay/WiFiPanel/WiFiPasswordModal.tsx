@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/core/Button/Button';
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 import { SectionHeader } from '@/components/core/SectionHeader/SectionHeader';
+import { TooltipWrapper } from '@/components/ui/Tooltip';
 
 interface WiFiPasswordModalProps {
   isOpen: boolean;
@@ -151,15 +152,20 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
               disabled={isConnecting}
               className={validationError ? 'error' : ''}
             />
-            <button
-              type="button"
-              className="wifi-password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
-              disabled={isConnecting}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            <TooltipWrapper
+              content={showPassword ? 'Hide password' : 'Show password'}
+              placement="top"
             >
-              <IconWrapper size="sm">{showPassword ? <EyeOff /> : <Eye />}</IconWrapper>
-            </button>
+              <button
+                type="button"
+                className="wifi-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isConnecting}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <IconWrapper size="sm">{showPassword ? <EyeOff /> : <Eye />}</IconWrapper>
+              </button>
+            </TooltipWrapper>
           </div>
           {validationError ? <p className="wifi-password-error">{validationError}</p> : null}
         </div>
