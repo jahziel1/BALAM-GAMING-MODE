@@ -31,8 +31,8 @@ import './InGameMenu.css';
 
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Play, Settings, X } from 'lucide-react';
-import { memo, useState } from 'react';
+import { Loader2, Play, Settings, X } from 'lucide-react';
+import { memo, useEffect, useState } from 'react';
 
 import { useAppStore } from '@/application/providers/StoreProvider';
 import { Button } from '@/components/core/Button/Button';
@@ -58,6 +58,7 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   // Local state
   const [isClosingGame, setIsClosingGame] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [isFpsLoading, setIsFpsLoading] = useState(true);
 
   const isOpen = overlay.leftSidebarOpen;
   const activeGame = game.activeRunningGame;
@@ -65,6 +66,15 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
 
   // Performance metrics (real-time FPS, GPU temp, etc.)
   const { metrics } = usePerformanceMetrics({ interval: 1000, enabled: isOpen });
+
+  // FPS loading state (show spinner for first 2 seconds)
+  useEffect(() => {
+    if (isOpen) {
+      setIsFpsLoading(true);
+      const timer = setTimeout(() => setIsFpsLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   /**
    * Resume game handler
@@ -230,7 +240,20 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
       <section className="stats-section">
         <div className="game-stats">
           <span className="stat-item">
-            {metrics?.fps?.current_fps ? `${Math.round(metrics.fps.current_fps)} FPS` : 'FPS N/A'}
+            {isFpsLoading ? (
+              <>
+                <Loader2
+                  size={16}
+                  className="animate-spin"
+                  style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }}
+                />
+                Loading FPS...
+              </>
+            ) : metrics?.fps?.current_fps ? (
+              `${Math.round(metrics.fps.current_fps)} FPS`
+            ) : (
+              'FPS N/A'
+            )}
           </span>
           <span className="stat-divider">•</span>
           <span className="stat-item">

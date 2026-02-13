@@ -105,6 +105,38 @@
   }
 }
 
+/* Slide out animation for closing panels */
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Closing state (applied when panel is closing) */
+.overlay-panel-left.closing {
+  animation: slideOutLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.overlay-panel-right.closing {
+  animation: slideOutRight 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Header */
 .overlay-panel-header {
   display: flex;

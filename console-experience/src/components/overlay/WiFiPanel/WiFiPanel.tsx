@@ -4,6 +4,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { Lock, Wifi, WifiOff } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useToast } from '@/hooks/useToast';
+
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 import { Skeleton } from '../../ui/Skeleton/Skeleton';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
@@ -41,6 +43,9 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const networkRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Toast notifications
+  const { success, error: showErrorToast } = useToast();
+
   const loadNetworks = useCallback(async () => {
     try {
       setIsScanning(true);
@@ -56,11 +61,14 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
       });
     } catch (error) {
       console.error('Failed to scan WiFi:', error);
-      setErrorMessage(String(error));
+      const errorMsg = 'Failed to scan WiFi networks';
+      const hint = 'Make sure WiFi adapter is enabled and working';
+      showErrorToast(errorMsg, hint);
+      setErrorMessage(errorMsg);
     } finally {
       setIsScanning(false);
     }
-  }, []); // No dependencies - stable callback
+  }, [showErrorToast]);
 
   useEffect(() => {
     if (isOpen) {
@@ -89,19 +97,25 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
           setIsConnecting(true);
           setErrorMessage(null);
           await invoke('connect_wifi', { ssid: network.ssid, password: '' });
+          success('Connected successfully', `Connected to ${network.ssid}`);
           await loadNetworks();
         } catch (error) {
-          setErrorMessage(`Connection failed: ${String(error)}`);
+          console.error('Connection failed:', error);
+          const errorMsg = `Failed to connect to ${network.ssid}`;
+          const hint = 'The network may be out of range or have connection issues';
+          showErrorToast(errorMsg, hint);
+          setErrorMessage(errorMsg);
         } finally {
           setIsConnecting(false);
         }
       } else {
-        setErrorMessage(
-          'Password input not yet implemented. Use Windows Settings for secured networks.'
-        );
+        const errorMsg =
+          'Password input not yet implemented. Use Windows Settings for secured networks.';
+        showErrorToast(errorMsg, 'This feature will be available soon');
+        setErrorMessage(errorMsg);
       }
     },
-    [loadNetworks]
+    [loadNetworks, success, showErrorToast]
   );
 
   useEffect(() => {

@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { useToast } from '@/hooks/useToast';
+
 import { Button } from '../core/Button/Button';
 import { IconWrapper } from '../core/IconWrapper/IconWrapper';
 import { SectionHeader } from '../core/SectionHeader/SectionHeader';
@@ -89,6 +91,9 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   const [supportsBrightness, setSupportsBrightness] = useState(false);
   const [supportsTDP, setSupportsTDP] = useState(false);
 
+  // Toast notifications
+  const { error: showErrorToast } = useToast();
+
   // Load current values function - declared before useEffect
   const loadCurrentValues = useCallback(async () => {
     try {
@@ -129,12 +134,16 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
         setAudioDevices(devices);
       } catch (audioError) {
         console.error('❌ Failed to load audio devices:', audioError);
-        // Non-critical, continue without audio device switching
+        showErrorToast(
+          'Failed to load audio devices',
+          'Audio device switching may not be available'
+        );
       }
     } catch (error) {
       console.error('Failed to load Quick Settings values:', error);
+      showErrorToast('Failed to load settings', 'Some settings may not be available');
     }
-  }, []);
+  }, [showErrorToast]);
 
   // Load initial values
   useEffect(() => {
@@ -146,52 +155,78 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   }, [isOpen, loadCurrentValues]);
 
   // Handlers
-  const handleVolumeChange = useCallback(async (value: number) => {
-    setVolume(value);
-    try {
-      await invoke('set_volume', { level: value });
-    } catch (error) {
-      console.error('Failed to set volume:', error);
-    }
-  }, []);
+  const handleVolumeChange = useCallback(
+    async (value: number) => {
+      setVolume(value);
+      try {
+        await invoke('set_volume', { level: value });
+      } catch (error) {
+        console.error('Failed to set volume:', error);
+        showErrorToast('Volume adjustment failed', 'Check your audio drivers');
+      }
+    },
+    [showErrorToast]
+  );
 
-  const handleBrightnessChange = useCallback(async (value: number) => {
-    setBrightness(value);
-    try {
-      await invoke('set_brightness', { level: value });
-    } catch (error) {
-      console.error('Failed to set brightness:', error);
-    }
-  }, []);
+  const handleBrightnessChange = useCallback(
+    async (value: number) => {
+      setBrightness(value);
+      try {
+        await invoke('set_brightness', { level: value });
+      } catch (error) {
+        console.error('Failed to set brightness:', error);
+        showErrorToast(
+          'Brightness adjustment failed',
+          'Your device may not support brightness control'
+        );
+      }
+    },
+    [showErrorToast]
+  );
 
-  const handleRefreshRateChange = useCallback(async (value: number) => {
-    setRefreshRate(value);
-    try {
-      await invoke('set_refresh_rate', { hz: value });
-    } catch (error) {
-      console.error('Failed to set refresh rate:', error);
-    }
-  }, []);
+  const handleRefreshRateChange = useCallback(
+    async (value: number) => {
+      setRefreshRate(value);
+      try {
+        await invoke('set_refresh_rate', { hz: value });
+      } catch (error) {
+        console.error('Failed to set refresh rate:', error);
+        showErrorToast(
+          'Refresh rate change failed',
+          'Make sure your monitor supports this refresh rate'
+        );
+      }
+    },
+    [showErrorToast]
+  );
 
-  const handleTDPChange = useCallback(async (value: number) => {
-    setTdp(value);
-    try {
-      await invoke('set_tdp', { watts: value });
-    } catch (error) {
-      console.error('Failed to set TDP:', error);
-    }
-  }, []);
+  const handleTDPChange = useCallback(
+    async (value: number) => {
+      setTdp(value);
+      try {
+        await invoke('set_tdp', { watts: value });
+      } catch (error) {
+        console.error('Failed to set TDP:', error);
+        showErrorToast('TDP adjustment failed', 'TDP control may require administrator privileges');
+      }
+    },
+    [showErrorToast]
+  );
 
-  const handleAudioDeviceChange = useCallback(async (deviceId: string) => {
-    try {
-      await invoke('set_default_audio_device', { deviceId });
-      // Reload devices to update default status
-      const devices = await invoke<AudioDevice[]>('list_audio_devices');
-      setAudioDevices(devices);
-    } catch (error) {
-      console.error('Failed to change audio device:', error);
-    }
-  }, []);
+  const handleAudioDeviceChange = useCallback(
+    async (deviceId: string) => {
+      try {
+        await invoke('set_default_audio_device', { deviceId });
+        // Reload devices to update default status
+        const devices = await invoke<AudioDevice[]>('list_audio_devices');
+        setAudioDevices(devices);
+      } catch (error) {
+        console.error('Failed to change audio device:', error);
+        showErrorToast('Audio device switch failed', 'The device may be disconnected or in use');
+      }
+    },
+    [showErrorToast]
+  );
 
   // Adjust focused slider value with LEFT/RIGHT (gamepad D-Pad)
   // Moved before useEffect to fix react-hooks/immutability

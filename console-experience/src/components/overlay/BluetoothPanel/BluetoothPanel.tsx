@@ -4,6 +4,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { Bluetooth, BluetoothOff } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useToast } from '@/hooks/useToast';
+
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 import { Skeleton } from '../../ui/Skeleton/Skeleton';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
@@ -55,16 +57,23 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
   const [bluetoothEnabled, setBluetoothEnabled] = useState(false);
   const deviceRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Toast notifications
+  const { success, error: showErrorToast, warning } = useToast();
+
   // Check Bluetooth availability
   const checkBluetoothStatus = useCallback(async () => {
     try {
       const available = await invoke<boolean>('is_bluetooth_available');
       setBluetoothEnabled(available);
+      if (!available) {
+        warning('Bluetooth unavailable', 'Your device may not have Bluetooth support');
+      }
     } catch (error) {
       console.error('Failed to check Bluetooth status:', error);
+      showErrorToast('Bluetooth check failed', 'Could not detect Bluetooth adapter');
       setBluetoothEnabled(false);
     }
-  }, []);
+  }, [warning, showErrorToast]);
 
   // Load devices
   const loadDevices = useCallback(async () => {
@@ -82,11 +91,14 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
       });
     } catch (error) {
       console.error('Failed to scan Bluetooth devices:', error);
-      setErrorMessage(String(error));
+      const errorMsg = 'Failed to scan Bluetooth devices';
+      const hint = 'Make sure Bluetooth is enabled and in range';
+      showErrorToast(errorMsg, hint);
+      setErrorMessage(errorMsg);
     } finally {
       setIsScanning(false);
     }
-  }, []);
+  }, [showErrorToast]);
 
   // Load on open
   useEffect(() => {
@@ -121,6 +133,7 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
             address: device.address,
             pin: '',
           });
+          success('Device paired', `Successfully paired with ${device.name}`);
           await loadDevices();
         } else if (device.pairing_state === 'Paired') {
           if (device.is_connected) {
@@ -128,22 +141,41 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
             await invoke('disconnect_bluetooth_device', {
               address: device.address,
             });
+            success('Device disconnected', `Disconnected from ${device.name}`);
             await loadDevices();
           } else {
             // Connect
             await invoke('connect_bluetooth_device', {
               address: device.address,
             });
+            success('Device connected', `Connected to ${device.name}`);
             await loadDevices();
           }
         }
       } catch (error) {
-        setErrorMessage(`Operation failed: ${String(error)}`);
+        console.error('Bluetooth operation failed:', error);
+
+        let errorMsg = 'Operation failed';
+        let hint = '';
+
+        if (device.pairing_state === 'Unpaired') {
+          errorMsg = `Failed to pair with ${device.name}`;
+          hint = 'Make sure the device is in pairing mode and nearby';
+        } else if (device.is_connected) {
+          errorMsg = `Failed to disconnect from ${device.name}`;
+          hint = 'Try turning the device off and on again';
+        } else {
+          errorMsg = `Failed to connect to ${device.name}`;
+          hint = 'The device may be out of range or already connected to another device';
+        }
+
+        showErrorToast(errorMsg, hint);
+        setErrorMessage(errorMsg);
       } finally {
         setIsOperating(false);
       }
     },
-    [loadDevices]
+    [loadDevices, success, showErrorToast]
   );
 
   // Toggle Bluetooth on/off
