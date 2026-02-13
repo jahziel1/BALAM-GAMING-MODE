@@ -63,7 +63,6 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
     };
 
     resetForm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   // Validate password

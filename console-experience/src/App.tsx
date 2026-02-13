@@ -18,6 +18,7 @@ import {
 import { Footer, Sidebar, TopBar } from './components/layout';
 import { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
 import { PipWindowContent, SystemOSD } from './components/overlay';
+import { KeyboardShortcutsPanel } from './components/overlay/KeyboardShortcutsPanel/KeyboardShortcutsPanel';
 import { FilterChips, type FilterType } from './components/ui/FilterChips';
 
 // Lazy load heavy overlay components
@@ -135,13 +136,14 @@ function App() {
   const [isWiFiPanelOpen, setIsWiFiPanelOpen] = useState(false);
   const [isBluetoothPanelOpen, setIsBluetoothPanelOpen] = useState(false);
   const [isPowerModalOpen, setIsPowerModalOpen] = useState(false);
+  const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false);
   const [pendingLaunchIndex, setPendingLaunchIndex] = useState<number | null>(null);
   const [osdValue, setOsdValue] = useState(75);
   const [isOsdVisible, setIsOsdVisible] = useState(false);
   const osdTimeout = useRef<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
-  // Fix #8: Global keyboard shortcuts for search (Ctrl+K, Ctrl+F)
+  // Fix #8: Global keyboard shortcuts for search (Ctrl+K, Ctrl+F) and help (F1, ?)
   useEffect(() => {
     const handleGlobalKeyboard = (e: KeyboardEvent) => {
       // Ctrl+K or Cmd+K (Mac)
@@ -157,6 +159,11 @@ function App() {
           e.preventDefault();
           setIsSearchOpen(true);
         }
+      }
+      // F1 or ? - Open keyboard shortcuts panel
+      if (e.key === 'F1' || e.key === '?') {
+        e.preventDefault();
+        setIsKeyboardShortcutsOpen(true);
       }
     };
 
@@ -682,6 +689,12 @@ function App() {
       <Suspense fallback={null}>
         <PowerModal isOpen={isPowerModalOpen} onClose={() => setIsPowerModalOpen(false)} />
       </Suspense>
+
+      {/* Keyboard Shortcuts Help Panel (F1 or ?) */}
+      <KeyboardShortcutsPanel
+        isOpen={isKeyboardShortcutsOpen}
+        onClose={() => setIsKeyboardShortcutsOpen(false)}
+      />
     </ErrorBoundary>
   );
 }
