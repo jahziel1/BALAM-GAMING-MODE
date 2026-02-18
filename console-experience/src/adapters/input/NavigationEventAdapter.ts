@@ -17,8 +17,10 @@ import { NavigationEventListener } from '../../ports/InputPort';
 export class NavigationEventAdapter implements NavigationEventListener {
   private callbacks = new Set<(event: NavigationEvent) => void>();
   private keyboardListener?: (e: KeyboardEvent) => void;
+  private wheelListener?: (e: WheelEvent) => void;
   private gamepadRAF?: number;
   private lastAxisTime = 0;
+  private lastWheelTime = 0;
   private buttonStates = new Array(20).fill(false);
   private triggerStates = { LT: false, RT: false }; // Track trigger states
   private unlistenNative?: () => void;
@@ -68,6 +70,20 @@ export class NavigationEventAdapter implements NavigationEventListener {
       }
     };
     window.addEventListener('keydown', this.keyboardListener);
+
+    // Mouse wheel navigation (scroll left/right through games)
+    this.wheelListener = (e: WheelEvent) => {
+      const now = Date.now();
+      if (now - this.lastWheelTime < 150) return; // debounce
+      this.lastWheelTime = now;
+
+      if (e.deltaY > 0) {
+        this.emit(createNavigationEvent(NavigationAction.RIGHT, 'MOUSE'));
+      } else if (e.deltaY < 0) {
+        this.emit(createNavigationEvent(NavigationAction.LEFT, 'MOUSE'));
+      }
+    };
+    window.addEventListener('wheel', this.wheelListener, { passive: true });
 
     // Gamepad navigation (polling)
     const checkGamepad = (time: number) => {
@@ -158,6 +174,9 @@ export class NavigationEventAdapter implements NavigationEventListener {
   private cleanup(): void {
     if (this.keyboardListener) {
       window.removeEventListener('keydown', this.keyboardListener);
+    }
+    if (this.wheelListener) {
+      window.removeEventListener('wheel', this.wheelListener);
     }
     if (this.gamepadRAF) {
       cancelAnimationFrame(this.gamepadRAF);
