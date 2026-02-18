@@ -302,37 +302,63 @@ export const useNavigation = (
       if (now - lastActionTime.current < 75) return;
       lastActionTime.current = now;
 
-      // Overlay panels (Settings, WiFi, Bluetooth, Power, InGameMenu, QuickSettings, etc.)
-      // Use a live DOM query instead of async React state to avoid ~16ms timing races where
-      // the panel is already in the DOM but focusArea hasn't been updated yet.
-      // NOTE: Synthetic Tab events are NOT trusted — we move focus programmatically instead.
+      // --- Overlay / modal panel navigation (fully DOM-based, no async state dependency) ---
+      // Pick the topmost open dialog. This is evaluated at action time so it is always
+      // accurate — no ~16ms React-state lag.
       const activeOverlayModal = [
         ...document.querySelectorAll<HTMLElement>(
           '[role="dialog"][aria-modal="true"],[role="alertdialog"][aria-modal="true"]'
         ),
-      ].at(-1); // Pick the topmost (last in DOM order) open dialog
-      if (
-        activeOverlayModal &&
-        currentState.focusArea !== 'SEARCH' &&
-        currentState.focusArea !== 'VIRTUAL_KEYBOARD'
-      ) {
+      ].at(-1);
+
+      if (activeOverlayModal) {
         const FOCUSABLE =
           'button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
           'textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
 
-        /** Move focus to the next (+1) or previous (-1) focusable element inside the active dialog. */
+        const activeEl = document.activeElement as HTMLElement | null;
+
+        // When a text input or textarea has focus (e.g. the search field), route the
+        // D-pad as arrow-key presses so the component navigates its own list.
+        // This avoids the bug where ArrowDown inside the search box also moved the game selection.
+        const isTextInput =
+          (activeEl?.tagName === 'INPUT' &&
+            (activeEl as HTMLInputElement).type !== 'range' &&
+            (activeEl as HTMLInputElement).type !== 'checkbox' &&
+            (activeEl as HTMLInputElement).type !== 'radio') ||
+          activeEl?.tagName === 'TEXTAREA';
+
+        if (isTextInput) {
+          const textKeyMap: Partial<Record<NavigationAction, string>> = {
+            [NavigationAction.UP]: 'ArrowUp',
+            [NavigationAction.DOWN]: 'ArrowDown',
+            [NavigationAction.LEFT]: 'ArrowLeft',
+            [NavigationAction.RIGHT]: 'ArrowRight',
+            [NavigationAction.CONFIRM]: 'Enter',
+            [NavigationAction.BACK]: 'Escape',
+          };
+          const k = textKeyMap[navAction];
+          if (k) inputAdapter.dispatchKeyEvent(k);
+          return;
+        }
+
+        // For range sliders and selects, LEFT/RIGHT should send arrow keys so the
+        // native control adjusts its value. For all other elements, LEFT/RIGHT moves
+        // focus to the adjacent focusable element (important for VK button grid).
+        const isRangeOrSelect =
+          (activeEl?.tagName === 'INPUT' && (activeEl as HTMLInputElement).type === 'range') ||
+          activeEl?.tagName === 'SELECT';
+
+        /** Move DOM focus to the next (+1) or previous (-1) focusable element in the active dialog. */
         const moveFocus = (direction: 1 | -1) => {
-          const active = document.activeElement as HTMLElement | null;
-          // Prefer the dialog that owns the current active element; fall back to the topmost modal
           const modal =
-            active?.closest<HTMLElement>(
+            activeEl?.closest<HTMLElement>(
               '[role="dialog"][aria-modal="true"],[role="alertdialog"][aria-modal="true"]'
             ) ?? activeOverlayModal;
           if (!modal) return;
           const focusable = [...modal.querySelectorAll<HTMLElement>(FOCUSABLE)];
           if (!focusable.length) return;
-          const currentIdx = active ? focusable.indexOf(active) : -1;
-          // If nothing focused yet, go to first/last depending on direction
+          const currentIdx = activeEl ? focusable.indexOf(activeEl) : -1;
           let nextIdx =
             currentIdx < 0 ? (direction > 0 ? 0 : focusable.length - 1) : currentIdx + direction;
           if (nextIdx < 0) nextIdx = focusable.length - 1;
@@ -348,22 +374,48 @@ export const useNavigation = (
             moveFocus(-1);
             break;
           case NavigationAction.RIGHT:
-            // ArrowRight adjusts sliders and native controls (these DO respond to synthetic events)
-            inputAdapter.dispatchKeyEvent('ArrowRight');
+            // Sliders & selects adjust their value; everything else moves focus
+            if (isRangeOrSelect) {
+              inputAdapter.dispatchKeyEvent('ArrowRight');
+            } else {
+              moveFocus(+1);
+            }
             break;
           case NavigationAction.LEFT:
-            inputAdapter.dispatchKeyEvent('ArrowLeft');
+            if (isRangeOrSelect) {
+              inputAdapter.dispatchKeyEvent('ArrowLeft');
+            } else {
+              moveFocus(-1);
+            }
             break;
           case NavigationAction.CONFIRM:
-            // .click() works for buttons, checkboxes, radio buttons, and links
-            (document.activeElement as HTMLElement | null)?.click();
+            // Only click elements that are actually inside the open modal to prevent
+            // accidentally launching a game when focus is outside (timing edge case).
+            if (activeEl && activeOverlayModal.contains(activeEl)) {
+              activeEl.click();
+            } else {
+              // Modal just opened and focus hasn't moved in yet — focus first element
+              activeOverlayModal.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+            }
             break;
           case NavigationAction.BACK:
-            // Escape is handled by useModalFocus listeners — synthetic events DO fire custom listeners
+            // Escape bubbles to window where useModalFocus closes the modal
             inputAdapter.dispatchKeyEvent('Escape');
             break;
+          // Virtual Keyboard special keys (gamepad bumpers / triggers)
+          case NavigationAction.VK_BACKSPACE:
+            inputAdapter.dispatchKeyEvent('Backspace');
+            break;
+          case NavigationAction.VK_SHIFT:
+            inputAdapter.dispatchKeyEvent('Shift');
+            break;
+          case NavigationAction.VK_SPACE:
+            inputAdapter.dispatchKeyEvent(' ');
+            break;
+          case NavigationAction.VK_SYMBOLS:
+            inputAdapter.dispatchKeyEvent('F1');
+            break;
           case NavigationAction.QUICK_SETTINGS:
-            // Allow Quick Settings toggle even from within an overlay
             if (overlay.rightSidebarOpen) {
               closeRightSidebar();
             } else if (!overlay.leftSidebarOpen) {

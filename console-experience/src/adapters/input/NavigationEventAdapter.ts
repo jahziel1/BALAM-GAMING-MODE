@@ -52,6 +52,17 @@ export class NavigationEventAdapter implements NavigationEventListener {
       // Ignore synthetic events to prevent loops
       if (!e.isTrusted) return;
 
+      // Don't intercept keys when focus is inside a modal dialog or an interactive
+      // input element — those handle their own keyboard navigation natively.
+      // Without this guard, pressing ArrowDown inside the search box would also
+      // trigger library game navigation.
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        if (target.closest('[role="dialog"],[role="alertdialog"]')) return;
+      }
+
       const keyMap: Record<string, NavigationAction> = {
         ArrowUp: NavigationAction.UP,
         ArrowDown: NavigationAction.DOWN,
