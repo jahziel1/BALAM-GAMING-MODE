@@ -190,8 +190,26 @@ function App() {
   // INPUT DEVICE DETECTION
   // ============================================================================
   const { deviceType } = useInputDevice();
-  const controllerType: 'XBOX' | 'PLAYSTATION' | 'SWITCH' | 'KEYBOARD' | 'GENERIC' =
-    deviceType === InputDeviceType.GAMEPAD ? 'GENERIC' : 'KEYBOARD';
+  const [controllerType, setControllerType] = useState<
+    'XBOX' | 'PLAYSTATION' | 'SWITCH' | 'KEYBOARD' | 'GENERIC'
+  >('KEYBOARD');
+
+  // Listen to Tauri controller-type-changed for accurate brand detection
+  useEffect(() => {
+    const unlisten = listen<string>('controller-type-changed', (e) => {
+      setControllerType(e.payload as 'XBOX' | 'PLAYSTATION' | 'SWITCH' | 'KEYBOARD' | 'GENERIC');
+    });
+    return () => {
+      void unlisten.then((f) => f());
+    };
+  }, []);
+
+  // Fall back to KEYBOARD layout when mouse/keyboard is the active device
+  useEffect(() => {
+    if (deviceType !== InputDeviceType.GAMEPAD) {
+      setControllerType('KEYBOARD');
+    }
+  }, [deviceType]);
 
   // ============================================================================
   // CALLBACKS
