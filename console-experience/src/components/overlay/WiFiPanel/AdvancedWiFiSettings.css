@@ -274,6 +274,14 @@
   }
 }
 
+/* Validation error messages */
+.settings-error {
+  display: block;
+  color: var(--color-error);
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .advanced-wifi-overlay,

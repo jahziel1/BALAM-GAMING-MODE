@@ -8,11 +8,12 @@
 import './AdvancedWiFiSettings.css';
 
 import { Globe, Network, Server, X } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button } from '@/components/core/Button/Button';
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 import { SectionHeader } from '@/components/core/SectionHeader/SectionHeader';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 export interface AdvancedWiFiConfig {
   /** Use DHCP (true) or static IP (false) */
@@ -74,31 +75,76 @@ const DEFAULT_CONFIG: AdvancedWiFiConfig = {
  * @param props - Component props
  * @returns Advanced WiFi settings modal
  */
+const IP_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/;
+const isValidIP = (ip: string) => IP_REGEX.test(ip) && ip.split('.').every((n) => Number(n) <= 255);
+
 export const AdvancedWiFiSettings: React.FC<AdvancedWiFiSettingsProps> = ({
   isOpen,
   onClose,
   onSave,
   initialConfig,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [config, setConfig] = useState<AdvancedWiFiConfig>({
     ...DEFAULT_CONFIG,
     ...initialConfig,
   });
+  const [staticIPError, setStaticIPError] = useState<string | null>(null);
+  const [gatewayError, setGatewayError] = useState<string | null>(null);
+  const [proxyPortError, setProxyPortError] = useState<string | null>(null);
+
+  useModalFocus(containerRef, isOpen, onClose);
 
   const handleSave = () => {
+    let hasError = false;
+    if (!config.useDHCP) {
+      if (!config.staticIP || !isValidIP(config.staticIP)) {
+        setStaticIPError('Enter a valid IP address (e.g. 192.168.1.100)');
+        hasError = true;
+      } else {
+        setStaticIPError(null);
+      }
+      if (!config.gateway || !isValidIP(config.gateway)) {
+        setGatewayError('Enter a valid gateway address (e.g. 192.168.1.1)');
+        hasError = true;
+      } else {
+        setGatewayError(null);
+      }
+    }
+    if (config.useProxy && config.proxyPort) {
+      const port = parseInt(config.proxyPort, 10);
+      if (isNaN(port) || port < 1 || port > 65535) {
+        setProxyPortError('Port must be between 1 and 65535');
+        hasError = true;
+      } else {
+        setProxyPortError(null);
+      }
+    }
+    if (hasError) return;
     onSave(config);
     onClose();
   };
 
   const handleReset = () => {
     setConfig(DEFAULT_CONFIG);
+    setStaticIPError(null);
+    setGatewayError(null);
+    setProxyPortError(null);
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="advanced-wifi-overlay" onClick={onClose}>
-      <div className="advanced-wifi-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={containerRef}
+        className="advanced-wifi-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Advanced Network Settings"
+        tabIndex={-1}
+      >
         {/* Header */}
         <div className="advanced-wifi-header">
           <div className="advanced-wifi-title">
@@ -145,9 +191,18 @@ export const AdvancedWiFiSettings: React.FC<AdvancedWiFiSettingsProps> = ({
                   <input
                     type="text"
                     value={config.staticIP}
-                    onChange={(e) => setConfig({ ...config, staticIP: e.target.value })}
+                    onChange={(e) => {
+                      setConfig({ ...config, staticIP: e.target.value });
+                      setStaticIPError(null);
+                    }}
                     placeholder="192.168.1.100"
+                    aria-describedby={staticIPError ? 'static-ip-error' : undefined}
                   />
+                  {staticIPError ? (
+                    <span id="static-ip-error" role="alert" className="settings-error">
+                      {staticIPError}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="advanced-wifi-input-group">
                   <label>Subnet Mask</label>
@@ -163,9 +218,18 @@ export const AdvancedWiFiSettings: React.FC<AdvancedWiFiSettingsProps> = ({
                   <input
                     type="text"
                     value={config.gateway}
-                    onChange={(e) => setConfig({ ...config, gateway: e.target.value })}
+                    onChange={(e) => {
+                      setConfig({ ...config, gateway: e.target.value });
+                      setGatewayError(null);
+                    }}
                     placeholder="192.168.1.1"
+                    aria-describedby={gatewayError ? 'gateway-error' : undefined}
                   />
+                  {gatewayError ? (
+                    <span id="gateway-error" role="alert" className="settings-error">
+                      {gatewayError}
+                    </span>
+                  ) : null}
                 </div>
               </div>
             )}
@@ -263,9 +327,18 @@ export const AdvancedWiFiSettings: React.FC<AdvancedWiFiSettingsProps> = ({
                   <input
                     type="text"
                     value={config.proxyPort}
-                    onChange={(e) => setConfig({ ...config, proxyPort: e.target.value })}
+                    onChange={(e) => {
+                      setConfig({ ...config, proxyPort: e.target.value });
+                      setProxyPortError(null);
+                    }}
                     placeholder="8080"
+                    aria-describedby={proxyPortError ? 'proxy-port-error' : undefined}
                   />
+                  {proxyPortError ? (
+                    <span id="proxy-port-error" role="alert" className="settings-error">
+                      {proxyPortError}
+                    </span>
+                  ) : null}
                 </div>
               </div>
             ) : null}
