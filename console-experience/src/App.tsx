@@ -484,43 +484,58 @@ function App() {
 
   // Volume change listener
   useEffect(() => {
-    const setupListener = async () => {
-      const unlisten = await listen<number>('volume-changed', (event) => {
-        handleVolumeChange(event.payload);
-      });
-      return unlisten;
-    };
-    const unlistenPromise = setupListener();
+    let cancelled = false;
+    let unlistenFn: (() => void) | undefined;
+    void listen<number>('volume-changed', (event) => {
+      handleVolumeChange(event.payload);
+    }).then((fn) => {
+      if (cancelled) {
+        fn();
+      } else {
+        unlistenFn = fn;
+      }
+    });
     return () => {
-      void unlistenPromise.then((unlisten) => unlisten());
+      cancelled = true;
+      unlistenFn?.();
     };
   }, [handleVolumeChange]);
 
   // WiFi Panel toggle listener (Ctrl+W)
   useEffect(() => {
-    const setupListener = async () => {
-      const unlisten = await listen('toggle-wifi-panel', () => {
-        setIsWiFiPanelOpen((prev) => !prev);
-      });
-      return unlisten;
-    };
-    const unlistenPromise = setupListener();
+    let cancelled = false;
+    let unlistenFn: (() => void) | undefined;
+    void listen('toggle-wifi-panel', () => {
+      setIsWiFiPanelOpen((prev) => !prev);
+    }).then((fn) => {
+      if (cancelled) {
+        fn();
+      } else {
+        unlistenFn = fn;
+      }
+    });
     return () => {
-      void unlistenPromise.then((unlisten) => unlisten());
+      cancelled = true;
+      unlistenFn?.();
     };
   }, []);
 
   // Bluetooth Panel toggle listener (Ctrl+B)
   useEffect(() => {
-    const setupListener = async () => {
-      const unlisten = await listen('toggle-bluetooth-panel', () => {
-        setIsBluetoothPanelOpen((prev) => !prev);
-      });
-      return unlisten;
-    };
-    const unlistenPromise = setupListener();
+    let cancelled = false;
+    let unlistenFn: (() => void) | undefined;
+    void listen('toggle-bluetooth-panel', () => {
+      setIsBluetoothPanelOpen((prev) => !prev);
+    }).then((fn) => {
+      if (cancelled) {
+        fn();
+      } else {
+        unlistenFn = fn;
+      }
+    });
     return () => {
-      void unlistenPromise.then((unlisten) => unlisten());
+      cancelled = true;
+      unlistenFn?.();
     };
   }, []);
 
