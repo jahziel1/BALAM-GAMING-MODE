@@ -20,6 +20,43 @@ import type { Game } from '../../domain/entities/game';
 import type { FocusArea } from '../../hooks/useNavigation';
 import { GameCarousel } from '../GameLibrary/GameCarousel';
 
+/**
+ * Build non-overlapping carousel rows from a flat game list.
+ * Exported so App.tsx can compute carousel offsets for navigation.
+ */
+export function buildCarousels(games: Game[]): { title: string; games: Game[] }[] {
+  const recentGames = games.slice(0, Math.min(10, games.length));
+  const recentIds = new Set(recentGames.map((g) => g.id));
+
+  const bySource = new Map<string, Game[]>();
+  for (const game of games) {
+    const existing = bySource.get(game.source) ?? [];
+    existing.push(game);
+    bySource.set(game.source, existing);
+  }
+
+  const result: { title: string; games: Game[] }[] = [];
+
+  if (recentGames.length > 0) {
+    result.push({ title: 'Recently Played', games: recentGames });
+  }
+
+  const sources = getSourcesByPriority();
+  for (const source of sources) {
+    const sourceGames = (bySource.get(source) ?? []).filter((g) => !recentIds.has(g.id));
+    if (sourceGames.length > 0) {
+      const config = getSourceConfig(source);
+      result.push({ title: config.carouselTitle, games: sourceGames });
+    }
+  }
+
+  if (result.length === 0 && games.length > 0) {
+    result.push({ title: 'All Games', games });
+  }
+
+  return result;
+}
+
 interface LibrarySectionProps {
   games: Game[];
   activeIndex: number;
@@ -39,41 +76,7 @@ export function LibrarySection({
 }: LibrarySectionProps) {
   const isLibraryFocused = focusArea === 'LIBRARY';
 
-  // Build NON-OVERLAPPING carousels:
-  // Recent = first N games. Source carousels = same source but excluding recent IDs.
-  const { carousels } = useMemo(() => {
-    const recentGames = games.slice(0, Math.min(10, games.length));
-    const recentIds = new Set(recentGames.map((g) => g.id));
-
-    const bySource = new Map<string, Game[]>();
-    for (const game of games) {
-      const existing = bySource.get(game.source) ?? [];
-      existing.push(game);
-      bySource.set(game.source, existing);
-    }
-
-    const result: { title: string; games: Game[] }[] = [];
-
-    if (recentGames.length > 0) {
-      result.push({ title: 'Recently Played', games: recentGames });
-    }
-
-    const sources = getSourcesByPriority();
-    for (const source of sources) {
-      // Exclude games already shown in Recent to avoid duplicates
-      const sourceGames = (bySource.get(source) ?? []).filter((g) => !recentIds.has(g.id));
-      if (sourceGames.length > 0) {
-        const config = getSourceConfig(source);
-        result.push({ title: config.carouselTitle, games: sourceGames });
-      }
-    }
-
-    if (result.length === 0 && games.length > 0) {
-      result.push({ title: 'All Games', games });
-    }
-
-    return { carousels: result };
-  }, [games]);
+  const carousels = useMemo(() => buildCarousels(games), [games]);
 
   // Cumulative start offsets: carousel i starts at offsets[i] in the flat index
   const offsets = useMemo(
@@ -85,7 +88,6 @@ export function LibrarySection({
   // Map flat activeIndex → active carousel + local item index within that carousel
   const { activeCarouselIdx, localIdx } = useMemo(() => {
     if (carousels.length === 0) return { activeCarouselIdx: 0, localIdx: 0 };
-    // Find the last carousel whose offset is <= activeIndex (pure reduce, no mutations)
     const idx = offsets.reduce((found, offset, i) => (activeIndex >= offset ? i : found), 0);
     return {
       activeCarouselIdx: idx,

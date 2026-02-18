@@ -9,6 +9,7 @@ import { useAppStore, useGameStore } from './application/providers/StoreProvider
 import defaultCover from './assets/default_cover.png';
 // Modular Components
 import {
+  buildCarousels,
   ConfirmationModal,
   ErrorBoundary,
   HeroSection,
@@ -242,6 +243,42 @@ function App() {
   }, []);
 
   // ============================================================================
+  // ============================================================================
+  // FILTERED GAMES + CAROUSEL OFFSETS - Declared before useNavigation
+  // ============================================================================
+  const filteredGamesForNav = useMemo(() => {
+    switch (activeFilter) {
+      case 'favorites':
+        return games.filter((game) => game.is_favorite === 1);
+      case 'recents':
+        return games
+          .filter((game) => game.last_played !== null)
+          .sort((a, b) => (b.last_played ?? 0) - (a.last_played ?? 0))
+          .slice(0, 20);
+      case 'steam':
+        return games.filter((game) => game.source === 'Steam');
+      case 'epic':
+        return games.filter((game) => game.source === 'Epic');
+      case 'xbox':
+        return games.filter((game) => game.source === 'Xbox');
+      case 'battlenet':
+        return games.filter((game) => game.source === 'BattleNet');
+      case 'manual':
+        return games.filter((game) => game.source === 'Manual');
+      case 'all':
+      default:
+        return games;
+    }
+  }, [games, activeFilter]);
+
+  const carouselOffsets = useMemo(() => {
+    const carousels = buildCarousels(filteredGamesForNav);
+    return carousels.map((_, i) =>
+      carousels.slice(0, i).reduce((sum, c) => sum + c.games.length, 0)
+    );
+  }, [filteredGamesForNav]);
+
+  // ============================================================================
   // NAVIGATION HOOK - Declared first to get setInGameMenuOpen
   // ============================================================================
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -265,7 +302,8 @@ function App() {
     quickSettingsSliderIndex,
     setQuickSettingsSliderIndex,
   } = useNavigation(
-    games.length,
+    filteredGamesForNav.length,
+    carouselOffsets,
     MENU_ITEMS.length,
     (index) => handleLaunchRawRef.current(index),
     (index) => {
@@ -276,13 +314,18 @@ function App() {
     },
     () => handleQuitRef.current(),
     activeRunningGame,
-    isExplorerOpen, // Search overlay has its own focus area, no need to disable navigation
+    isExplorerOpen,
     (direction: number) => {
       if (quickSettingsAdjustRef.current) {
         quickSettingsAdjustRef.current(direction);
       }
     }
   );
+
+  // Reset selection when active filter changes so activeIndex stays in bounds
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [activeFilter, setActiveIndex]);
 
   // ============================================================================
   // SEARCH CALLBACKS - Declared after useNavigation to access setFocusArea
@@ -575,31 +618,8 @@ function App() {
   // ============================================================================
   // DERIVED STATE
   // ============================================================================
-  // Filter games based on active filter
-  const filteredGames = useMemo(() => {
-    switch (activeFilter) {
-      case 'favorites':
-        return games.filter((game) => game.is_favorite === 1);
-      case 'recents':
-        return games
-          .filter((game) => game.last_played !== null)
-          .sort((a, b) => (b.last_played ?? 0) - (a.last_played ?? 0))
-          .slice(0, 20);
-      case 'steam':
-        return games.filter((game) => game.source === 'Steam');
-      case 'epic':
-        return games.filter((game) => game.source === 'Epic');
-      case 'xbox':
-        return games.filter((game) => game.source === 'Xbox');
-      case 'battlenet':
-        return games.filter((game) => game.source === 'BattleNet');
-      case 'manual':
-        return games.filter((game) => game.source === 'Manual');
-      case 'all':
-      default:
-        return games;
-    }
-  }, [games, activeFilter]);
+  // filteredGames is the same computation as filteredGamesForNav (computed earlier for useNavigation)
+  const filteredGames = filteredGamesForNav;
 
   const activeGame = filteredGames[activeIndex] ?? filteredGames[0];
   const backgroundImage = getCachedAssetSrc(

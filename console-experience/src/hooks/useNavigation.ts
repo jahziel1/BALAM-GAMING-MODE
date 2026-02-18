@@ -42,6 +42,8 @@ type Action =
       type: 'MOVE';
       direction: NavigationAction;
       itemCount: number;
+      /** Flat start-index of each carousel, e.g. [0, 10, 25]. Empty = no carousel structure. */
+      carouselOffsets: number[];
       sidebarItemCount: number;
       quickSettingsSliderCount: number;
     }
@@ -96,7 +98,8 @@ function navReducer(state: NavState, action: Action): NavState {
       return { ...state, isQuickSettingsOpen: false, focusArea: 'HERO' };
 
     case 'MOVE': {
-      const { direction, itemCount, sidebarItemCount, quickSettingsSliderCount } = action;
+      const { direction, itemCount, carouselOffsets, sidebarItemCount, quickSettingsSliderCount } =
+        action;
 
       // Quick Settings navigation (NOTE: rightSidebarOpen state comes from app-store, but slider index managed here)
       // The actual check happens in handleAction, this just handles UP/DOWN for slider navigation
@@ -146,22 +149,56 @@ function navReducer(state: NavState, action: Action): NavState {
       }
 
       // Main library navigation (Steam Big Picture style)
+      // Uses carouselOffsets for row-aware UP/DOWN and boundary-clamped LEFT/RIGHT
+      const hasCarousels = carouselOffsets.length > 1;
+      const cIdx = hasCarousels
+        ? carouselOffsets.reduce((f, o, i) => (state.activeIndex >= o ? i : f), 0)
+        : 0;
+
       switch (direction) {
         case NavigationAction.UP:
-          if (state.focusArea === 'LIBRARY') return { ...state, focusArea: 'HERO' };
+          if (state.focusArea === 'LIBRARY') {
+            if (hasCarousels && cIdx > 0) {
+              // Move to same column in the previous carousel
+              const localIdx = state.activeIndex - carouselOffsets[cIdx];
+              const prevStart = carouselOffsets[cIdx - 1];
+              const prevSize = carouselOffsets[cIdx] - prevStart;
+              return { ...state, activeIndex: prevStart + Math.min(localIdx, prevSize - 1) };
+            }
+            return { ...state, focusArea: 'HERO' };
+          }
           return state;
+
         case NavigationAction.DOWN:
           if (state.focusArea === 'HERO') return { ...state, focusArea: 'LIBRARY' };
+          if (state.focusArea === 'LIBRARY' && hasCarousels && cIdx < carouselOffsets.length - 1) {
+            // Move to same column in the next carousel
+            const localIdx = state.activeIndex - carouselOffsets[cIdx];
+            const nextStart = carouselOffsets[cIdx + 1];
+            const nextEnd =
+              cIdx + 2 < carouselOffsets.length ? carouselOffsets[cIdx + 2] - 1 : itemCount - 1;
+            const nextSize = nextEnd - nextStart + 1;
+            return { ...state, activeIndex: nextStart + Math.min(localIdx, nextSize - 1) };
+          }
           return state;
-        case NavigationAction.LEFT:
-          // Stop at first item (no wrap-around, like Steam)
-          if (state.activeIndex > 0) return { ...state, activeIndex: state.activeIndex - 1 };
-          return state; // Stay at first item
-        case NavigationAction.RIGHT:
-          // Stop at last item (no wrap-around, like Steam)
-          if (state.activeIndex < itemCount - 1)
+
+        case NavigationAction.LEFT: {
+          const cStart = hasCarousels ? carouselOffsets[cIdx] : 0;
+          if (state.activeIndex > cStart) return { ...state, activeIndex: state.activeIndex - 1 };
+          return state; // At first item of this carousel, stop
+        }
+
+        case NavigationAction.RIGHT: {
+          const cEnd = hasCarousels
+            ? cIdx < carouselOffsets.length - 1
+              ? carouselOffsets[cIdx + 1] - 1
+              : itemCount - 1
+            : itemCount - 1;
+          if (state.activeIndex < cEnd)
             return { ...state, activeIndex: state.activeIndex + 1, focusArea: 'LIBRARY' };
-          return state; // Stay at last item
+          return state; // At last item of this carousel, stop
+        }
+
         default:
           return state;
       }
@@ -223,6 +260,7 @@ function navReducer(state: NavState, action: Action): NavState {
  */
 export const useNavigation = (
   itemCount: number,
+  carouselOffsets: number[],
   sidebarItemCount: number,
   onLaunch: (index: number) => void,
   onSidebarSelect: (index: number) => void,
@@ -233,6 +271,11 @@ export const useNavigation = (
 ) => {
   const [state, dispatch] = useReducer(navReducer, initialState);
   const lastActionTime = useRef(0);
+  // Stable ref so handleAction doesn't need carouselOffsets in its dep array
+  const carouselOffsetsRef = useRef(carouselOffsets);
+  useEffect(() => {
+    carouselOffsetsRef.current = carouselOffsets;
+  }, [carouselOffsets]);
 
   // Get sidebar states and actions from app-store
   const { overlay, openLeftSidebar, closeLeftSidebar, openRightSidebar, closeRightSidebar } =
@@ -430,6 +473,7 @@ export const useNavigation = (
         type: 'MOVE',
         direction: navAction,
         itemCount,
+        carouselOffsets: carouselOffsetsRef.current,
         sidebarItemCount,
         quickSettingsSliderCount: 4,
       });

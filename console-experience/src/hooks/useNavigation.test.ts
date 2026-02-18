@@ -29,6 +29,7 @@ describe('useNavigation Hook', () => {
     const { result } = renderHook(() =>
       useNavigation(
         10, // itemCount
+        [], // carouselOffsets
         5, // sidebarItemCount
         () => {}, // onLaunch
         () => {}, // onSidebarSelect
@@ -49,6 +50,7 @@ describe('useNavigation Hook', () => {
     const { result } = renderHook(() =>
       useNavigation(
         10, // itemCount
+        [], // carouselOffsets
         5, // sidebarItemCount
         () => {}, // onLaunch
         () => {}, // onSidebarSelect
@@ -70,6 +72,7 @@ describe('useNavigation Hook', () => {
     renderHook(() =>
       useNavigation(
         10, // itemCount
+        [], // carouselOffsets
         5, // sidebarItemCount
         () => {}, // onLaunch
         () => {}, // onSidebarSelect

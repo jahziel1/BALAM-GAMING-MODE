@@ -90,6 +90,7 @@ describe('useNavigation Behavioral Tests', () => {
       const p = { ...defaultProps, ...props };
       return useNavigation(
         p.itemCount,
+        [], // carouselOffsets
         p.sidebarItemCount,
         p.onLaunch,
         p.onSidebarSelect,
