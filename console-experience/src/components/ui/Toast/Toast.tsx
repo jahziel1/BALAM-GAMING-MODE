@@ -70,7 +70,10 @@ export const Toast: React.FC<ToastProps> = ({
   };
 
   return (
-    <div className={`toast toast-${type} ${isExiting ? 'toast-exit' : ''}`}>
+    <div
+      className={`toast toast-${type} ${isExiting ? 'toast-exit' : ''}`}
+      role={type === 'error' || type === 'warning' ? 'alert' : 'status'}
+    >
       <div className="toast-content">
         {getIcon()}
         <div className="toast-text">
