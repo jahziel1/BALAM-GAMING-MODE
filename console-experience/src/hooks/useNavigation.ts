@@ -321,7 +321,13 @@ export const useNavigation = (
         gamepadModalFocusRef.current = null;
       }
 
-      if (activeOverlayModal) {
+      // QuickSettings (right sidebar) uses a custom props-based slider navigation system
+      // (quickSettingsSliderIndex → isFocused prop on RadixSlider). Intercepting it here
+      // with moveFocus() would move DOM focus without updating quickSettingsSliderIndex,
+      // breaking the visual highlight and LEFT/RIGHT slider adjustment entirely.
+      // InGameMenu (left sidebar) is fine — its buttons have onClick handlers that work
+      // correctly when CONFIRM calls target.click().
+      if (activeOverlayModal && !overlay.rightSidebarOpen) {
         const FOCUSABLE =
           'button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
           'textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
