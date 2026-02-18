@@ -322,11 +322,6 @@ function App() {
     }
   );
 
-  // Reset selection when active filter changes so activeIndex stays in bounds
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [activeFilter, setActiveIndex]);
-
   // ============================================================================
   // SEARCH CALLBACKS - Declared after useNavigation to access setFocusArea
   // ============================================================================
