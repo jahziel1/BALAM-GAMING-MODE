@@ -2,7 +2,7 @@ import './PowerModal.css';
 
 import { invoke } from '@tauri-apps/api/core';
 import { LogOut, Power, RotateCw } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/core/Button/Button';
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
@@ -20,16 +20,16 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
   const [selectedAction, setSelectedAction] = useState<PowerAction>(null);
   const [countdown, setCountdown] = useState(5);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedAction(null);
-
       setCountdown(5);
-
       setIsExecuting(false);
+      setError(null);
     }
   }, [isOpen]);
 
@@ -49,9 +49,12 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
           await invoke('logout_pc');
           break;
       }
-    } catch (error) {
-      console.error('Power action failed:', error);
-      onClose();
+    } catch (err) {
+      console.error('Power action failed:', err);
+      setIsExecuting(false);
+      setSelectedAction(null);
+      setCountdown(5);
+      setError('Action failed. Please try again.');
     }
   }, [selectedAction, isExecuting, onClose]);
 
@@ -136,12 +139,19 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
       ) : (
         // Confirmation countdown
         <>
-          <p className="power-modal-message">
+          {error ? (
+            <p className="power-modal-error" role="alert">
+              {error}
+            </p>
+          ) : null}
+          <p className="power-modal-message" aria-live="polite" aria-atomic="true">
             {selectedAction === 'shutdown' && `Shutting down in ${countdown} seconds...`}
             {selectedAction === 'restart' && `Restarting in ${countdown} seconds...`}
             {selectedAction === 'logout' && `Logging out in ${countdown} seconds...`}
           </p>
-          <div className="power-modal-countdown">{countdown}</div>
+          <div className="power-modal-countdown" aria-hidden="true">
+            {countdown}
+          </div>
           <Button variant="secondary" size="md" onClick={handleCancel} disabled={isExecuting}>
             Cancel
           </Button>
