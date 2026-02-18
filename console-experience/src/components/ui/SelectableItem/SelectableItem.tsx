@@ -27,12 +27,21 @@ export const SelectableItem: React.FC<SelectableItemProps> = memo(
     className = '',
     variant = 'default',
   }) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (!disabled && onClick && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        onClick();
+      }
+    };
+
     return (
       <div
         className={`selectable-item ${isFocused ? 'focused' : ''} ${disabled ? 'disabled' : ''} ${variant} ${className}`}
         onClick={disabled ? undefined : onClick}
+        onKeyDown={handleKeyDown}
         role="button"
         tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled || undefined}
       >
         {children}
       </div>
