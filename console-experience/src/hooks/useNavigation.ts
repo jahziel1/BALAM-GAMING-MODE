@@ -24,7 +24,8 @@ export type FocusArea =
   | 'INGAME_MENU'
   | 'VIRTUAL_KEYBOARD'
   | 'QUICK_SETTINGS'
-  | 'SEARCH';
+  | 'SEARCH'
+  | 'OVERLAY';
 
 interface NavState {
   focusArea: FocusArea;
@@ -289,13 +290,53 @@ export const useNavigation = (
     (navAction: NavigationAction) => {
       const currentState = stateRef.current;
 
-      // isDisabled blocks library navigation but NOT virtual keyboard navigation
-      if (isDisabled && currentState.focusArea !== 'VIRTUAL_KEYBOARD') {
+      // isDisabled blocks library navigation but NOT virtual keyboard or overlay panel navigation
+      if (
+        isDisabled &&
+        currentState.focusArea !== 'VIRTUAL_KEYBOARD' &&
+        currentState.focusArea !== 'OVERLAY'
+      ) {
         return;
       }
       const now = Date.now();
       if (now - lastActionTime.current < 75) return;
       lastActionTime.current = now;
+
+      // Overlay panels (Settings, WiFi, Bluetooth, Power, InGameMenu, QuickSettings, etc.)
+      // Convert gamepad inputs to keyboard events so Tab trap and native controls work
+      if (currentState.focusArea === 'OVERLAY') {
+        switch (navAction) {
+          case NavigationAction.DOWN:
+            inputAdapter.dispatchKeyEvent('Tab');
+            break;
+          case NavigationAction.UP:
+            inputAdapter.dispatchKeyEvent('Tab', { shift: true });
+            break;
+          case NavigationAction.RIGHT:
+            inputAdapter.dispatchKeyEvent('ArrowRight');
+            break;
+          case NavigationAction.LEFT:
+            inputAdapter.dispatchKeyEvent('ArrowLeft');
+            break;
+          case NavigationAction.CONFIRM:
+            inputAdapter.dispatchKeyEvent(' ');
+            break;
+          case NavigationAction.BACK:
+            inputAdapter.dispatchKeyEvent('Escape');
+            break;
+          case NavigationAction.QUICK_SETTINGS:
+            // Allow Quick Settings toggle even from within an overlay
+            if (overlay.rightSidebarOpen) {
+              closeRightSidebar();
+            } else if (!overlay.leftSidebarOpen) {
+              openRightSidebar();
+            }
+            break;
+          default:
+            break;
+        }
+        return;
+      }
 
       // Handle CONFIRM action
       if (navAction === NavigationAction.CONFIRM) {

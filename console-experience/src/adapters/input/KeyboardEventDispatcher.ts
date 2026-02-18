@@ -8,11 +8,12 @@
 import { KeyboardEventDispatcher as IKeyboardEventDispatcher } from '../../ports/InputPort';
 
 export class KeyboardEventDispatcher implements IKeyboardEventDispatcher {
-  dispatchKeyEvent(key: string): void {
+  dispatchKeyEvent(key: string, modifiers?: { shift?: boolean }): void {
     const event = new KeyboardEvent('keydown', {
       key,
       bubbles: true,
       cancelable: true,
+      shiftKey: modifiers?.shift ?? false,
     });
     window.dispatchEvent(event);
   }

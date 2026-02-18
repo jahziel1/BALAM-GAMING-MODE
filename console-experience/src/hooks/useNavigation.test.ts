@@ -11,13 +11,29 @@ vi.mock('@tauri-apps/api/window', () => ({
     show: vi.fn(() => Promise.resolve()),
     setFocus: vi.fn(() => Promise.resolve()),
     listen: vi.fn(() => Promise.resolve(() => {})),
+    isVisible: vi.fn(() => Promise.resolve(true)),
   })),
+}));
+
+vi.mock('@tauri-apps/api/core', () => ({
+  invoke: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock('../adapters/input/InputAdapter', () => ({
   inputAdapter: {
     onNavigationEvent: vi.fn(() => () => {}),
+    dispatchKeyEvent: vi.fn(),
   },
+}));
+
+vi.mock('../application/providers/StoreProvider', () => ({
+  useAppStore: vi.fn(() => ({
+    overlay: { leftSidebarOpen: false, rightSidebarOpen: false },
+    openLeftSidebar: vi.fn(),
+    closeLeftSidebar: vi.fn(),
+    openRightSidebar: vi.fn(),
+    closeRightSidebar: vi.fn(),
+  })),
 }));
 
 describe('useNavigation Hook', () => {
@@ -38,7 +54,7 @@ describe('useNavigation Hook', () => {
       )
     );
 
-    expect(result.current.focusArea).toBe('HERO');
+    expect(result.current.focusArea).toBe('LIBRARY');
     expect(result.current.isSidebarOpen).toBe(false);
     expect(result.current.isInGameMenuOpen).toBe(false);
     expect(result.current.isQuickSettingsOpen).toBe(false);

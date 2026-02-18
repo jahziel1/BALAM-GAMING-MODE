@@ -25,10 +25,10 @@ export interface NavigationEventListener {
 
 /**
  * Port for dispatching synthetic keyboard events
- * Used to convert gamepad inputs to keyboard events for virtual keyboard
+ * Used to convert gamepad inputs to keyboard events for virtual keyboard and overlay panels
  */
 export interface KeyboardEventDispatcher {
-  dispatchKeyEvent(key: string): void;
+  dispatchKeyEvent(key: string, modifiers?: { shift?: boolean }): void;
 }
 
 /**

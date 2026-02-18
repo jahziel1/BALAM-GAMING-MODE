@@ -43,8 +43,8 @@ export class InputAdapter implements InputPort {
     return this.navigationAdapter.onNavigationEvent(callback);
   }
 
-  dispatchKeyEvent(key: string): void {
-    this.eventDispatcher.dispatchKeyEvent(key);
+  dispatchKeyEvent(key: string, modifiers?: { shift?: boolean }): void {
+    this.eventDispatcher.dispatchKeyEvent(key, modifiers);
   }
 }
 

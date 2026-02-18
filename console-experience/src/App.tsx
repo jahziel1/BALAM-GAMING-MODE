@@ -69,7 +69,7 @@ function App() {
     loadGames,
   } = useGameStore();
 
-  const { openRightSidebar, openLeftSidebar, settings } = useAppStore();
+  const { overlay, openRightSidebar, openLeftSidebar, settings } = useAppStore();
 
   // Apply CSS classes to <html> based on settings
   useEffect(() => {
@@ -415,6 +415,23 @@ function App() {
       setFocusArea('SEARCH');
     }
   }, [isSearchOpen, setFocusArea]);
+
+  // Sync gamepad focus area when overlay panels open/close.
+  // When any overlay is open, OVERLAY mode translates D-pad → Tab navigation so the
+  // gamepad can navigate Settings, WiFi, Bluetooth, InGameMenu, etc. natively.
+  const anyOverlayOpen =
+    overlay.leftSidebarOpen ||
+    overlay.rightSidebarOpen ||
+    isSettingsOpen ||
+    isWiFiPanelOpen ||
+    isBluetoothPanelOpen ||
+    isPowerModalOpen ||
+    isKeyboardShortcutsOpen ||
+    isExplorerOpen;
+  useEffect(() => {
+    setFocusArea(anyOverlayOpen ? 'OVERLAY' : 'HERO');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [anyOverlayOpen]);
 
   // ============================================================================
   // QUIT HANDLER
