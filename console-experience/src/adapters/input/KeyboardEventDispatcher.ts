@@ -15,6 +15,11 @@ export class KeyboardEventDispatcher implements IKeyboardEventDispatcher {
       cancelable: true,
       shiftKey: modifiers?.shift ?? false,
     });
-    window.dispatchEvent(event);
+    // Dispatch on the focused element so the event bubbles through the DOM tree,
+    // reaching React onKeyDown handlers and native element behaviours (e.g. range sliders).
+    // window.dispatchEvent() only reaches window-level listeners and is ignored by React and
+    // native elements — that's why gamepad key events had no effect inside panels.
+    const target = (document.activeElement as HTMLElement | null) ?? document.body;
+    target.dispatchEvent(event);
   }
 }
