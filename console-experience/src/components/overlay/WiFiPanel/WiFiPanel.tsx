@@ -62,8 +62,7 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
         }
         return current;
       });
-    } catch (error) {
-      console.error('Failed to scan WiFi:', error);
+    } catch {
       const errorMsg = 'Failed to scan WiFi networks';
       const hint = 'Make sure WiFi adapter is enabled and working';
       showErrorToast(errorMsg, hint);
@@ -103,8 +102,7 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
           await invoke('connect_wifi', { ssid: network.ssid, password: '' });
           success('Connected successfully', `Connected to ${network.ssid}`);
           await loadNetworks();
-        } catch (error) {
-          console.error('Connection failed:', error);
+        } catch {
           const errorMsg = `Failed to connect to ${network.ssid}`;
           const hint = 'The network may be out of range or have connection issues';
           showErrorToast(errorMsg, hint);
@@ -136,8 +134,6 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
         setPasswordModalOpen(false);
         await loadNetworks();
       } catch (error) {
-        console.error('Connection failed:', error);
-
         const errorMsg = `Failed to connect to ${selectedNetwork.ssid}`;
         let hint = 'Check your password and try again';
 

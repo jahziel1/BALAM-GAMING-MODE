@@ -88,8 +88,7 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
       if (!available) {
         warning('Bluetooth unavailable', 'Your device may not have Bluetooth support');
       }
-    } catch (error) {
-      console.error('Failed to check Bluetooth status:', error);
+    } catch {
       showErrorToast('Bluetooth check failed', 'Could not detect Bluetooth adapter');
       setBluetoothEnabled(false);
     }
@@ -109,8 +108,7 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
         }
         return prevIndex;
       });
-    } catch (error) {
-      console.error('Failed to scan Bluetooth devices:', error);
+    } catch {
       const errorMsg = 'Failed to scan Bluetooth devices';
       const hint = 'Make sure Bluetooth is enabled and in range';
       showErrorToast(errorMsg, hint);
@@ -173,8 +171,6 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
           }
         }
       } catch (error) {
-        console.error('Bluetooth operation failed:', error);
-
         let errorMsg = 'Operation failed';
         let hint = BLUETOOTH_ERROR_HINTS.default;
 
@@ -244,7 +240,6 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
         success('Bluetooth disabled', 'All devices disconnected');
       }
     } catch (error) {
-      console.error('Failed to toggle Bluetooth:', error);
       const errorStr =
         error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
       let hint = BLUETOOTH_ERROR_HINTS.default;

@@ -5,6 +5,7 @@ import { listen } from '@tauri-apps/api/event';
 import { ArrowLeft, File, Folder, HardDrive, Plus } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useToast } from '../../hooks/useToast';
 import ButtonHint from '../ui/ButtonHint/ButtonHint';
 
 interface FileEntry {
@@ -26,22 +27,29 @@ const FileExplorer = ({ onClose, onSelectGame, controllerType }: FileExplorerPro
   const [drives, setDrives] = useState<string[]>([]);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
+  const { error: showErrorToast } = useToast();
 
   useEffect(() => {
     // Initial: Get Drives
     void invoke<string[]>('get_system_drives').then(setDrives);
   }, []);
 
-  const loadDirectory = useCallback(async (path: string) => {
-    try {
-      const data = await invoke<FileEntry[]>('list_directory', { path });
-      setEntries(data);
-      setCurrentPath(path);
-      setFocusedIndex(0);
-    } catch (err) {
-      console.error('Failed to list dir:', err);
-    }
-  }, []);
+  const loadDirectory = useCallback(
+    async (path: string) => {
+      try {
+        const data = await invoke<FileEntry[]>('list_directory', { path });
+        setEntries(data);
+        setCurrentPath(path);
+        setFocusedIndex(0);
+      } catch {
+        showErrorToast(
+          'Could not access folder',
+          'Check that the folder exists and you have permission to access it'
+        );
+      }
+    },
+    [showErrorToast]
+  );
 
   const handleSelect = useCallback(
     (entry: FileEntry | string) => {

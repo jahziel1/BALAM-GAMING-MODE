@@ -32,6 +32,7 @@ import { useInputDevice } from './hooks/useInputDevice';
 // Hooks
 import { useNavigation } from './hooks/useNavigation';
 import { usePipWindow } from './hooks/usePipWindow';
+import { useToast } from './hooks/useToast';
 import { useVirtualKeyboard } from './hooks/useVirtualKeyboard';
 // Database
 import { addPlayTime, initDatabase, toggleFavorite } from './services/database';
@@ -67,7 +68,14 @@ function App() {
     loadGames,
   } = useGameStore();
 
-  const { openRightSidebar, openLeftSidebar } = useAppStore();
+  const { openRightSidebar, openLeftSidebar, settings } = useAppStore();
+
+  // Apply CSS classes to <html> based on settings
+  useEffect(() => {
+    const html = document.documentElement;
+    html.classList.toggle('no-animations', !settings.animationsEnabled);
+    html.classList.toggle('no-blur', !settings.blurEffects);
+  }, [settings.animationsEnabled, settings.blurEffects]);
 
   // PiP window management (auto-detects if running in main window)
   usePipWindow();
@@ -77,6 +85,9 @@ function App() {
 
   // Audio feedback
   const { audioLaunch } = useAudio();
+
+  // Toast notifications
+  const { error: showErrorToast } = useToast();
 
   // Initialize database on mount
   useEffect(() => {
@@ -112,8 +123,11 @@ function App() {
 
               // Reload games to reflect updated stats
               await loadGames();
-            } catch (error) {
-              console.error('Failed to update play time:', error);
+            } catch {
+              showErrorToast(
+                'Failed to update play time',
+                'Your play session may not have been saved'
+              );
             }
           }
 
@@ -125,6 +139,7 @@ function App() {
     return () => {
       void unlisten.then((fn) => fn());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clearActiveGame, games, loadGames]);
 
   // ============================================================================
