@@ -65,7 +65,13 @@ export const GameCarousel = memo(
       }
     }, [focusedIndex, isActive]);
 
-    if (games.length === 0) return null;
+    if (games.length === 0) {
+      return (
+        <div className="game-carousel-empty">
+          <p className="game-carousel-empty-text">No games in this category</p>
+        </div>
+      );
+    }
 
     return (
       <section className="carousel-section" data-active={isActive}>

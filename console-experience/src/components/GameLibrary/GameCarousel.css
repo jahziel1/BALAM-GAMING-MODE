@@ -74,6 +74,18 @@
   /* Card.css .card.focused handles the focus styling */
 }
 
+/* Empty State */
+.game-carousel-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.game-carousel-empty-text {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .carousel-title {

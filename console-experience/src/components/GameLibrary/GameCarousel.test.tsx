@@ -230,8 +230,8 @@ describe('GameCarousel - Scroll Behavior', () => {
     expect(mockScrollIntoView).toHaveBeenCalledTimes(1);
   });
 
-  it('should render empty if no games provided', () => {
-    const { container } = render(
+  it('should render empty state if no games provided', () => {
+    render(
       <GameCarousel
         title="Empty Carousel"
         games={[]}
@@ -242,7 +242,7 @@ describe('GameCarousel - Scroll Behavior', () => {
       />
     );
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByText('No games in this category')).toBeInTheDocument();
   });
 
   it('should apply correct data-active attribute', () => {
