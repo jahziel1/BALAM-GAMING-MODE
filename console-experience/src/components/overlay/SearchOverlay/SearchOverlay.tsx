@@ -156,16 +156,15 @@ export const SearchOverlay = memo(function SearchOverlay({
 
   // Fix #21: Auto-focus input when opened
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      // Small delay to ensure virtual keyboard has time to initialize
-      setTimeout(() => {
-        inputRef.current?.focus();
-        // Explicitly open virtual keyboard
-        if (onOpenVirtualKeyboard) {
-          onOpenVirtualKeyboard();
-        }
-      }, 100);
-    }
+    if (!isOpen || !inputRef.current) return;
+    // Small delay to ensure virtual keyboard has time to initialize
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+      if (onOpenVirtualKeyboard) {
+        onOpenVirtualKeyboard();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
   }, [isOpen, onOpenVirtualKeyboard]);
 
   // Fix #3: Handle close with animation
