@@ -303,25 +303,52 @@ export const useNavigation = (
       lastActionTime.current = now;
 
       // Overlay panels (Settings, WiFi, Bluetooth, Power, InGameMenu, QuickSettings, etc.)
-      // Convert gamepad inputs to keyboard events so Tab trap and native controls work
+      // NOTE: Synthetic Tab events (dispatchKeyEvent) are NOT trusted by browsers — they don't
+      // trigger native focus movement. We must move focus programmatically instead.
       if (currentState.focusArea === 'OVERLAY') {
+        const FOCUSABLE =
+          'button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
+          'textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
+
+        /** Move focus to the next (+1) or previous (-1) focusable element inside the active dialog. */
+        const moveFocus = (direction: 1 | -1) => {
+          const active = document.activeElement as HTMLElement | null;
+          // Find the enclosing dialog; fall back to searching all open dialogs
+          const modal =
+            active?.closest<HTMLElement>('[role="dialog"],[role="alertdialog"]') ??
+            document.querySelector<HTMLElement>('[role="dialog"],[role="alertdialog"]');
+          if (!modal) return;
+          const focusable = [...modal.querySelectorAll<HTMLElement>(FOCUSABLE)];
+          if (!focusable.length) return;
+          const currentIdx = active ? focusable.indexOf(active) : -1;
+          // If nothing focused yet, go to first/last depending on direction
+          let nextIdx =
+            currentIdx < 0 ? (direction > 0 ? 0 : focusable.length - 1) : currentIdx + direction;
+          if (nextIdx < 0) nextIdx = focusable.length - 1;
+          if (nextIdx >= focusable.length) nextIdx = 0;
+          focusable[nextIdx]?.focus();
+        };
+
         switch (navAction) {
           case NavigationAction.DOWN:
-            inputAdapter.dispatchKeyEvent('Tab');
+            moveFocus(+1);
             break;
           case NavigationAction.UP:
-            inputAdapter.dispatchKeyEvent('Tab', { shift: true });
+            moveFocus(-1);
             break;
           case NavigationAction.RIGHT:
+            // ArrowRight adjusts sliders and native controls (these DO respond to synthetic events)
             inputAdapter.dispatchKeyEvent('ArrowRight');
             break;
           case NavigationAction.LEFT:
             inputAdapter.dispatchKeyEvent('ArrowLeft');
             break;
           case NavigationAction.CONFIRM:
-            inputAdapter.dispatchKeyEvent(' ');
+            // .click() works for buttons, checkboxes, radio buttons, and links
+            (document.activeElement as HTMLElement | null)?.click();
             break;
           case NavigationAction.BACK:
+            // Escape is handled by useModalFocus listeners — synthetic events DO fire custom listeners
             inputAdapter.dispatchKeyEvent('Escape');
             break;
           case NavigationAction.QUICK_SETTINGS:
