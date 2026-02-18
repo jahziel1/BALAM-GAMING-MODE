@@ -182,22 +182,16 @@ function navReducer(state: NavState, action: Action): NavState {
           }
           return state;
 
-        case NavigationAction.LEFT: {
-          const cStart = hasCarousels ? carouselOffsets[cIdx] : 0;
-          if (state.activeIndex > cStart) return { ...state, activeIndex: state.activeIndex - 1 };
-          return state; // At first item of this carousel, stop
-        }
+        case NavigationAction.LEFT:
+          // Sequential: move back one game across all carousels
+          if (state.activeIndex > 0) return { ...state, activeIndex: state.activeIndex - 1 };
+          return state;
 
-        case NavigationAction.RIGHT: {
-          const cEnd = hasCarousels
-            ? cIdx < carouselOffsets.length - 1
-              ? carouselOffsets[cIdx + 1] - 1
-              : itemCount - 1
-            : itemCount - 1;
-          if (state.activeIndex < cEnd)
+        case NavigationAction.RIGHT:
+          // Sequential: move forward one game across all carousels
+          if (state.activeIndex < itemCount - 1)
             return { ...state, activeIndex: state.activeIndex + 1, focusArea: 'LIBRARY' };
-          return state; // At last item of this carousel, stop
-        }
+          return state;
 
         default:
           return state;
