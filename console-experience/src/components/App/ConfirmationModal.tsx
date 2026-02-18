@@ -2,7 +2,12 @@
  * @module components/App/ConfirmationModal
  */
 
+import { useEffect, useId, useRef } from 'react';
+
 import type { Game } from '../../domain/entities/game';
+
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
 
 /**
  * Represents a running game with its process ID
@@ -34,18 +39,11 @@ interface ConfirmationModalProps {
  * Modal dialog that confirms game switching when another game is already running.
  * Warns the user that unsaved progress in the current game will be lost.
  *
+ * Accessibility: implements ARIA dialog pattern (role="dialog", aria-modal,
+ * focus trap, focus restoration, Escape key handler).
+ *
  * @param props - Component props
  * @returns Modal dialog or null if no pending game
- *
- * @example
- * ```tsx
- * <ConfirmationModal
- *   pendingGame={gameToLaunch}
- *   activeRunningGame={currentlyRunning}
- *   onConfirm={handleConfirmSwitch}
- *   onCancel={handleCancelSwitch}
- * />
- * ```
  */
 export function ConfirmationModal({
   pendingGame,
@@ -53,12 +51,88 @@ export function ConfirmationModal({
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
+  const titleId = useId();
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const isOpen = pendingGame !== null;
+
+  // Save focus on open, restore on close
+  useEffect(() => {
+    if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+    } else {
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
+    }
+  }, [isOpen]);
+
+  // Auto-focus confirm button on open
+  useEffect(() => {
+    if (!isOpen) return;
+    const timer = setTimeout(() => {
+      const modal = modalRef.current;
+      if (!modal) return;
+      const focusable = modal.querySelector<HTMLElement>('.btn-modal.confirm');
+      if (focusable) {
+        focusable.focus();
+      } else {
+        const first = modal.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+        first?.focus();
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  // Escape key closes modal
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        onCancel();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [isOpen, onCancel]);
+
+  // Focus trap: keep Tab/Shift+Tab within the modal
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const modal = modalRef.current;
+      if (!modal) return;
+      const focusable = [...modal.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [isOpen]);
+
   if (!pendingGame) return null;
 
   return (
     <div className="system-modal-backdrop">
-      <div className="system-modal">
-        <h2>Switch Game?</h2>
+      <div
+        ref={modalRef}
+        className="system-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+      >
+        <h2 id={titleId}>Switch Game?</h2>
         <p>
           Launching <strong>{pendingGame.title}</strong> will close
           <br />
