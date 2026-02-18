@@ -11,6 +11,39 @@ vi.mock('@tauri-apps/api/core', () => ({
   }),
 }));
 
+// Mock StoreProvider to provide settings state
+vi.mock('@/application/providers/StoreProvider', () => ({
+  useAppStore: vi.fn(() => ({
+    settings: {
+      language: 'en',
+      startWithWindows: false,
+      startMinimized: false,
+      animationsEnabled: true,
+      blurEffects: true,
+      cardSize: 'medium',
+      hardwareAcceleration: true,
+      defaultTDP: 15,
+      defaultRefreshRate: 60,
+      autoScan: true,
+      vibration: true,
+    },
+    updateSetting: vi.fn(),
+    resetSettings: vi.fn(),
+    performance: {
+      config: {
+        level: 1,
+        opacity: 0.9,
+        enabled: false,
+        mode: 'compact',
+        position: 'top-right',
+        autoStartFPS: true,
+        updateInterval: 1000,
+      },
+    },
+    setPerformanceLevel: vi.fn(),
+  })),
+}));
+
 describe('SettingsPanel Baseline', () => {
   const defaultProps = {
     isOpen: true,
@@ -53,8 +86,8 @@ describe('SettingsPanel Baseline', () => {
     });
     // Should find "Hardware Acceleration" which is unique to Performance tab
     expect(screen.getByText('Hardware Acceleration')).toBeDefined();
-    // Verify performance monitoring section is present
-    expect(screen.getByText(/Performance Monitoring/i)).toBeDefined();
+    // Verify FPS monitoring section is present
+    expect(screen.getByText(/FPS Monitoring Service/i)).toBeDefined();
   });
 
   it('renders specific system settings like TDP slider', () => {

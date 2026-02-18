@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
+import { useAppStore } from '../../../application/providers/StoreProvider';
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
 import { OverlayPanel } from '../OverlayPanel/OverlayPanel';
 import { DisplayTab } from './components/tabs/DisplayTab';
@@ -75,36 +76,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<SettingsCategory>('general');
   const [focusedIndex, setFocusedIndex] = useState(0);
-
-  // General settings
-  const [language, setLanguage] = useState('en');
-  const [startWithWindows, setStartWithWindows] = useState(false);
-  const [startMinimized, setStartMinimized] = useState(false);
-
-  // Appearance settings
-  const [animationsEnabled, setAnimationsEnabled] = useState(true);
-  const [blurEffects, setBlurEffects] = useState(true);
-  const [cardSize, setCardSize] = useState('medium');
-
-  // Performance settings
-  const [hardwareAcceleration, setHardwareAcceleration] = useState(true);
-
-  // System settings
-  const [defaultTDP, setDefaultTDP] = useState(15);
-  const [defaultRefreshRate, setDefaultRefreshRate] = useState(60);
-
-  // Reset confirmation
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  const { settings, updateSetting, resetSettings } = useAppStore();
+  const {
+    language,
+    startWithWindows,
+    startMinimized,
+    animationsEnabled,
+    blurEffects,
+    cardSize,
+    hardwareAcceleration,
+    defaultTDP,
+    defaultRefreshRate,
+    autoScan,
+    vibration,
+  } = settings;
 
   // Version info
   const version = '0.1.0';
-
-  // Load settings on open
-  useEffect(() => {
-    if (isOpen) {
-      // TODO: Load settings from backend or localStorage
-    }
-  }, [isOpen]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -142,20 +132,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   // Reset all settings to defaults
   const handleResetConfirmed = () => {
-    // Reset all state to defaults
-    setLanguage('en');
-    setStartWithWindows(false);
-    setStartMinimized(false);
-    setAnimationsEnabled(true);
-    setBlurEffects(true);
-    setCardSize('medium');
-    setHardwareAcceleration(true);
-    setDefaultTDP(15);
-    setDefaultRefreshRate(60);
-
-    // TODO: Clear localStorage or backend settings
-    // TODO: Show success toast
-
+    resetSettings();
     setShowResetConfirm(false);
   };
 
@@ -174,7 +151,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <select
                 className="settings-select"
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
+                onChange={(e) => updateSetting('language', e.target.value)}
               >
                 <option value="en">English</option>
                 <option value="es">Español</option>
@@ -195,7 +172,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <input
                   type="checkbox"
                   checked={startWithWindows}
-                  onChange={(e) => setStartWithWindows(e.target.checked)}
+                  onChange={(e) => updateSetting('startWithWindows', e.target.checked)}
                 />
                 <span className="settings-toggle-slider" />
               </label>
@@ -210,7 +187,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <input
                   type="checkbox"
                   checked={startMinimized}
-                  onChange={(e) => setStartMinimized(e.target.checked)}
+                  onChange={(e) => updateSetting('startMinimized', e.target.checked)}
                 />
                 <span className="settings-toggle-slider" />
               </label>
@@ -232,7 +209,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <input
                   type="checkbox"
                   checked={animationsEnabled}
-                  onChange={(e) => setAnimationsEnabled(e.target.checked)}
+                  onChange={(e) => updateSetting('animationsEnabled', e.target.checked)}
                 />
                 <span className="settings-toggle-slider" />
               </label>
@@ -247,7 +224,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <input
                   type="checkbox"
                   checked={blurEffects}
-                  onChange={(e) => setBlurEffects(e.target.checked)}
+                  onChange={(e) => updateSetting('blurEffects', e.target.checked)}
                 />
                 <span className="settings-toggle-slider" />
               </label>
@@ -261,7 +238,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <select
                 className="settings-select"
                 value={cardSize}
-                onChange={(e) => setCardSize(e.target.value)}
+                onChange={(e) => updateSetting('cardSize', e.target.value)}
               >
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
@@ -292,7 +269,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <span className="settings-item-description">Automatically detect new games</span>
               </div>
               <label className="settings-toggle">
-                <input type="checkbox" defaultChecked />
+                <input
+                  type="checkbox"
+                  checked={autoScan}
+                  onChange={(e) => updateSetting('autoScan', e.target.checked)}
+                />
                 <span className="settings-toggle-slider" />
               </label>
             </div>
@@ -332,7 +313,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <span className="settings-item-description">Controller haptic feedback</span>
               </div>
               <label className="settings-toggle">
-                <input type="checkbox" defaultChecked />
+                <input
+                  type="checkbox"
+                  checked={vibration}
+                  onChange={(e) => updateSetting('vibration', e.target.checked)}
+                />
                 <span className="settings-toggle-slider" />
               </label>
             </div>
@@ -354,7 +339,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         return (
           <PerformanceTab
             hardwareAcceleration={hardwareAcceleration}
-            setHardwareAcceleration={setHardwareAcceleration}
+            setHardwareAcceleration={(val) => updateSetting('hardwareAcceleration', val)}
           />
         );
 
@@ -396,7 +381,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   min="5"
                   max="30"
                   value={defaultTDP}
-                  onChange={(e) => setDefaultTDP(Number(e.target.value))}
+                  onChange={(e) => updateSetting('defaultTDP', Number(e.target.value))}
                 />
                 <span className="settings-slider-value">{defaultTDP}W</span>
               </div>
@@ -410,7 +395,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <select
                 className="settings-select"
                 value={defaultRefreshRate}
-                onChange={(e) => setDefaultRefreshRate(Number(e.target.value))}
+                onChange={(e) => updateSetting('defaultRefreshRate', Number(e.target.value))}
               >
                 <option value="60">60 Hz</option>
                 <option value="90">90 Hz</option>

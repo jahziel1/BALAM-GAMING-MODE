@@ -2,12 +2,10 @@
  * @module components/App/ConfirmationModal
  */
 
-import { useEffect, useId, useRef } from 'react';
+import { useId, useRef } from 'react';
 
 import type { Game } from '../../domain/entities/game';
-
-const FOCUSABLE_SELECTOR =
-  'button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
+import { useModalFocus } from '../../hooks/useModalFocus';
 
 /**
  * Represents a running game with its process ID
@@ -53,72 +51,9 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   const titleId = useId();
   const modalRef = useRef<HTMLDivElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
   const isOpen = pendingGame !== null;
 
-  // Save focus on open, restore on close
-  useEffect(() => {
-    if (isOpen) {
-      previousFocusRef.current = document.activeElement as HTMLElement;
-    } else {
-      previousFocusRef.current?.focus();
-      previousFocusRef.current = null;
-    }
-  }, [isOpen]);
-
-  // Auto-focus confirm button on open
-  useEffect(() => {
-    if (!isOpen) return;
-    const timer = setTimeout(() => {
-      const modal = modalRef.current;
-      if (!modal) return;
-      const focusable = modal.querySelector<HTMLElement>('.btn-modal.confirm');
-      if (focusable) {
-        focusable.focus();
-      } else {
-        const first = modal.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-        first?.focus();
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [isOpen]);
-
-  // Escape key closes modal
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        onCancel();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, onCancel]);
-
-  // Focus trap: keep Tab/Shift+Tab within the modal
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-      const modal = modalRef.current;
-      if (!modal) return;
-      const focusable = [...modal.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)];
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen]);
+  useModalFocus(modalRef, isOpen, onCancel, { initialFocusSelector: '.btn-modal.confirm' });
 
   if (!pendingGame) return null;
 

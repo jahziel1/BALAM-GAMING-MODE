@@ -1,10 +1,11 @@
 import './OverlayPanel.css';
 
 import { X } from 'lucide-react';
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useId, useRef } from 'react';
 
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 import { TooltipWrapper } from '@/components/ui/Tooltip';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 interface OverlayPanelProps {
   isOpen: boolean;
@@ -26,9 +27,6 @@ interface OverlayPanelProps {
    */
   onEscape?: () => void;
 }
-
-const FOCUSABLE_SELECTOR =
-  'button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
 
 /**
  * Reusable overlay panel component.
@@ -54,70 +52,8 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
 }) => {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Save focus on open, restore on close
-  useEffect(() => {
-    if (isOpen) {
-      previousFocusRef.current = document.activeElement as HTMLElement;
-    } else {
-      previousFocusRef.current?.focus();
-      previousFocusRef.current = null;
-    }
-  }, [isOpen]);
-
-  // Move initial focus into panel on open
-  useEffect(() => {
-    if (!isOpen) return;
-    const timer = setTimeout(() => {
-      const panel = panelRef.current;
-      if (!panel) return;
-      const firstFocusable = panel.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-      if (firstFocusable) {
-        firstFocusable.focus();
-      } else {
-        panel.focus();
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [isOpen]);
-
-  // Escape key: call onEscape if provided, otherwise onClose
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        (onEscape ?? onClose)();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, onClose, onEscape]);
-
-  // Focus trap: keep Tab/Shift+Tab within the panel
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-      const panel = panelRef.current;
-      if (!panel) return;
-      const focusable = [...panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)];
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen]);
+  useModalFocus(panelRef, isOpen, onEscape ?? onClose);
 
   // Early return AFTER all hooks (Rules of Hooks)
   if (!isOpen) return null;

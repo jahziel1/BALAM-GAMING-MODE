@@ -37,12 +37,18 @@ import {
   DEFAULT_PERFORMANCE_CONFIG,
   type PerformanceSlice,
 } from './slices/performance-slice';
+import {
+  createSettingsSlice,
+  DEFAULT_SETTINGS,
+  type SettingsSlice,
+  type SettingsState,
+} from './slices/settings-slice';
 import { createSystemSlice, type SystemSlice } from './slices/system-slice';
 
 /**
  * Combined app store type
  */
-export type AppStore = OverlaySlice & GameSlice & PerformanceSlice & SystemSlice;
+export type AppStore = OverlaySlice & GameSlice & PerformanceSlice & SystemSlice & SettingsSlice;
 
 /**
  * Factory function to create app store with injected dependencies
@@ -71,16 +77,23 @@ export function createAppStore(gameRepository: GameRepository, systemRepository:
         ...createGameSlice(set, get, gameRepository),
         ...createPerformanceSlice(set, get),
         ...createSystemSlice(set, get, systemRepository),
+        ...createSettingsSlice(set),
       }),
       {
         name: 'balam_app_store', // localStorage key
-        // Only persist performance config (overlay and game are runtime state)
+        // Persist performance config and settings
         partialize: (state) => ({
           performance: state.performance,
+          settings: state.settings,
         }),
         // Merge persisted state with initial state
         merge: (persisted, current) => {
-          const p = persisted as { performance?: { config?: Record<string, unknown> } } | undefined;
+          const p = persisted as
+            | {
+                performance?: { config?: Record<string, unknown> };
+                settings?: Partial<SettingsState>;
+              }
+            | undefined;
           return {
             ...current,
             performance: {
@@ -89,6 +102,7 @@ export function createAppStore(gameRepository: GameRepository, systemRepository:
                 ...(p?.performance?.config ?? {}),
               } as AppStore['performance']['config'],
             },
+            settings: { ...DEFAULT_SETTINGS, ...(p?.settings ?? {}) },
           };
         },
       }
