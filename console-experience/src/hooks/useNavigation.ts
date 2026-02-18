@@ -303,9 +303,19 @@ export const useNavigation = (
       lastActionTime.current = now;
 
       // Overlay panels (Settings, WiFi, Bluetooth, Power, InGameMenu, QuickSettings, etc.)
-      // NOTE: Synthetic Tab events (dispatchKeyEvent) are NOT trusted by browsers — they don't
-      // trigger native focus movement. We must move focus programmatically instead.
-      if (currentState.focusArea === 'OVERLAY') {
+      // Use a live DOM query instead of async React state to avoid ~16ms timing races where
+      // the panel is already in the DOM but focusArea hasn't been updated yet.
+      // NOTE: Synthetic Tab events are NOT trusted — we move focus programmatically instead.
+      const activeOverlayModal = [
+        ...document.querySelectorAll<HTMLElement>(
+          '[role="dialog"][aria-modal="true"],[role="alertdialog"][aria-modal="true"]'
+        ),
+      ].at(-1); // Pick the topmost (last in DOM order) open dialog
+      if (
+        activeOverlayModal &&
+        currentState.focusArea !== 'SEARCH' &&
+        currentState.focusArea !== 'VIRTUAL_KEYBOARD'
+      ) {
         const FOCUSABLE =
           'button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
           'textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
@@ -313,10 +323,11 @@ export const useNavigation = (
         /** Move focus to the next (+1) or previous (-1) focusable element inside the active dialog. */
         const moveFocus = (direction: 1 | -1) => {
           const active = document.activeElement as HTMLElement | null;
-          // Find the enclosing dialog; fall back to searching all open dialogs
+          // Prefer the dialog that owns the current active element; fall back to the topmost modal
           const modal =
-            active?.closest<HTMLElement>('[role="dialog"],[role="alertdialog"]') ??
-            document.querySelector<HTMLElement>('[role="dialog"],[role="alertdialog"]');
+            active?.closest<HTMLElement>(
+              '[role="dialog"][aria-modal="true"],[role="alertdialog"][aria-modal="true"]'
+            ) ?? activeOverlayModal;
           if (!modal) return;
           const focusable = [...modal.querySelectorAll<HTMLElement>(FOCUSABLE)];
           if (!focusable.length) return;

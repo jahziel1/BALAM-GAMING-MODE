@@ -416,9 +416,9 @@ function App() {
     }
   }, [isSearchOpen, setFocusArea]);
 
-  // Sync gamepad focus area when overlay panels open/close.
-  // When any overlay is open, OVERLAY mode translates D-pad → Tab navigation so the
-  // gamepad can navigate Settings, WiFi, Bluetooth, InGameMenu, etc. natively.
+  // Reset focus area when ALL overlay panels close so the main library becomes navigable again.
+  // NOTE: We no longer set focusArea='OVERLAY' here — useNavigation detects open modals via live
+  // DOM queries (no async timing gap) so the gamepad works the moment a panel enters the DOM.
   const anyOverlayOpen =
     overlay.leftSidebarOpen ||
     overlay.rightSidebarOpen ||
@@ -429,7 +429,9 @@ function App() {
     isKeyboardShortcutsOpen ||
     isExplorerOpen;
   useEffect(() => {
-    setFocusArea(anyOverlayOpen ? 'OVERLAY' : 'HERO');
+    if (!anyOverlayOpen) {
+      setFocusArea('HERO');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [anyOverlayOpen]);
 
