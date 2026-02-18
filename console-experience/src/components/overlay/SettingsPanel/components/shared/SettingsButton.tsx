@@ -25,7 +25,7 @@ export const SettingsButton: React.FC<SettingsButtonProps> = ({
   }
 
   return (
-    <button className={className} onClick={onClick} disabled={disabled} style={style}>
+    <button type="button" className={className} onClick={onClick} disabled={disabled} style={style}>
       {children}
     </button>
   );
