@@ -144,6 +144,8 @@ export const OverlayTab: React.FC = () => {
                 className={`overlay-position-button ${position === pos ? 'active' : ''}`}
                 onClick={() => void handlePositionChange(pos)}
                 disabled={loading}
+                aria-label={`Set overlay position to ${pos.replace('-', ' ')}`}
+                aria-pressed={position === pos}
               >
                 <div className="overlay-position-preview">
                   <div className={`overlay-preview-dot position-${pos}`}></div>

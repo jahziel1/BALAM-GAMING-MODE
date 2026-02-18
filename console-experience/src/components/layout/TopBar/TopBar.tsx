@@ -140,7 +140,13 @@ const TopBar: React.FC<TopBarProps> = ({
           <div
             className="status-item clickable"
             onClick={() => void handleVolumeClick()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') void handleVolumeClick();
+            }}
             title="Click to Change Volume"
+            role="button"
+            tabIndex={0}
+            aria-label={`Volume ${status?.volume ?? '--'}%`}
           >
             <Volume2 size={20} className="icon active" />
             <span className="status-label">{status?.volume ?? '--'}%</span>
@@ -150,7 +156,13 @@ const TopBar: React.FC<TopBarProps> = ({
           <div
             className="status-item clickable"
             onClick={() => onOpenWiFiPanel?.()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') onOpenWiFiPanel?.();
+            }}
             title="WiFi Settings (Ctrl+W)"
+            role="button"
+            tabIndex={0}
+            aria-label="Open WiFi settings"
           >
             {status?.connection_type === 'WiFi' ? (
               <span title={status.network_name ?? 'WiFi'}>
@@ -177,7 +189,13 @@ const TopBar: React.FC<TopBarProps> = ({
           <div
             className="status-item clickable"
             onClick={() => onOpenBluetoothPanel?.()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') onOpenBluetoothPanel?.();
+            }}
             title="Bluetooth Settings (Ctrl+B)"
+            role="button"
+            tabIndex={0}
+            aria-label="Open Bluetooth settings"
           >
             <Bluetooth size={20} className="icon active" />
           </div>

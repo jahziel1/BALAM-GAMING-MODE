@@ -103,6 +103,7 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
               </IconWrapper>
             }
             onClick={() => setSelectedAction('shutdown')}
+            aria-label="Shutdown computer"
             fullWidth
           >
             Shutdown
@@ -117,6 +118,7 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
               </IconWrapper>
             }
             onClick={() => setSelectedAction('restart')}
+            aria-label="Restart computer"
             fullWidth
           >
             Restart
@@ -131,6 +133,7 @@ export const PowerModal: React.FC<PowerModalProps> = ({ isOpen, onClose }) => {
               </IconWrapper>
             }
             onClick={() => setSelectedAction('logout')}
+            aria-label="Log out of Windows"
             fullWidth
           >
             Logout
