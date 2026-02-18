@@ -266,6 +266,10 @@ export const useNavigation = (
 ) => {
   const [state, dispatch] = useReducer(navReducer, initialState);
   const lastActionTime = useRef(0);
+  // Tracks which element the GAMEPAD has selected inside the current modal.
+  // Using a dedicated ref (not document.activeElement) decouples gamepad selection
+  // from mouse focus — the mouse cannot affect what A/CONFIRM acts on.
+  const gamepadModalFocusRef = useRef<HTMLElement | null>(null);
   // Stable ref so handleAction doesn't need carouselOffsets in its dep array
   const carouselOffsetsRef = useRef(carouselOffsets);
   useEffect(() => {
@@ -303,7 +307,7 @@ export const useNavigation = (
       lastActionTime.current = now;
 
       // --- Overlay / modal panel navigation (fully DOM-based, no async state dependency) ---
-      // Pick the topmost open dialog. This is evaluated at action time so it is always
+      // Pick the topmost open dialog. Evaluated at action-time so it is always
       // accurate — no ~16ms React-state lag.
       const activeOverlayModal = [
         ...document.querySelectorAll<HTMLElement>(
@@ -311,16 +315,34 @@ export const useNavigation = (
         ),
       ].at(-1);
 
+      // When no modal is open, clear the gamepad selection ref so stale data
+      // from a previous modal doesn't affect future sessions.
+      if (!activeOverlayModal) {
+        gamepadModalFocusRef.current = null;
+      }
+
       if (activeOverlayModal) {
         const FOCUSABLE =
           'button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
           'textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
 
+        // Reset gamepad selection if the tracked element left the current modal
+        // (e.g. modal closed and a different one opened).
+        if (
+          gamepadModalFocusRef.current &&
+          !activeOverlayModal.contains(gamepadModalFocusRef.current)
+        ) {
+          gamepadModalFocusRef.current = null;
+        }
+
+        // Read active element AFTER the stale-ref check so we get the real current one.
         const activeEl = document.activeElement as HTMLElement | null;
 
         // When a text input or textarea has focus (e.g. the search field), route the
         // D-pad as arrow-key presses so the component navigates its own list.
-        // This avoids the bug where ArrowDown inside the search box also moved the game selection.
+        // This avoids the bug where ArrowDown inside the search box also moved games.
+        // NOTE: we check document.activeElement here (not the gamepad ref) because
+        // the input was explicitly focused by the user or by useModalFocus.
         const isTextInput =
           (activeEl?.tagName === 'INPUT' &&
             (activeEl as HTMLInputElement).type !== 'range' &&
@@ -342,28 +364,40 @@ export const useNavigation = (
           return;
         }
 
-        // For range sliders and selects, LEFT/RIGHT should send arrow keys so the
-        // native control adjusts its value. For all other elements, LEFT/RIGHT moves
-        // focus to the adjacent focusable element (important for VK button grid).
-        const isRangeOrSelect =
-          (activeEl?.tagName === 'INPUT' && (activeEl as HTMLInputElement).type === 'range') ||
-          activeEl?.tagName === 'SELECT';
+        // Determine which element the gamepad considers "selected".
+        // Priority: gamepad-tracked ref → document.activeElement (if inside modal).
+        // The mouse sets document.activeElement via clicks, so we prefer the
+        // gamepad-tracked ref to avoid executing actions on wherever the mouse last was.
+        const gamepadEl =
+          gamepadModalFocusRef.current ??
+          (activeEl && activeOverlayModal.contains(activeEl) ? activeEl : null);
 
-        /** Move DOM focus to the next (+1) or previous (-1) focusable element in the active dialog. */
+        // For range sliders and selects, LEFT/RIGHT send arrow keys to adjust the value.
+        // For all other elements, LEFT/RIGHT move focus to the adjacent item
+        // (critical for navigating the Virtual Keyboard button grid).
+        const isRangeOrSelect =
+          (gamepadEl?.tagName === 'INPUT' && (gamepadEl as HTMLInputElement).type === 'range') ||
+          gamepadEl?.tagName === 'SELECT';
+
+        /** Move gamepad focus to the next (+1) or previous (-1) focusable element in the dialog. */
         const moveFocus = (direction: 1 | -1) => {
           const modal =
-            activeEl?.closest<HTMLElement>(
+            gamepadEl?.closest<HTMLElement>(
               '[role="dialog"][aria-modal="true"],[role="alertdialog"][aria-modal="true"]'
             ) ?? activeOverlayModal;
           if (!modal) return;
           const focusable = [...modal.querySelectorAll<HTMLElement>(FOCUSABLE)];
           if (!focusable.length) return;
-          const currentIdx = activeEl ? focusable.indexOf(activeEl) : -1;
+          const currentIdx = gamepadEl ? focusable.indexOf(gamepadEl) : -1;
           let nextIdx =
             currentIdx < 0 ? (direction > 0 ? 0 : focusable.length - 1) : currentIdx + direction;
           if (nextIdx < 0) nextIdx = focusable.length - 1;
           if (nextIdx >= focusable.length) nextIdx = 0;
-          focusable[nextIdx]?.focus();
+          const next = focusable[nextIdx];
+          if (next) {
+            next.focus();
+            gamepadModalFocusRef.current = next; // gamepad owns this selection
+          }
         };
 
         switch (navAction) {
@@ -374,7 +408,6 @@ export const useNavigation = (
             moveFocus(-1);
             break;
           case NavigationAction.RIGHT:
-            // Sliders & selects adjust their value; everything else moves focus
             if (isRangeOrSelect) {
               inputAdapter.dispatchKeyEvent('ArrowRight');
             } else {
@@ -388,16 +421,17 @@ export const useNavigation = (
               moveFocus(-1);
             }
             break;
-          case NavigationAction.CONFIRM:
-            // Only click elements that are actually inside the open modal to prevent
-            // accidentally launching a game when focus is outside (timing edge case).
-            if (activeEl && activeOverlayModal.contains(activeEl)) {
-              activeEl.click();
-            } else {
-              // Modal just opened and focus hasn't moved in yet — focus first element
-              activeOverlayModal.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+          case NavigationAction.CONFIRM: {
+            // Use the gamepad-tracked element — NOT document.activeElement — so that
+            // mouse hover/click cannot hijack what A/CONFIRM acts on.
+            const target = gamepadEl ?? activeOverlayModal.querySelector<HTMLElement>(FOCUSABLE);
+            if (target) {
+              target.focus();
+              gamepadModalFocusRef.current = target;
+              target.click();
             }
             break;
+          }
           case NavigationAction.BACK:
             // Escape bubbles to window where useModalFocus closes the modal
             inputAdapter.dispatchKeyEvent('Escape');

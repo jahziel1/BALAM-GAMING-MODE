@@ -212,6 +212,13 @@ function App() {
     }
   }, [deviceType]);
 
+  // Hide cursor when gamepad is active so it doesn't visually overlap the gamepad
+  // selection indicator. Moving the mouse restores the cursor automatically because
+  // InputDeviceDetector switches deviceType back to KEYBOARD/MOUSE on mouse movement.
+  useEffect(() => {
+    document.body.classList.toggle('gamepad-active', deviceType === InputDeviceType.GAMEPAD);
+  }, [deviceType]);
+
   // ============================================================================
   // CALLBACKS
   // ============================================================================

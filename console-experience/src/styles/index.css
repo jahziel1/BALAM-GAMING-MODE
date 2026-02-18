@@ -18,6 +18,13 @@
 
 /* Component styles will be imported by components */
 
+/* Gamepad active: hide cursor so it doesn't overlap the gamepad selection indicator.
+   The InputDeviceDetector adds this class to <body> when a gamepad is the active input.
+   Mouse pointer-events are left enabled so the device can switch back on mouse move. */
+body.gamepad-active {
+  cursor: none;
+}
+
 /* Settings: disable animations */
 .no-animations *,
 .no-animations *::before,
