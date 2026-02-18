@@ -394,7 +394,7 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
     }
 
     return (
-      <div className="bluetooth-devices">
+      <div className="bluetooth-devices" role="listbox" aria-label="Available devices">
         {devices.map((device, index) => (
           <div
             key={device.address}
@@ -402,9 +402,20 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
               deviceRefs.current[index] = el;
             }}
             className={`bluetooth-device ${index === selectedIndex ? 'focused' : ''} ${device.is_connected ? 'connected' : ''} ${isOperating ? 'operating' : ''}`}
+            role="option"
+            tabIndex={0}
+            aria-selected={device.is_connected}
+            aria-label={`${device.name || 'Unknown Device'}${device.is_connected ? ', connected' : ''}${device.pairing_state === 'Paired' ? ', paired' : ''}`}
             onClick={() => {
               setSelectedIndex(index);
               void handleDeviceAction(device);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setSelectedIndex(index);
+                void handleDeviceAction(device);
+              }
             }}
           >
             <div className="bluetooth-device-header">

@@ -286,7 +286,7 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
     }
 
     return (
-      <div className="wifi-networks">
+      <div className="wifi-networks" role="listbox" aria-label="Available networks">
         {networks.map((network, index) => (
           <div
             key={network.ssid}
@@ -294,9 +294,20 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
               networkRefs.current[index] = el;
             }}
             className={`wifi-network ${index === selectedIndex ? 'focused' : ''} ${network.is_connected ? 'connected' : ''} ${isConnecting ? 'connecting' : ''}`}
+            role="option"
+            tabIndex={0}
+            aria-selected={network.is_connected}
+            aria-label={`${network.ssid}${network.is_connected ? ', connected' : ''}${network.security !== 'Open' ? ', secured' : ', open'}`}
             onClick={() => {
               setSelectedIndex(index);
               void handleConnect(network);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setSelectedIndex(index);
+                void handleConnect(network);
+              }
             }}
           >
             <div className="wifi-network-header">
