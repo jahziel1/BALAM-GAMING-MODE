@@ -50,16 +50,16 @@ interface GameCarouselProps {
  * @returns Horizontal game carousel
  */
 export const GameCarousel = memo(
-  ({ title, games, focusedIndex, isActive, onLaunch }: GameCarouselProps) => {
+  ({ title, games, focusedIndex, isActive, onLaunch, onSetFocus }: GameCarouselProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    // Auto-scroll to focused item
+    // Auto-scroll: keep focused card centred in the viewport
     useEffect(() => {
-      if (isActive && focusedIndex >= 0 && cardRefs.current[focusedIndex]) {
+      if (focusedIndex >= 0 && cardRefs.current[focusedIndex]) {
         cardRefs.current[focusedIndex]?.scrollIntoView({
           behavior: 'smooth',
-          inline: 'start', // Match scroll-snap-align: start for consistent behavior
+          inline: 'center',
           block: 'nearest',
         });
       }
@@ -88,6 +88,7 @@ export const GameCarousel = memo(
                   cardRefs.current[index] = el;
                 }}
                 className={`carousel-item ${isFocused ? 'carousel-item-focused' : ''}`}
+                onMouseEnter={() => onSetFocus?.(index)}
               >
                 <Card
                   title={game.title}

@@ -3,6 +3,11 @@
  *
  * Game library with horizontal carousels.
  * Steam Big Picture inspired layout with categorized game rows.
+ *
+ * Navigation model:
+ * - activeIndex is a flat index across ALL non-overlapping carousel entries
+ * - Games in "Recently Played" are excluded from source carousels to avoid duplicates
+ * - Flat index maps to [carouselIdx, localIdx] via cumulative offsets
  */
 
 import './LibrarySection.css';
@@ -15,33 +20,15 @@ import type { Game } from '../../domain/entities/game';
 import type { FocusArea } from '../../hooks/useNavigation';
 import { GameCarousel } from '../GameLibrary/GameCarousel';
 
-/**
- * Props for LibrarySection component
- */
 interface LibrarySectionProps {
-  /** Array of all games to display */
   games: Game[];
-  /** Index of currently active/selected game */
   activeIndex: number;
-  /** Current focus area for navigation */
   focusArea: FocusArea;
-  /** Callback when game is launched */
   onLaunchGame: (game: Game, index: number) => void;
-  /** Callback when active index changes */
   onSetActiveIndex: (index: number) => void;
-  /** Callback when focus area changes */
   onSetFocusArea: (area: FocusArea) => void;
 }
 
-/**
- * LibrarySection Component
- *
- * Displays the game library as horizontal carousels organized by category.
- * Similar to Steam Big Picture's categorized game rows.
- *
- * @param props - Component props
- * @returns Categorized game carousels
- */
 export function LibrarySection({
   games,
   activeIndex,
@@ -50,12 +37,14 @@ export function LibrarySection({
   onSetActiveIndex,
   onSetFocusArea,
 }: LibrarySectionProps) {
-  // Categorize games dynamically by source
-  const { recentGames, gamesBySource, allGames } = useMemo(() => {
-    // Recent games (last played - for now just first 10)
-    const recent = games.slice(0, Math.min(10, games.length));
+  const isLibraryFocused = focusArea === 'LIBRARY';
 
-    // Group by source dynamically
+  // Build NON-OVERLAPPING carousels:
+  // Recent = first N games. Source carousels = same source but excluding recent IDs.
+  const { carousels } = useMemo(() => {
+    const recentGames = games.slice(0, Math.min(10, games.length));
+    const recentIds = new Set(recentGames.map((g) => g.id));
+
     const bySource = new Map<string, Game[]>();
     for (const game of games) {
       const existing = bySource.get(game.source) ?? [];
@@ -63,60 +52,46 @@ export function LibrarySection({
       bySource.set(game.source, existing);
     }
 
-    return {
-      recentGames: recent,
-      gamesBySource: bySource,
-      allGames: games,
-    };
-  }, [games]);
+    const result: { title: string; games: Game[] }[] = [];
 
-  const isLibraryFocused = focusArea === 'LIBRARY';
-
-  // Build carousel list dynamically
-  const carousels = useMemo(() => {
-    const result = [];
-
-    // Recent games carousel
     if (recentGames.length > 0) {
       result.push({ title: 'Recently Played', games: recentGames });
     }
 
-    // Source carousels (dynamically generated, sorted by priority)
     const sources = getSourcesByPriority();
     for (const source of sources) {
-      const sourceGames = gamesBySource.get(source);
-      if (sourceGames && sourceGames.length > 0) {
+      // Exclude games already shown in Recent to avoid duplicates
+      const sourceGames = (bySource.get(source) ?? []).filter((g) => !recentIds.has(g.id));
+      if (sourceGames.length > 0) {
         const config = getSourceConfig(source);
-        result.push({
-          title: config.carouselTitle,
-          games: sourceGames,
-        });
+        result.push({ title: config.carouselTitle, games: sourceGames });
       }
     }
 
-    // Only show "All Games" if no other carousels exist
-    if (result.length === 0 && allGames.length > 0) {
-      result.push({ title: 'All Games', games: allGames });
+    if (result.length === 0 && games.length > 0) {
+      result.push({ title: 'All Games', games });
     }
 
-    return result;
-  }, [recentGames, gamesBySource, allGames]);
+    return { carousels: result };
+  }, [games]);
 
-  // FIX: Only focus the FIRST carousel to prevent shared focus across all carousels
-  // This ensures each carousel shows focus only when it's the active one
-  const activeCarouselIndex = 0; // For now, always use first carousel
+  // Cumulative start offsets: carousel i starts at offsets[i] in the flat index
+  const offsets = useMemo(
+    () =>
+      carousels.map((_, i) => carousels.slice(0, i).reduce((sum, c) => sum + c.games.length, 0)),
+    [carousels]
+  );
 
-  const getCarouselProps = (carouselIdx: number, carouselGames: Game[]) => {
-    const isActiveCarousel = carouselIdx === activeCarouselIndex;
-    const carouselFocusIndex = isActiveCarousel
-      ? Math.min(activeIndex, carouselGames.length - 1) // Clamp to valid range
-      : -1; // No focus for non-active carousels
-
+  // Map flat activeIndex → active carousel + local item index within that carousel
+  const { activeCarouselIdx, localIdx } = useMemo(() => {
+    if (carousels.length === 0) return { activeCarouselIdx: 0, localIdx: 0 };
+    // Find the last carousel whose offset is <= activeIndex (pure reduce, no mutations)
+    const idx = offsets.reduce((found, offset, i) => (activeIndex >= offset ? i : found), 0);
     return {
-      focusedIndex: carouselFocusIndex,
-      isActive: isLibraryFocused && isActiveCarousel,
+      activeCarouselIdx: idx,
+      localIdx: Math.min(activeIndex - offsets[idx], carousels[idx].games.length - 1),
     };
-  };
+  }, [activeIndex, offsets, carousels]);
 
   return (
     <div className="library-section" onMouseEnter={() => onSetFocusArea('LIBRARY')}>
@@ -125,9 +100,10 @@ export function LibrarySection({
           key={carousel.title}
           title={carousel.title}
           games={carousel.games}
-          {...getCarouselProps(idx, carousel.games)}
-          onLaunch={onLaunchGame}
-          onSetFocus={onSetActiveIndex}
+          focusedIndex={idx === activeCarouselIdx ? localIdx : -1}
+          isActive={isLibraryFocused ? idx === activeCarouselIdx : false}
+          onLaunch={(game, localIndex) => onLaunchGame(game, offsets[idx] + localIndex)}
+          onSetFocus={(localIndex) => onSetActiveIndex(offsets[idx] + localIndex)}
         />
       ))}
     </div>
