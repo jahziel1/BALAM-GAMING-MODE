@@ -198,6 +198,9 @@ export const GameLibraryVirtualized = memo(function GameLibraryVirtualized({
       ref={parentRef}
       className="game-library-virtualized"
       onMouseEnter={() => onSetFocusArea('LIBRARY')}
+      role="grid"
+      aria-label="Game Library"
+      tabIndex={focusArea === 'LIBRARY' ? 0 : -1}
       style={{
         height: 'calc(100vh - 180px)', // Full height minus topbar/footer
         overflow: 'auto',
@@ -235,6 +238,7 @@ export const GameLibraryVirtualized = memo(function GameLibraryVirtualized({
             */
             <div
               key={virtualRow.key}
+              role="row"
               style={{
                 position: 'absolute',
                 top: 0,
@@ -287,7 +291,13 @@ export const GameLibraryVirtualized = memo(function GameLibraryVirtualized({
                   };
 
                   return (
-                    <div key={game.id} style={{ width: `${CARD_WIDTH}px`, flexShrink: 0 }}>
+                    <div
+                      key={game.id}
+                      role="gridcell"
+                      aria-selected={gameIndex === activeIndex}
+                      aria-label={game.title}
+                      style={{ width: `${CARD_WIDTH}px`, flexShrink: 0 }}
+                    >
                       <Card
                         title={game.title}
                         image={getCachedAssetSrc(game.image, defaultCover)}
