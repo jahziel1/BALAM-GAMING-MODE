@@ -50,6 +50,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import defaultCover from '../../../assets/default_cover.png';
 import type { Game } from '../../../domain/entities/game';
+import { useModalFocus } from '../../../hooks/useModalFocus';
 import { getCachedAssetSrc } from '../../../utils/image-cache';
 import { IconWrapper } from '../../core/IconWrapper/IconWrapper';
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
@@ -177,22 +178,8 @@ export const SearchOverlay = memo(function SearchOverlay({
     }, 200); // Match CSS animation duration
   }, [onClose]);
 
-  // Fix #4: Centralized ESC key handler (use capture to prevent conflicts)
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        handleClose();
-      }
-    };
-
-    // Use capture phase to intercept before other handlers
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, handleClose]);
+  // Fix #4 + a11y: focus management (trap + restore + Escape) via useModalFocus
+  useModalFocus(containerRef, isOpen, handleClose);
 
   // Fix #23: Memoized handleSelect to prevent re-renders
   const handleSelect = useCallback(
