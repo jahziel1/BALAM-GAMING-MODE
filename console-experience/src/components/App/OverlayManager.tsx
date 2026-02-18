@@ -189,14 +189,16 @@ export function OverlayManager({
       ) : null}
 
       {/* Virtual Keyboard - Fix #22: Pass controllerType */}
-      <VirtualKeyboard
-        isOpen={virtualKeyboard.isOpen}
-        onClose={virtualKeyboard.close}
-        onSubmit={virtualKeyboard.handleSubmit}
-        onTextChange={virtualKeyboard.handleTextChange} // Use debounced version from hook
-        controllerType={controllerType} // Fix #22
-        {...keyboardProps} // Fix #2: Memoized props
-      />
+      {virtualKeyboard.isOpen ? (
+        <VirtualKeyboard
+          isOpen={virtualKeyboard.isOpen}
+          onClose={virtualKeyboard.close}
+          onSubmit={virtualKeyboard.handleSubmit}
+          onTextChange={virtualKeyboard.handleTextChange} // Use debounced version from hook
+          controllerType={controllerType} // Fix #22
+          {...keyboardProps} // Fix #2: Memoized props
+        />
+      ) : null}
 
       {/* Search Overlay */}
       <SearchOverlay
