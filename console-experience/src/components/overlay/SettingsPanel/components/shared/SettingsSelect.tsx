@@ -5,6 +5,7 @@ interface SettingsSelectProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: { value: string | number; label: string }[];
   disabled?: boolean;
+  label?: string;
 }
 
 export const SettingsSelect: React.FC<SettingsSelectProps> = ({
@@ -12,8 +13,15 @@ export const SettingsSelect: React.FC<SettingsSelectProps> = ({
   onChange,
   options,
   disabled,
+  label,
 }) => (
-  <select className="settings-select" value={value} onChange={onChange} disabled={disabled}>
+  <select
+    className="settings-select"
+    value={value}
+    onChange={onChange}
+    disabled={disabled}
+    aria-label={label}
+  >
     {options.map((opt) => (
       <option key={opt.value} value={opt.value}>
         {opt.label}

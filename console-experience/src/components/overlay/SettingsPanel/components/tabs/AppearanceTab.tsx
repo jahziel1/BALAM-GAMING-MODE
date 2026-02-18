@@ -31,11 +31,16 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
         <SettingsToggle
           checked={animationsEnabled}
           onChange={(e) => setAnimationsEnabled(e.target.checked)}
+          label="Animations"
         />
       </SettingsItem>
 
       <SettingsItem label="Blur Effects" description="Background blur on overlays">
-        <SettingsToggle checked={blurEffects} onChange={(e) => setBlurEffects(e.target.checked)} />
+        <SettingsToggle
+          checked={blurEffects}
+          onChange={(e) => setBlurEffects(e.target.checked)}
+          label="Blur Effects"
+        />
       </SettingsItem>
 
       <SettingsItem label="Card Size" description="Game card display size">
@@ -43,6 +48,7 @@ export const AppearanceTab: React.FC<AppearanceTabProps> = ({
           value={cardSize}
           onChange={(e) => setCardSize(e.target.value)}
           options={cardSizeOptions}
+          label="Card Size"
         />
       </SettingsItem>
     </SettingsSection>

@@ -90,6 +90,7 @@ export const DisplayTab: React.FC = () => {
                 checked={hdr.enabled}
                 onChange={(e) => void handleHdrToggle(e.target.checked)}
                 disabled={toggling || hdr.force_disabled}
+                label="Enable HDR"
               />
             </SettingsItem>
 

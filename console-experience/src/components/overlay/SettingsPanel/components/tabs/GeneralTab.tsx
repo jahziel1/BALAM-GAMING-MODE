@@ -34,6 +34,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
           options={languageOptions}
+          label="Language"
         />
       </SettingsItem>
 
@@ -44,6 +45,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         <SettingsToggle
           checked={startWithWindows}
           onChange={(e) => setStartWithWindows(e.target.checked)}
+          label="Start with Windows"
         />
       </SettingsItem>
 
@@ -51,6 +53,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         <SettingsToggle
           checked={startMinimized}
           onChange={(e) => setStartMinimized(e.target.checked)}
+          label="Start Minimized"
         />
       </SettingsItem>
     </SettingsSection>
