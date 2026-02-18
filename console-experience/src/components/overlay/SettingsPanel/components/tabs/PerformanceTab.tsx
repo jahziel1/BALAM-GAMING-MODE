@@ -32,15 +32,7 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
           <SettingsToggle
             checked={hardwareAcceleration}
             onChange={(e) => setHardwareAcceleration(e.target.checked)}
-          />
-        </SettingsItem>
-
-        <SettingsItem label="Background Behavior" description="Continue running when game launches">
-          <SettingsToggle
-            checked={true}
-            onChange={() => {
-              // Not implemented yet
-            }}
+            label="Hardware Acceleration"
           />
         </SettingsItem>
       </SettingsSection>
@@ -53,6 +45,7 @@ export const PerformanceTab: React.FC<PerformanceTabProps> = ({
           <SettingsToggle
             checked={pipVisible}
             onChange={(e) => setPerformanceLevel(e.target.checked ? 1 : 0)}
+            label="Show Performance Overlay"
           />
         </SettingsItem>
 
