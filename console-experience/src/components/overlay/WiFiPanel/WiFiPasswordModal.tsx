@@ -1,12 +1,13 @@
 import './WiFiPasswordModal.css';
 
 import { Eye, EyeOff, Lock, Settings, Wifi } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/core/Button/Button';
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 import { SectionHeader } from '@/components/core/SectionHeader/SectionHeader';
 import { TooltipWrapper } from '@/components/ui/Tooltip';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 import { type AdvancedWiFiConfig, AdvancedWiFiSettings } from './AdvancedWiFiSettings';
 
@@ -48,12 +49,15 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
   securityType,
   isConnecting = false,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false);
   const [advancedConfig, setAdvancedConfig] = useState<AdvancedWiFiConfig | null>(null);
+
+  useModalFocus(containerRef, isOpen, onClose);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -95,16 +99,12 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
     onConnect(password, remember);
   }, [password, remember, onConnect, validatePassword]);
 
-  // Handle keyboard navigation
+  // Handle Enter key to submit
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        onClose();
-      } else if (e.key === 'Enter') {
+      if (e.key === 'Enter') {
         e.preventDefault();
         e.stopPropagation();
         handleSubmit();
@@ -113,13 +113,21 @@ export const WiFiPasswordModal: React.FC<WiFiPasswordModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, onClose, handleSubmit]);
+  }, [isOpen, handleSubmit]);
 
   if (!isOpen) return null;
 
   return (
     <div className="wifi-password-modal-overlay" onClick={onClose}>
-      <div className="wifi-password-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={containerRef}
+        className="wifi-password-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Connect to WiFi Network"
+        tabIndex={-1}
+      >
         {/* Header */}
         <div className="wifi-password-modal-header">
           <div className="wifi-password-modal-icon">

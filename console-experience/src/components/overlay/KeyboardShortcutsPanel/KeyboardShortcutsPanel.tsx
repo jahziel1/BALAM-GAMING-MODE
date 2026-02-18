@@ -1,11 +1,12 @@
 import './KeyboardShortcutsPanel.css';
 
 import { Command, Gamepad2, Search, Settings, X } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
 
 import { Button } from '@/components/core/Button/Button';
 import { IconWrapper } from '@/components/core/IconWrapper/IconWrapper';
 import { SectionHeader } from '@/components/core/SectionHeader/SectionHeader';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 interface KeyboardShortcutsPanelProps {
   isOpen: boolean;
@@ -86,27 +87,22 @@ export const KeyboardShortcutsPanel: React.FC<KeyboardShortcutsPanelProps> = ({
   isOpen,
   onClose,
 }) => {
-  // Handle Escape key to close
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, onClose]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  useModalFocus(containerRef, isOpen, onClose);
 
   if (!isOpen) return null;
 
   return (
     <div className="keyboard-shortcuts-overlay" onClick={onClose}>
-      <div className="keyboard-shortcuts-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={containerRef}
+        className="keyboard-shortcuts-panel"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Keyboard Shortcuts"
+        tabIndex={-1}
+      >
         {/* Header */}
         <div className="keyboard-shortcuts-header">
           <div className="keyboard-shortcuts-title">
