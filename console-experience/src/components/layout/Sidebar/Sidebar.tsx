@@ -39,7 +39,15 @@ const Sidebar: React.FC<SidebarProps> = memo(({ isOpen, focusedIndex, onAction, 
             className={`menu-item ${index === focusedIndex ? 'focused' : ''} ${item.danger ? 'danger' : ''}`}
             onMouseEnter={() => onFocusItem(index)}
             onClick={() => onAction(item.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onAction(item.id);
+              }
+            }}
             role="button"
+            tabIndex={0}
+            aria-label={item.label}
           >
             <div className="icon">{item.icon}</div>
             <div className="label">{item.label}</div>
