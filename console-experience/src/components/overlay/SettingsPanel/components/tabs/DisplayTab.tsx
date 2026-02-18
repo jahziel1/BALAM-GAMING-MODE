@@ -84,7 +84,11 @@ export const DisplayTab: React.FC = () => {
           <>
             <SettingsItem
               label="Enable HDR"
-              description={`Max brightness: ${Math.round(hdr.max_luminance_nits)} nits`}
+              description={
+                toggling
+                  ? 'Applying...'
+                  : `Max brightness: ${Math.round(hdr.max_luminance_nits)} nits`
+              }
             >
               <SettingsToggle
                 checked={hdr.enabled}
