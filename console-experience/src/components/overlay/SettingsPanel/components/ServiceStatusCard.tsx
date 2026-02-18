@@ -1,6 +1,6 @@
 import './ServiceStatusCard.css';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useFpsServiceManager } from '../../../../hooks/useFpsServiceManager';
 
@@ -14,6 +14,7 @@ import { useFpsServiceManager } from '../../../../hooks/useFpsServiceManager';
 export const ServiceStatusCard: React.FC = React.memo(() => {
   const { status, loading, error, install, uninstall, start, stop, refresh } =
     useFpsServiceManager();
+  const [showUninstallConfirm, setShowUninstallConfirm] = useState(false);
 
   if (!status) {
     return (
@@ -110,10 +111,10 @@ export const ServiceStatusCard: React.FC = React.memo(() => {
             )}
             <button
               className="action-button danger"
-              onClick={() => void uninstall()}
+              onClick={() => setShowUninstallConfirm(true)}
               disabled={loading}
             >
-              {loading ? '⏳ Uninstalling...' : '🗑 Uninstall'}
+              {loading ? '⏳ Working...' : '🗑 Uninstall'}
             </button>
           </div>
         )}
@@ -129,6 +130,37 @@ export const ServiceStatusCard: React.FC = React.memo(() => {
           <li>⏳ Vulkan/OpenGL support (coming soon)</li>
         </ul>
       </div>
+
+      {showUninstallConfirm ? (
+        <div className="service-confirm-overlay">
+          <div
+            className="service-confirm-dialog"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="uninstall-confirm-title"
+          >
+            <h4 id="uninstall-confirm-title">Uninstall FPS Service?</h4>
+            <p>
+              This will remove the FPS monitoring service from Windows. The overlay will stop
+              working until reinstalled.
+            </p>
+            <div className="service-confirm-actions">
+              <button className="action-button" onClick={() => setShowUninstallConfirm(false)}>
+                Cancel
+              </button>
+              <button
+                className="action-button danger"
+                onClick={() => {
+                  void uninstall();
+                  setShowUninstallConfirm(false);
+                }}
+              >
+                Uninstall
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 });
