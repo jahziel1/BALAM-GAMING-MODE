@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "npm run validate && tsc && vite build",
     "build:e2e": "vite build",
+    "build:overlay": "powershell -ExecutionPolicy Bypass -File ./build-overlay.ps1",
+    "build:overlay:debug": "powershell -ExecutionPolicy Bypass -File ./build-overlay.ps1 -Debug",
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "vitest",
@@ -29,6 +31,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@bbc/tv-lrud-spatial": "github:bbc/lrud-spatial",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/rajdhani": "^5.2.7",
     "@radix-ui/react-dialog": "^1.0.5",

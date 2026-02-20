@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build:e2e",
+    "beforeBuildCommand": "npm run build:overlay && npm run build:e2e",
     "frontendDist": "../dist"
   },
   "app": {
@@ -39,7 +39,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": ["libryzenadj.dll", "inpoutx64.dll", "WinRing0x64.dll"]
+    "resources": ["libryzenadj.dll", "inpoutx64.dll", "WinRing0x64.dll", "overlay.dll"]
   },
   "plugins": {
     "sql": {

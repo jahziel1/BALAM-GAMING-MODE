@@ -30,6 +30,8 @@ use crate::application::commands::{
     get_fps_service_status,
     get_fps_stats,
     get_games,
+    // Overlay commands
+    get_overlay_status,
     get_paired_bluetooth_devices,
     get_performance_metrics,
     get_primary_display,
@@ -40,15 +42,18 @@ use crate::application::commands::{
     get_system_drives,
     get_system_status,
     get_tdp_config,
+    get_whitelisted_games,
     get_wifi_signal_strength,
     // Haptic commands
     haptic_action,
     haptic_event,
     haptic_navigation,
     // PiP commands
+    hide_game_overlay,
     hide_performance_pip,
     install_fps_service,
     is_bluetooth_available,
+    is_game_whitelisted,
     is_haptic_supported,
     is_nvml_available,
     is_pip_visible,
@@ -69,9 +74,12 @@ use crate::application::commands::{
     set_brightness,
     set_default_audio_device,
     set_hdr_enabled,
+    set_overlay_click_through,
+    set_overlay_opacity,
     set_refresh_rate,
     set_tdp,
     set_volume,
+    show_game_overlay,
     show_performance_pip,
     shutdown_pc,
     start_fps_service,
@@ -79,6 +87,7 @@ use crate::application::commands::{
     supports_brightness_control,
     supports_tdp_control,
     toggle_fps_service,
+    toggle_game_overlay,
     toggle_performance_pip,
     trigger_haptic,
     uninstall_fps_service,
@@ -339,7 +348,16 @@ pub fn run() {
             show_performance_pip,
             hide_performance_pip,
             toggle_performance_pip,
-            is_pip_visible
+            is_pip_visible,
+            // Overlay commands
+            show_game_overlay,
+            hide_game_overlay,
+            toggle_game_overlay,
+            set_overlay_opacity,
+            set_overlay_click_through,
+            get_overlay_status,
+            is_game_whitelisted,
+            get_whitelisted_games
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -86,3 +86,32 @@ export async function navigateMenu(direction: 'up' | 'down', times = 1): Promise
     await simulateKeyPress(key);
   }
 }
+
+/**
+ * Wait for the overlay panel to be visible.
+ * Uses data-testid="overlay-panel" (reliable selector).
+ */
+export async function waitForOverlayPanel(timeout = 5000): Promise<WebdriverIO.Element> {
+  const el = await $('[data-testid="overlay-panel"]');
+  await el.waitForDisplayed({ timeout });
+  return el;
+}
+
+/**
+ * Check if the left sidebar is currently expanded.
+ */
+export async function isSidebarExpanded(): Promise<boolean> {
+  return browser.execute(() => {
+    const sidebar = document.querySelector('[data-testid="sidebar"]');
+    return sidebar ? sidebar.classList.contains('expanded') : false;
+  });
+}
+
+/**
+ * Get count of visible game cards.
+ */
+export async function getVisibleCardCount(): Promise<number> {
+  return browser.execute(() => {
+    return document.querySelectorAll('.card').length;
+  });
+}
