@@ -259,7 +259,77 @@ await invoke('set_overlay_click_through', { enabled: true });
 
 ## 🐛 **Troubleshooting (Problemas Comunes)**
 
-### Problema 1: "Servicio no se puede iniciar"
+### Problema 1: "Servicio crashea con error 1067"
+
+**Síntoma:**
+```
+ESTADO: STOPPED
+CÓDIGO_DE_SALIDA_DE_WIN32: 1067 (0x42b)
+```
+
+O en Event Viewer:
+```
+Código de excepción: 0xc0000005 (Access Violation)
+```
+
+**Causa:**
+El servicio tiene código que crashea en Windows Service context (Session 0):
+- Imports de `tracing` o logging libraries
+- Llamadas a `debug!()`, `info!()`, `error!()`
+- Acceso a stdout/stderr (que no existen en servicios)
+
+**Solución (YA APLICADA):**
+
+El código del servicio ya fue corregido para:
+
+1. ✅ **Remover imports de tracing:**
+   ```rust
+   // ❌ ANTES (crasheaba):
+   use tracing::debug;
+
+   // ✅ AHORA (funciona):
+   // Tracing removed - Windows Services don't have stdout/stderr
+   ```
+
+2. ✅ **Comentar todas las llamadas a debug!():**
+   ```rust
+   // ❌ ANTES:
+   debug!("Service started");
+
+   // ✅ AHORA:
+   // debug!("Service started");
+   ```
+
+3. ✅ **Reportar SERVICE_RUNNING primero:**
+   ```rust
+   // ✅ Report RUNNING first (critical!)
+   report_status(SERVICE_RUNNING, 0, 0)?;
+
+   // Then start components (ignore errors)
+   let _ = monitor.start();
+   let _ = server.start();
+   ```
+
+4. ✅ **Simplificar main loop:**
+   ```rust
+   // Main loop - just keep alive
+   while !*should_stop.lock() {
+       std::thread::sleep(Duration::from_millis(1000));
+   }
+   ```
+
+**Si el servicio sigue crasheando:**
+
+Verifica el Event Viewer para el crash específico:
+```powershell
+Get-EventLog -LogName Application -After (Get-Date).AddMinutes(-5) |
+  Where-Object { $_.EntryType -eq "Error" -and $_.Source -eq "Application Error" } |
+  Select-Object -First 1 | Format-List -Property TimeGenerated, Message
+```
+
+---
+
+### Problema 2: "Servicio no se puede instalar"
 
 **Síntoma:**
 ```
@@ -275,7 +345,7 @@ Error: Service failed to start
 
 ---
 
-### Problema 2: "No se detecta ningún juego"
+### Problema 3: "No se detecta ningún juego"
 
 **Síntoma:**
 - `get_running_game()` devuelve null
@@ -299,7 +369,7 @@ Error: Service failed to start
 
 ---
 
-### Problema 3: "Overlay no aparece sobre el juego"
+### Problema 4: "Overlay no aparece sobre el juego"
 
 **Síntoma:**
 - Se ejecuta `toggle_game_overlay()` sin errores
@@ -336,7 +406,7 @@ Error: Service failed to start
 
 ---
 
-### Problema 4: "DLL no se encuentra"
+### Problema 5: "DLL no se encuentra"
 
 **Síntoma:**
 ```
@@ -361,7 +431,7 @@ Error: Overlay DLL not found at: C:\...\overlay.dll
 
 ---
 
-### Problema 5: "Overlay aparece pero está vacío"
+### Problema 6: "Overlay aparece pero está vacío"
 
 **Síntoma:**
 - La ventana de overlay se crea

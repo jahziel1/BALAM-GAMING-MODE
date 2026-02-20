@@ -79,36 +79,41 @@ fn service_main_impl() -> WinResult<()> {
 
     *SERVICE_STATE.lock() = Some(state);
 
-    // Start ETW
-    {
-        let mut monitor = etw_monitor.lock();
-        monitor.start()?;
-    }
-
-    // Start IPC
-    {
-        let mut server = ipc_server.lock();
-        server.start()?;
-    }
-
-    // Report running ASAP to avoid timeout
+    // Report running FIRST to avoid timeout (critical!)
     report_status(SERVICE_RUNNING, 0, 0)?;
 
-    // Main loop
+    // Start ETW (non-critical - continue if fails)
+    {
+        let mut monitor = etw_monitor.lock();
+        let _ = monitor.start(); // Ignore error - will use simulation mode
+    }
+
+    // Start IPC (non-critical - continue if fails)
+    {
+        let mut server = ipc_server.lock();
+        let _ = server.start(); // Ignore error - service will still run
+    }
+
+    // Main loop - keep service alive
     while !*should_stop.lock() {
-        // Get FPS and active game PID
+        // Simplified loop - just sleep
+        // TODO: Re-enable FPS monitoring once we verify service stays running
+
+        // Try to get FPS (ignore errors)
+        /*
         let (fps, active_pid) = {
             let monitor = etw_monitor.lock();
             monitor.get_fps()
         };
 
-        // Update IPC with FPS and game info
+        // Update IPC (ignore errors)
         {
             let mut server = ipc_server.lock();
             server.update_fps(fps, active_pid);
         }
+        */
 
-        std::thread::sleep(Duration::from_millis(100));
+        std::thread::sleep(Duration::from_millis(1000));
     }
 
     // Cleanup

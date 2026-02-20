@@ -18,7 +18,7 @@ use parking_lot::Mutex;
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use tracing::debug;
+// Tracing removed - Windows Services don't have stdout/stderr (Session 0)
 use windows::core::Result as WinResult;
 use windows::core::{GUID, PCWSTR, PWSTR};
 use windows::Win32::Foundation::{CloseHandle, FILETIME};
@@ -210,7 +210,7 @@ impl EtwMonitor {
 
             // Ignore error if session doesn't exist
             if result.is_err() {
-                debug!("No existing trace session to stop");
+                // debug!("No existing trace session to stop");
             }
 
             Ok(())
@@ -378,7 +378,7 @@ impl EtwMonitor {
 
                 if result != 0 {
                     // ProcessTrace failed - typically ERROR_CANCELLED when service stops
-                    debug!("ProcessTrace ended with code: {}", result);
+                    // debug!("ProcessTrace ended with code: {}", result);
                 }
             }
         });
@@ -436,10 +436,10 @@ impl EtwMonitor {
         *last_update = now;
 
         if max_fps > 0.0 {
-            debug!(
-                "📊 Active process PID {} - FPS: {:.1}",
-                max_fps_pid, max_fps
-            );
+            // debug!(
+            //     "📊 Active process PID {} - FPS: {:.1}",
+            //     max_fps_pid, max_fps
+            // );
         }
     }
 }
@@ -548,7 +548,7 @@ unsafe extern "system" fn event_record_callback(event_record: *mut EVENT_RECORD)
             return; // Ignore this event
         }
 
-        debug!("✅ DXGI Present event from PID {}", process_id);
+        // debug!("✅ DXGI Present event from PID {}", process_id);
 
         // Track frames per process
         let mut map = FRAME_TIMES_PER_PROCESS.lock();
