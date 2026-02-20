@@ -89,7 +89,7 @@ function App() {
     loadGames,
   } = useGameStore();
 
-  const { overlay, openRightSidebar, openLeftSidebar, settings } = useAppStore();
+  const { overlay, openRightSidebar, settings } = useAppStore();
 
   // Apply CSS classes to <html> based on settings
   useEffect(() => {
@@ -573,24 +573,9 @@ function App() {
   // ============================================================================
   // GLOBAL SHORTCUT LISTENER
   // ============================================================================
-  useEffect(() => {
-    const unlisten = listen('toggle-overlay', () => {
-      void (async () => {
-        const win = getCurrentWindow();
-        if (await win.isVisible()) {
-          await win.setFocus();
-          openLeftSidebar();
-        } else {
-          await win.show();
-          await win.setFocus();
-          openLeftSidebar();
-        }
-      })();
-    });
-    return () => {
-      void unlisten.then((f) => f());
-    };
-  }, [openLeftSidebar]);
+  // REMOVED: toggle-overlay listener (obsolete)
+  // Now using toggle_game_overlay() command directly from backend
+  // which creates dedicated overlay window instead of showing main window
 
   // Volume change listener
   useEffect(() => {

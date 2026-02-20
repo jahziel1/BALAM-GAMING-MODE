@@ -1,10 +1,8 @@
 import { listen } from '@tauri-apps/api/event';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 import { useEffect } from 'react';
 
 interface GlobalShortcutsProps {
   onOpenSearch: () => void;
-  onOpenLeftSidebar: () => void;
   onToggleWiFi: () => void;
   onToggleBluetooth: () => void;
   onVolumeChange: (newVolume: number) => void;
@@ -13,14 +11,13 @@ interface GlobalShortcutsProps {
 /**
  * Hook to manage global keyboard shortcuts and system events
  * - Ctrl+K / Ctrl+F: Open Search
- * - toggle-overlay: Open Left Sidebar
+ * - Ctrl+Shift+Q: Toggle Overlay (handled in backend)
  * - volume-changed: Update OSD
  * - toggle-wifi-panel: Toggle WiFi Panel
  * - toggle-bluetooth-panel: Toggle Bluetooth Panel
  */
 export function useGlobalShortcuts({
   onOpenSearch,
-  onOpenLeftSidebar,
   onToggleWiFi,
   onToggleBluetooth,
   onVolumeChange,
@@ -49,24 +46,9 @@ export function useGlobalShortcuts({
   }, [onOpenSearch]);
 
   // Toggle Overlay (Global Shortcut)
-  useEffect(() => {
-    const unlisten = listen('toggle-overlay', () => {
-      void (async () => {
-        const win = getCurrentWindow();
-        if (await win.isVisible()) {
-          await win.setFocus();
-          onOpenLeftSidebar();
-        } else {
-          await win.show();
-          await win.setFocus();
-          onOpenLeftSidebar();
-        }
-      })();
-    });
-    return () => {
-      void unlisten.then((f) => f());
-    };
-  }, [onOpenLeftSidebar]);
+  // REMOVED: toggle-overlay listener (obsolete)
+  // Now handled by toggle_game_overlay() command from backend
+  // which creates dedicated overlay window with TOPMOST style
 
   // Volume Change Listener
   useEffect(() => {
