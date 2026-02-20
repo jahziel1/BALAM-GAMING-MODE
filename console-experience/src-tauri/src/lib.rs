@@ -95,7 +95,7 @@ use crate::application::commands::{
     update_fps_service,
 };
 use crate::application::DIContainer;
-use tauri::{Emitter, Manager};
+use tauri::Emitter;
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -179,21 +179,14 @@ pub fn run() {
                         } else if shortcut.key == Code::KeyQ
                             && shortcut.mods.contains(Modifiers::CONTROL | Modifiers::SHIFT)
                         {
-                            if let Some(window) = app.get_webview_window("main") {
-                                let is_visible = window.is_visible().unwrap_or(false);
-                                if is_visible {
-                                    // Window is visible (launcher open) - just ignore the hotkey
-                                    // InGameMenu should only work during gameplay
-                                    tracing::warn!("Ctrl+Shift+Q pressed but no game is running - ignoring");
-                                } else {
-                                    // Window is hidden (game is running) - show InGameMenu
-                                    let _ = window.show();
-                                    let _ = window.set_always_on_top(true);
-                                    let _ = window.set_focus();
-                                    // CRITICAL: Tell frontend to show the Blade immediately
-                                    let _ = app.emit("toggle-overlay", true);
+                            // Toggle native game overlay (TOPMOST or DLL injection)
+                            // This uses the new overlay system that creates a dedicated overlay window
+                            let app_handle = app.clone();
+                            tauri::async_runtime::spawn(async move {
+                                if let Err(e) = toggle_game_overlay(app_handle).await {
+                                    tracing::error!("Failed to toggle overlay: {}", e);
                                 }
-                            }
+                            });
                         } else if shortcut.key == Code::KeyW && shortcut.mods.contains(Modifiers::CONTROL) {
                             // WiFi Panel toggle
                             let _ = app.emit("toggle-wifi-panel", true);

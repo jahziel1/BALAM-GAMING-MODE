@@ -32,7 +32,7 @@ import {
 } from './components/App';
 import { Footer, Sidebar, TopBar } from './components/layout';
 import { MENU_ITEMS } from './components/layout/Sidebar/Sidebar';
-import { PipWindowContent, SystemOSD } from './components/overlay';
+import { InGameMenuOptimized, PipWindowContent, SystemOSD } from './components/overlay';
 import { KeyboardShortcutsPanel } from './components/overlay/KeyboardShortcutsPanel/KeyboardShortcutsPanel';
 import { FilterChips, type FilterType } from './components/ui/FilterChips';
 
@@ -55,18 +55,24 @@ import { getCachedAssetSrc } from './utils/image-cache';
 
 function App() {
   // ============================================================================
-  // PIP WINDOW DETECTION
+  // WINDOW TYPE DETECTION
   // ============================================================================
-  const [isPipWindow] = useState<boolean>(() => {
+  const [windowType] = useState<'main' | 'pip' | 'overlay'>(() => {
     try {
       const currentWindow = getCurrentWindow();
       const windowLabel = currentWindow.label;
-      return windowLabel === 'performance-pip';
+
+      if (windowLabel === 'performance-pip') return 'pip';
+      if (windowLabel === 'overlay') return 'overlay';
+      return 'main';
     } catch (error) {
       console.error('Failed to get window label:', error);
-      return false;
+      return 'main';
     }
   });
+
+  const isPipWindow = windowType === 'pip';
+  const isOverlayWindow = windowType === 'overlay';
 
   // ============================================================================
   // STORES & DATA
@@ -688,6 +694,21 @@ function App() {
   // PiP Window: Only render the performance overlay
   if (isPipWindow) {
     return <PipWindowContent />;
+  }
+
+  // Overlay Window: Only render the InGameMenu
+  if (isOverlayWindow) {
+    // Auto-open InGameMenu when overlay window loads
+    const { openLeftSidebar } = useAppStore();
+    useEffect(() => {
+      openLeftSidebar();
+    }, [openLeftSidebar]);
+
+    return (
+      <ErrorBoundary>
+        <InGameMenuOptimized />
+      </ErrorBoundary>
+    );
   }
 
   // Main Window: Render full app
