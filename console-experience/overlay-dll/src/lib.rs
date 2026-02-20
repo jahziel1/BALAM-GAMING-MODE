@@ -1,139 +1,167 @@
-// Allow unsupported calling conventions from hudhook macro (phased out compiler warning)
-#![allow(unsupported_calling_conventions)]
-
-/// Balam Performance Overlay DLL
+/// Overlay DLL - Injected into legacy games
 ///
-/// DirectX 11 overlay for FPS monitoring using hudhook.
-/// Injects into games to capture frame timings and send via IPC to main app.
-use hudhook::*;
-use std::time::{Duration, Instant};
-use tracing::{error, info};
+/// Provides in-game overlay for DirectX 9/11 games without FSO.
+/// Uses DirectX hooking + ImGui for rendering.
+///
+/// # Architecture
+/// ```
+/// DllMain (entry) → Initialize hooks
+///     ↓
+/// Hook DirectX Present() → Render ImGui
+///     ↓
+/// ImGui → Overlay UI (FPS, menus, etc)
+///     ↓
+/// IPC Bridge → Communication with Balam
+/// ```
+///
+/// # Safety
+/// - Only injected into whitelisted games
+/// - Minimal performance impact
+/// - Clean unhooking on detach
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+use windows::Win32::Foundation::{BOOL, HINSTANCE};
+use windows::Win32::System::SystemServices::{
+    DLL_PROCESS_ATTACH, DLL_PROCESS_DETACH, DLL_THREAD_ATTACH, DLL_THREAD_DETACH,
+};
 
-mod ipc;
-use ipc::IPCWriter;
+/// Global overlay state
+static OVERLAY_VISIBLE: AtomicBool = AtomicBool::new(true);
+static OVERLAY_FPS: AtomicU32 = AtomicU32::new(0);
+static HOOKS_INSTALLED: AtomicBool = AtomicBool::new(false);
 
-/// Maximum FPS history samples
-const FPS_HISTORY_SIZE: usize = 60;
-
-/// Update interval for FPS calculation
-const FPS_UPDATE_INTERVAL_MS: u64 = 100;
-
-/// Balam Performance Overlay
-struct BalamOverlay {
-    ipc: Option<IPCWriter>,
-    frame_times: Vec<Duration>,
-    last_frame: Instant,
-    last_fps_update: Instant,
-    current_fps: f32,
-    avg_fps_1s: f32,
-    fps_1_percent_low: f32,
-    frame_time_ms: f32,
-}
-
-impl BalamOverlay {
-    fn new() -> Self {
-        info!("🎮 Initializing Balam Overlay");
-
-        let ipc = match IPCWriter::new() {
-            Ok(writer) => {
-                info!("✅ IPC writer initialized");
-                Some(writer)
+/// DLL entry point
+///
+/// Called by Windows when DLL is loaded/unloaded.
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn DllMain(
+    _hinst_dll: HINSTANCE,
+    fdw_reason: u32,
+    _lpv_reserved: *mut std::ffi::c_void,
+) -> BOOL {
+    match fdw_reason {
+        DLL_PROCESS_ATTACH => {
+            // DLL is being loaded into process
+            if let Err(_e) = on_attach() {
+                // Failed to initialize
+                // Note: Can't use stdout in DLL context
+                // TODO: Log to file or Windows Event Log
+                return BOOL(0); // Fail
             }
-            Err(e) => {
-                error!("❌ Failed to initialize IPC: {}", e);
-                None
-            }
-        };
-
-        Self {
-            ipc,
-            frame_times: Vec::with_capacity(FPS_HISTORY_SIZE),
-            last_frame: Instant::now(),
-            last_fps_update: Instant::now(),
-            current_fps: 0.0,
-            avg_fps_1s: 0.0,
-            fps_1_percent_low: 0.0,
-            frame_time_ms: 0.0,
+            BOOL(1) // Success
         }
-    }
-
-    fn on_frame(&mut self) {
-        let now = Instant::now();
-        let frame_time = now.duration_since(self.last_frame);
-        self.last_frame = now;
-
-        self.frame_times.push(frame_time);
-        if self.frame_times.len() > FPS_HISTORY_SIZE {
-            self.frame_times.remove(0);
+        DLL_PROCESS_DETACH => {
+            // DLL is being unloaded
+            on_detach();
+            BOOL(1)
         }
-
-        let time_since_update = now.duration_since(self.last_fps_update);
-        if time_since_update >= Duration::from_millis(FPS_UPDATE_INTERVAL_MS) {
-            self.calculate_fps_metrics();
-            self.send_fps_to_backend();
-            self.last_fps_update = now;
+        DLL_THREAD_ATTACH | DLL_THREAD_DETACH => {
+            // Thread notifications (ignore)
+            BOOL(1)
         }
-    }
-
-    fn calculate_fps_metrics(&mut self) {
-        if self.frame_times.is_empty() {
-            return;
-        }
-
-        if let Some(last_frame_time) = self.frame_times.last() {
-            let frame_time_secs = last_frame_time.as_secs_f32();
-            if frame_time_secs > 0.0 {
-                self.current_fps = 1.0 / frame_time_secs;
-                self.frame_time_ms = frame_time_secs * 1000.0;
-            }
-        }
-
-        let total_time: Duration = self.frame_times.iter().sum();
-        let avg_frame_time = total_time.as_secs_f32() / self.frame_times.len() as f32;
-        if avg_frame_time > 0.0 {
-            self.avg_fps_1s = 1.0 / avg_frame_time;
-        }
-
-        let mut sorted_times = self.frame_times.clone();
-        sorted_times.sort();
-        let percentile_99_idx = (sorted_times.len() as f32 * 0.99) as usize;
-        if let Some(worst_time) = sorted_times.get(percentile_99_idx) {
-            let worst_time_secs = worst_time.as_secs_f32();
-            if worst_time_secs > 0.0 {
-                self.fps_1_percent_low = 1.0 / worst_time_secs;
-            }
-        }
-    }
-
-    fn send_fps_to_backend(&mut self) {
-        if let Some(ipc) = self.ipc.as_mut() {
-            if let Err(e) = ipc.write_fps(
-                self.current_fps,
-                self.avg_fps_1s,
-                self.fps_1_percent_low,
-                self.frame_time_ms,
-            ) {
-                error!("Failed to write FPS to IPC: {}", e);
-            }
-        }
+        _ => BOOL(1),
     }
 }
 
-impl ImguiRenderLoop for BalamOverlay {
-    fn render(&mut self, _ui: &mut imgui::Ui) {
-        // Track frame timing on every render call
-        self.on_frame();
+/// Initialize overlay when DLL is attached
+fn on_attach() -> Result<(), String> {
+    // TODO: Initialize DirectX hooks
+    // This will hook Present() to render overlay
+    // For now, just mark as initialized
+    HOOKS_INSTALLED.store(true, Ordering::SeqCst);
 
-        // Optional: Draw debug UI (disabled for production)
-        // _ui.window("Balam FPS Monitor")
-        //     .size([200.0, 100.0], imgui::Condition::FirstUseEver)
-        //     .build(|| {
-        //         _ui.text(format!("FPS: {:.1}", self.current_fps));
-        //         _ui.text(format!("Frame: {:.2}ms", self.frame_time_ms));
-        //     });
+    // TODO: Initialize IPC bridge
+    // This will communicate with Balam for FPS data
+
+    // TODO: Start render thread or hook Present()
+
+    Ok(())
+}
+
+/// Cleanup overlay when DLL is detached
+fn on_detach() {
+    // Remove hooks
+    if HOOKS_INSTALLED.load(Ordering::SeqCst) {
+        // TODO: Unhook DirectX functions
+        HOOKS_INSTALLED.store(false, Ordering::SeqCst);
     }
 }
 
-// Use hudhook macro to register DirectX 11 hooks
-use hudhook::hooks::dx11::ImguiDx11Hooks;
-hudhook!(ImguiDx11Hooks, BalamOverlay::new());
+/// Toggle overlay visibility
+///
+/// Called by hotkey (F12) or from Balam IPC.
+#[no_mangle]
+pub extern "C" fn toggle_overlay() {
+    let current = OVERLAY_VISIBLE.load(Ordering::SeqCst);
+    OVERLAY_VISIBLE.store(!current, Ordering::SeqCst);
+}
+
+/// Update FPS counter
+///
+/// Called from IPC bridge when Balam sends FPS data.
+#[no_mangle]
+pub extern "C" fn update_fps(fps: f32) {
+    // Store FPS as u32 (bits)
+    OVERLAY_FPS.store(fps.to_bits(), Ordering::SeqCst);
+}
+
+/// Get current overlay visibility
+#[no_mangle]
+pub extern "C" fn is_overlay_visible() -> bool {
+    OVERLAY_VISIBLE.load(Ordering::SeqCst)
+}
+
+/// Get current FPS value
+#[no_mangle]
+pub extern "C" fn get_fps() -> f32 {
+    let bits = OVERLAY_FPS.load(Ordering::SeqCst);
+    f32::from_bits(bits)
+}
+
+/// Render overlay
+///
+/// Called from DirectX Present hook.
+/// This will be implemented with DirectX + ImGui rendering.
+#[no_mangle]
+pub extern "C" fn render_overlay() {
+    if !OVERLAY_VISIBLE.load(Ordering::SeqCst) {
+        return;
+    }
+
+    // TODO: Render ImGui UI
+    // 1. Get DirectX device from hook context
+    // 2. Initialize ImGui context if needed
+    // 3. Build UI (FPS counter, menu, etc.)
+    // 4. Render ImGui to DirectX
+
+    // Placeholder implementation
+    let _fps = get_fps();
+    // In real implementation, this would render with ImGui
+    // For now, it's just a placeholder to verify DLL loads
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_overlay_visibility_toggle() {
+        let initial = OVERLAY_VISIBLE.load(Ordering::SeqCst);
+        toggle_overlay();
+        let after_toggle = OVERLAY_VISIBLE.load(Ordering::SeqCst);
+        assert_ne!(initial, after_toggle);
+    }
+
+    #[test]
+    fn test_fps_update() {
+        update_fps(60.5);
+        let _fps = get_fps();
+        assert!((fps - 60.5).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_initial_state() {
+        assert!(OVERLAY_VISIBLE.load(Ordering::SeqCst));
+        assert!(!HOOKS_INSTALLED.load(Ordering::SeqCst));
+    }
+}

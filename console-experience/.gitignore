@@ -34,3 +34,5 @@ test_results*.txt
 *.njsproj
 *.sln
 *.sw?
+overlay-dll/target/
+overlay-dll/Cargo.lock
