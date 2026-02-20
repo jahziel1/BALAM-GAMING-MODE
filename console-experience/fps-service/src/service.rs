@@ -96,16 +96,16 @@ fn service_main_impl() -> WinResult<()> {
 
     // Main loop
     while !*should_stop.lock() {
-        // Get FPS
-        let fps = {
+        // Get FPS and active game PID
+        let (fps, active_pid) = {
             let monitor = etw_monitor.lock();
             monitor.get_fps()
         };
 
-        // Update IPC
+        // Update IPC with FPS and game info
         {
             let mut server = ipc_server.lock();
-            server.update_fps(fps);
+            server.update_fps(fps, active_pid);
         }
 
         std::thread::sleep(Duration::from_millis(100));

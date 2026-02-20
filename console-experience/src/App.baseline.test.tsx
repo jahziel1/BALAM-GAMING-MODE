@@ -6,12 +6,32 @@ import App from './App';
 // Mock all stores and providers
 vi.mock('./application/providers/StoreProvider', () => ({
   useAppStore: vi.fn(() => ({
-    overlay: { leftSidebarOpen: false, rightSidebarOpen: false },
+    overlay: {
+      leftSidebarOpen: false,
+      rightSidebarOpen: false,
+      currentOverlay: null,
+      previousOverlay: null,
+    },
     game: {
       activeRunningGame: null,
       games: [],
       isLaunching: false,
       error: null,
+    },
+    settings: {
+      animationsEnabled: true,
+      blurEffects: true,
+    },
+    performance: {
+      config: {
+        level: 1,
+        opacity: 0.9,
+        enabled: false,
+        mode: 'compact',
+        position: 'top-right',
+        autoStartFPS: true,
+        updateInterval: 1000,
+      },
     },
     openRightSidebar: vi.fn(),
     closeRightSidebar: vi.fn(),
@@ -19,6 +39,9 @@ vi.mock('./application/providers/StoreProvider', () => ({
     closeLeftSidebar: vi.fn(),
     closeAllSidebars: vi.fn(),
     clearActiveGame: vi.fn(),
+    loadGames: vi.fn(),
+    launchGame: vi.fn(),
+    killGame: vi.fn(),
   })),
   useGameStore: vi.fn(() => ({
     games: [
@@ -85,6 +108,8 @@ Object.defineProperty(navigator, 'getGamepads', {
 describe('App Baseline', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // jsdom doesn't implement scrollIntoView — mock it so GameCarousel doesn't crash
+    Element.prototype.scrollIntoView = vi.fn();
   });
 
   it('renders the main layout components', () => {

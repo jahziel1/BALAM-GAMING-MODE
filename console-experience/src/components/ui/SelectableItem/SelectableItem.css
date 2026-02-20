@@ -23,7 +23,11 @@
   color: var(--color-text-primary);
 }
 
-.selectable-item.focused {
+.selectable-item.focused,
+.selectable-item:focus,
+.selectable-item:focus-visible,
+.selectable-item:focus-within {
+  outline: none;
   background: var(--focus-bg);
   color: var(--color-text-primary);
   border-color: var(--color-primary);

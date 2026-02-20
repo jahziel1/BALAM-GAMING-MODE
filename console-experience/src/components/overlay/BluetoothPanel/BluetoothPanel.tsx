@@ -2,7 +2,7 @@ import './BluetoothPanel.css';
 
 import { invoke } from '@tauri-apps/api/core';
 import { Bluetooth, BluetoothOff } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useToast } from '@/hooks/useToast';
 
@@ -55,6 +55,55 @@ const BLUETOOTH_ERROR_HINTS: Record<string, string> = {
   default: 'An unexpected error occurred. Try restarting Bluetooth or the device',
 };
 
+const getActionLabel = (device: BluetoothDevice): string => {
+  if (device.pairing_state === 'Unpaired') return 'Pair';
+  if (device.is_connected) return 'Disconnect';
+  return 'Connect';
+};
+
+interface BluetoothDeviceItemProps {
+  device: BluetoothDevice;
+  isOperating: boolean;
+  onAction: (device: BluetoothDevice) => void;
+}
+
+const BluetoothDeviceItem: React.FC<BluetoothDeviceItemProps> = ({
+  device,
+  isOperating,
+  onAction,
+}) => {
+  return (
+    <div
+      className={`bluetooth-device ${device.is_connected ? 'connected' : ''} ${isOperating ? 'operating' : ''}`}
+      role="option"
+      tabIndex={0}
+      aria-selected={device.is_connected}
+      aria-label={`${device.name || 'Unknown Device'}${device.is_connected ? ', connected' : ''}${device.pairing_state === 'Paired' ? ', paired' : ''}`}
+      onClick={() => onAction(device)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onAction(device);
+        }
+      }}
+    >
+      <div className="bluetooth-device-header">
+        <Bluetooth size={20} />
+        <span className="bluetooth-device-name">{device.name || 'Unknown Device'}</span>
+        {device.is_connected ? <span className="bluetooth-badge">Connected</span> : null}
+        {device.pairing_state === 'Paired' && !device.is_connected ? (
+          <span className="bluetooth-badge paired">Paired</span>
+        ) : null}
+      </div>
+      <div className="bluetooth-device-meta">
+        <span className="bluetooth-address">{device.address}</span>
+        <span className="bluetooth-type">{device.device_type}</span>
+        <span className="bluetooth-action">{getActionLabel(device)}</span>
+      </div>
+    </div>
+  );
+};
+
 /**
  * Bluetooth Panel - Device management overlay
  *
@@ -70,12 +119,10 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
   controllerType = 'KEYBOARD',
 }) => {
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
   const [isOperating, setIsOperating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [bluetoothEnabled, setBluetoothEnabled] = useState(false);
-  const deviceRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Toast notifications
   const { success, error: showErrorToast, warning } = useToast();
@@ -101,13 +148,6 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
       setErrorMessage(null);
       const devs = await invoke<BluetoothDevice[]>('scan_bluetooth_devices');
       setDevices(devs);
-      // Reset selection if out of bounds
-      setSelectedIndex((prevIndex) => {
-        if (devs.length > 0 && prevIndex >= devs.length) {
-          return 0;
-        }
-        return prevIndex;
-      });
     } catch {
       const errorMsg = 'Failed to scan Bluetooth devices';
       const hint = 'Make sure Bluetooth is enabled and in range';
@@ -125,18 +165,6 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
       void loadDevices();
     }
   }, [isOpen, checkBluetoothStatus, loadDevices]);
-
-  // Auto-scroll to selected device
-  useEffect(() => {
-    const selectedElement = deviceRefs.current[selectedIndex];
-    if (selectedElement) {
-      selectedElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'nearest',
-      });
-    }
-  }, [selectedIndex]);
 
   // Handle device action (pair/connect)
   const handleDeviceAction = useCallback(
@@ -259,79 +287,6 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
     }
   }, [bluetoothEnabled, checkBluetoothStatus, loadDevices, success, showErrorToast]);
 
-  // Keyboard navigation
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-
-      switch (e.key) {
-        case 'Escape':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          onClose();
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          setSelectedIndex((prev) => Math.max(0, prev - 1));
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          setSelectedIndex((prev) => {
-            const maxIndex = devices.length - 1;
-            return Math.min(maxIndex, prev + 1);
-          });
-          break;
-        case 'Enter':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          setSelectedIndex((currentIndex) => {
-            if (devices[currentIndex]) {
-              void handleDeviceAction(devices[currentIndex]);
-            }
-            return currentIndex;
-          });
-          break;
-        case 'r':
-        case 'R':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          void loadDevices();
-          break;
-        case 't':
-        case 'T':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          void toggleBluetooth();
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, devices, onClose, handleDeviceAction, loadDevices, toggleBluetooth]);
-
-  const getDeviceIcon = (_type: BluetoothDevice['device_type']) => {
-    // Return appropriate icon based on device type
-    // TODO: Use different icons based on device type (AudioVideo, Computer, Phone, etc.)
-    return <Bluetooth size={20} />;
-  };
-
-  const getActionLabel = (device: BluetoothDevice): string => {
-    if (device.pairing_state === 'Unpaired') return 'Pair';
-    if (device.is_connected) return 'Disconnect';
-    return 'Connect';
-  };
-
   const footer = (
     <div className="bluetooth-footer">
       <ButtonHint action="BACK" type={controllerType} label="Close" />
@@ -390,43 +345,13 @@ export const BluetoothPanel: React.FC<BluetoothPanelProps> = ({
 
     return (
       <div className="bluetooth-devices" role="listbox" aria-label="Available devices">
-        {devices.map((device, index) => (
-          <div
+        {devices.map((device) => (
+          <BluetoothDeviceItem
             key={device.address}
-            ref={(el) => {
-              deviceRefs.current[index] = el;
-            }}
-            className={`bluetooth-device ${index === selectedIndex ? 'focused' : ''} ${device.is_connected ? 'connected' : ''} ${isOperating ? 'operating' : ''}`}
-            role="option"
-            tabIndex={0}
-            aria-selected={device.is_connected}
-            aria-label={`${device.name || 'Unknown Device'}${device.is_connected ? ', connected' : ''}${device.pairing_state === 'Paired' ? ', paired' : ''}`}
-            onClick={() => {
-              setSelectedIndex(index);
-              void handleDeviceAction(device);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelectedIndex(index);
-                void handleDeviceAction(device);
-              }
-            }}
-          >
-            <div className="bluetooth-device-header">
-              {getDeviceIcon(device.device_type)}
-              <span className="bluetooth-device-name">{device.name || 'Unknown Device'}</span>
-              {device.is_connected ? <span className="bluetooth-badge">Connected</span> : null}
-              {device.pairing_state === 'Paired' && !device.is_connected ? (
-                <span className="bluetooth-badge paired">Paired</span>
-              ) : null}
-            </div>
-            <div className="bluetooth-device-meta">
-              <span className="bluetooth-address">{device.address}</span>
-              <span className="bluetooth-type">{device.device_type}</span>
-              <span className="bluetooth-action">{getActionLabel(device)}</span>
-            </div>
-          </div>
+            device={device}
+            isOperating={isOperating}
+            onAction={(d) => void handleDeviceAction(d)}
+          />
         ))}
       </div>
     );

@@ -93,12 +93,18 @@
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.status-item.clickable:hover {
+.status-item.clickable:hover,
+.status-item.clickable:focus,
+.status-item.clickable:focus-visible {
+  outline: none;
   transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.4);
 }
 
-.status-item.clickable:hover .icon {
-  filter: drop-shadow(0 0 12px rgba(var(--color-primary-rgb), 0.8)); /* Blue glow en hover */
+.status-item.clickable:hover .icon,
+.status-item.clickable:focus .icon,
+.status-item.clickable:focus-visible .icon {
+  filter: drop-shadow(0 0 12px rgba(var(--color-primary-rgb), 0.8)); /* Blue glow en hover/focus */
 }
 
 .status-item.clickable:active {

@@ -1,27 +1,98 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { AppStore } from '@/application/stores';
 
 import { InGameMenuOptimized } from './InGameMenuOptimized';
 
-// Mock Zustand stores
-vi.mock('@/application/providers/StoreProvider', () => ({
-  useGameStore: vi.fn(() => ({
-    activeRunningGame: {
-      game: { id: '1', title: 'Test Game' },
-      pid: 1234,
+// ---- Mocks ----
+
+const mockCloseLeftSidebar = vi.fn();
+const mockOpenRightSidebar = vi.fn();
+const mockCloseAllSidebars = vi.fn();
+const mockClearActiveGame = vi.fn();
+const mockKillGame = vi.fn();
+
+const mockActiveGame = {
+  game: {
+    id: '1',
+    raw_id: '1',
+    title: 'Test Game',
+    path: '/game.exe',
+    source: 'Steam' as const,
+    image: null,
+    hero_image: null,
+    logo: null,
+    last_played: null,
+  },
+  pid: 1234,
+};
+
+function makeMockStore(overrides: Partial<AppStore> = {}): AppStore {
+  return {
+    overlay: {
+      leftSidebarOpen: true,
+      rightSidebarOpen: false,
+      currentOverlay: null,
+      previousOverlay: null,
     },
-    killGame: vi.fn(),
+    game: {
+      activeRunningGame: mockActiveGame,
+      games: [],
+      isLaunching: false,
+      error: null,
+    },
+    settings: { animationsEnabled: true, blurEffects: true },
+    performance: { fps: 0, cpuTemp: 0, gpuTemp: 0, ramUsage: 0 },
+    system: { volume: 50, brightness: 50 },
+    closeLeftSidebar: mockCloseLeftSidebar,
+    openLeftSidebar: vi.fn(),
+    openRightSidebar: mockOpenRightSidebar,
+    closeRightSidebar: vi.fn(),
+    closeAllSidebars: mockCloseAllSidebars,
+    showOverlay: vi.fn(),
+    hideOverlay: vi.fn(),
+    goBack: vi.fn(),
+    clearActiveGame: mockClearActiveGame,
+    killGame: mockKillGame,
+    loadGames: vi.fn(),
+    launchGame: vi.fn(),
+    setVolume: vi.fn(),
+    setBrightness: vi.fn(),
+    updatePerformanceMetrics: vi.fn(),
+    ...overrides,
+  } as AppStore;
+}
+
+vi.mock('@/application/providers/StoreProvider', () => ({
+  useAppStore: vi.fn(() => makeMockStore()),
+}));
+
+vi.mock('@tauri-apps/api/core', () => ({
+  invoke: vi.fn().mockResolvedValue(undefined),
+  convertFileSrc: vi.fn((p: string) => p),
+}));
+
+vi.mock('@tauri-apps/api/window', () => ({
+  getCurrentWindow: vi.fn(() => ({
+    hide: vi.fn().mockResolvedValue(undefined),
+    listen: vi.fn().mockResolvedValue(vi.fn()),
+    isFocused: vi.fn().mockResolvedValue(true),
+    isVisible: vi.fn().mockResolvedValue(false),
   })),
 }));
 
-vi.mock('@/application/stores/overlay-store', () => ({
-  useOverlayStore: vi.fn(() => ({
-    currentOverlay: 'inGameMenu',
-    hideOverlay: vi.fn(),
-    showOverlay: vi.fn(),
+vi.mock('@/hooks/usePerformanceMetrics', () => ({
+  usePerformanceMetrics: vi.fn(() => ({
+    metrics: { fps: 0, cpuTemp: 0, gpuTemp: 0, ramUsage: 0 },
   })),
 }));
+
+vi.mock('@tauri-apps/api/event', () => ({
+  listen: vi.fn().mockResolvedValue(vi.fn()),
+}));
+
+// ---- Tests ----
 
 describe('InGameMenuOptimized Component', () => {
   beforeEach(() => {
@@ -32,70 +103,43 @@ describe('InGameMenuOptimized Component', () => {
     render(<InGameMenuOptimized />);
     expect(screen.getByText('Resume Game')).toBeInTheDocument();
     expect(screen.getByText('Quick Settings')).toBeInTheDocument();
-    expect(screen.getByText('Quit Game')).toBeInTheDocument();
+    expect(screen.getByText('Close Game')).toBeInTheDocument();
   });
 
   it('displays active game title', () => {
     render(<InGameMenuOptimized />);
-    expect(screen.getByText('Test Game')).toBeInTheDocument();
+    expect(screen.getAllByText('Test Game').length).toBeGreaterThan(0);
   });
 
   it('displays fallback title when no game is running', async () => {
-    const { useGameStore } = await import('@/application/providers/StoreProvider');
-    vi.mocked(useGameStore).mockReturnValue({
-      activeRunningGame: null,
-      killGame: vi.fn(),
-      // Add other required store properties as needed
-    } as any);
+    const { useAppStore } = await import('@/application/providers/StoreProvider');
+    vi.mocked(useAppStore).mockReturnValue(
+      makeMockStore({
+        game: { activeRunningGame: null, games: [], isLaunching: false, error: null },
+      })
+    );
 
     render(<InGameMenuOptimized />);
-    expect(screen.getByText('In-Game Menu')).toBeInTheDocument();
+    expect(screen.getAllByText('In-Game Menu').length).toBeGreaterThan(0);
   });
 
-  it('calls hideOverlay when Resume Game is clicked', async () => {
-    const mockHideOverlay = vi.fn();
-    const { useOverlayStore } = await import('@/application/stores/overlay-store');
-    vi.mocked(useOverlayStore).mockReturnValue({
-      currentOverlay: 'inGameMenu',
-      hideOverlay: mockHideOverlay,
-      showOverlay: vi.fn(),
-    } as any);
-
+  it('calls openRightSidebar when Quick Settings is clicked', () => {
     render(<InGameMenuOptimized />);
-    const resumeButton = screen.getByText('Resume Game');
-    resumeButton.click();
-    expect(mockHideOverlay).toHaveBeenCalledTimes(1);
+    screen.getByText('Quick Settings').click();
+    expect(mockOpenRightSidebar).toHaveBeenCalled();
   });
 
-  it('calls showOverlay with quickSettings when Quick Settings is clicked', async () => {
-    const mockShowOverlay = vi.fn();
-    const { useOverlayStore } = await import('@/application/stores/overlay-store');
-    vi.mocked(useOverlayStore).mockReturnValue({
-      currentOverlay: 'inGameMenu',
-      hideOverlay: vi.fn(),
-      showOverlay: mockShowOverlay,
-    } as any);
-
+  it('shows confirmation when Close Game is clicked', () => {
     render(<InGameMenuOptimized />);
-    const settingsButton = screen.getByText('Quick Settings');
-    settingsButton.click();
-    expect(mockShowOverlay).toHaveBeenCalledWith('quickSettings');
+    fireEvent.click(screen.getByText('Close Game'));
+    expect(screen.getByText('Close Game?')).toBeInTheDocument();
   });
 
-  it('calls killGame when Quit Game is clicked', async () => {
-    const mockKillGame = vi.fn();
-    const { useGameStore } = await import('@/application/providers/StoreProvider');
-    vi.mocked(useGameStore).mockReturnValue({
-      activeRunningGame: {
-        game: { id: '1', title: 'Test Game' },
-        pid: 1234,
-      },
-      killGame: mockKillGame,
-    } as any);
-
+  it('calls closeLeftSidebar when Resume Game is clicked', async () => {
     render(<InGameMenuOptimized />);
-    const quitButton = screen.getByText('Quit Game');
-    quitButton.click();
-    expect(mockKillGame).toHaveBeenCalledWith(1234);
+    screen.getByText('Resume Game').click();
+    await vi.waitFor(() => {
+      expect(mockCloseLeftSidebar).toHaveBeenCalled();
+    });
   });
 });

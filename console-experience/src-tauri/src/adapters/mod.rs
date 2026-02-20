@@ -10,6 +10,7 @@ pub mod identity_engine;
 pub mod local_scanner;
 pub mod metadata_adapter;
 pub mod microsoft_store_adapter;
+pub mod overlay;
 pub mod performance;
 pub mod performance_monitoring;
 pub mod process_launcher;

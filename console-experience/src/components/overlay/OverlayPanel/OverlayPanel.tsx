@@ -26,6 +26,12 @@ interface OverlayPanelProps {
    * Useful for panels that need to show unsaved-changes confirmation on Escape.
    */
   onEscape?: () => void;
+  /**
+   * CSS selector for the element to receive initial focus when the panel opens.
+   * Default: first focusable element (usually the close button).
+   * Example: ".settings-category" to focus the first category button.
+   */
+  initialFocusSelector?: string;
 }
 
 /**
@@ -49,11 +55,12 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
   enableBlur = true,
   enableBackground = true,
   onEscape,
+  initialFocusSelector,
 }) => {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
-  useModalFocus(panelRef, isOpen, onEscape ?? onClose);
+  useModalFocus(panelRef, isOpen, onEscape ?? onClose, { initialFocusSelector });
 
   // Early return AFTER all hooks (Rules of Hooks)
   if (!isOpen) return null;
@@ -61,6 +68,7 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
   return (
     <div
       className={`overlay-panel-wrapper ${enableBackground ? 'with-background' : 'no-background'}`}
+      data-testid="overlay-panel"
     >
       <div
         className={`overlay-panel-backdrop ${enableBlur ? 'with-blur' : 'no-blur'}`}

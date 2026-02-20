@@ -115,6 +115,10 @@ export const useVirtualKeyboard = (options?: UseVirtualKeyboardOptions) => {
   const debounceTimer = useRef<number | null>(null);
   const debounceMs = options?.debounceMs ?? 150; // Default 150ms debounce
 
+  // Suppress auto-reopen after an explicit user close (prevents the VK from
+  // immediately reopening when close() blurs the targetInput while deviceType=GAMEPAD)
+  const closedByUserRef = useRef(false);
+
   // Use refs to avoid recreating effects on every callback change
   const callbacksRef = useRef(options);
   useEffect(() => {
@@ -153,6 +157,8 @@ export const useVirtualKeyboard = (options?: UseVirtualKeyboardOptions) => {
       if (shouldOpenKeyboard(target)) {
         // Open keyboard if using gamepad or mouse (NOT physical keyboard)
         if (deviceType === InputDeviceType.GAMEPAD || deviceType === InputDeviceType.MOUSE) {
+          // A real focus event means the user explicitly focused an input — allow reopen
+          closedByUserRef.current = false;
           setIsOpen(true);
           callbacksRef.current?.onOpen?.();
         }
@@ -174,12 +180,19 @@ export const useVirtualKeyboard = (options?: UseVirtualKeyboardOptions) => {
     }
   }, [deviceType, isOpen]);
 
-  // Auto-reopen keyboard when switching to gamepad/mouse if input is focused
+  // Auto-reopen keyboard when switching to gamepad/mouse if input is focused.
+  // Suppressed for one cycle after an explicit close() to prevent the VK from
+  // immediately reopening when close() blurs the targetInput.
   useEffect(() => {
     if (
       !isOpen &&
       (deviceType === InputDeviceType.GAMEPAD || deviceType === InputDeviceType.MOUSE)
     ) {
+      if (closedByUserRef.current) {
+        // Consume the suppress flag — subsequent device-change cycles will behave normally
+        closedByUserRef.current = false;
+        return;
+      }
       // Check targetInputRef first, then activeElement
       const targetInput = getTargetInput();
       const activeElement = targetInput ?? document.activeElement;
@@ -194,6 +207,7 @@ export const useVirtualKeyboard = (options?: UseVirtualKeyboardOptions) => {
   }, [deviceType, isOpen, getTargetInput]);
 
   const close = useCallback(() => {
+    closedByUserRef.current = true; // Suppress immediate auto-reopen
     setIsOpen(false);
     callbacksRef.current?.onClose?.();
 
@@ -288,6 +302,7 @@ export const useVirtualKeyboard = (options?: UseVirtualKeyboardOptions) => {
 
   // Manual open method for explicit control
   const open = useCallback(() => {
+    closedByUserRef.current = false; // Allow reopen when explicitly triggered
     setIsOpen(true);
     callbacksRef.current?.onOpen?.();
   }, []);

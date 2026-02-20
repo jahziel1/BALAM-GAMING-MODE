@@ -74,7 +74,7 @@ export const GameCarousel = memo(
     }
 
     return (
-      <section className="carousel-section" data-active={isActive}>
+      <section className="carousel-section" data-testid="game-carousel" data-active={isActive}>
         <h2 className="carousel-title">{title}</h2>
 
         <div className="carousel-container" ref={containerRef}>

@@ -96,7 +96,11 @@ export function LibrarySection({
   }, [activeIndex, offsets, carousels]);
 
   return (
-    <div className="library-section" onMouseEnter={() => onSetFocusArea('LIBRARY')}>
+    <div
+      className="library-section"
+      data-testid="library-section"
+      onMouseEnter={() => onSetFocusArea('LIBRARY')}
+    >
       {carousels.map((carousel, idx) => (
         <GameCarousel
           key={carousel.title}

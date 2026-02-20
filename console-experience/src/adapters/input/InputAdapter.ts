@@ -12,6 +12,13 @@ import { InputDeviceDetector } from './InputDeviceDetector';
 import { KeyboardEventDispatcher } from './KeyboardEventDispatcher';
 import { NavigationEventAdapter } from './NavigationEventAdapter';
 
+// TypeScript interface for dev-mode window globals
+declare global {
+  interface Window {
+    __INPUT_ADAPTER__?: InputAdapter;
+  }
+}
+
 export class InputAdapter implements InputPort {
   private deviceDetector: InputDeviceDetector;
   private eventDispatcher: KeyboardEventDispatcher;
@@ -50,3 +57,7 @@ export class InputAdapter implements InputPort {
 
 // Singleton instance
 export const inputAdapter = new InputAdapter();
+
+if (import.meta.env.DEV) {
+  window.__INPUT_ADAPTER__ = inputAdapter;
+}

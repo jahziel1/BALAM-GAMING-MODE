@@ -37,6 +37,7 @@ tracing-appender = "0.2"
 # Utilities
 parking_lot = "0.12"
 once_cell = "1.19"
+winreg = "0.52"  # Registry access for FSO detection
 
 [profile.release]
 opt-level = "z"     # Optimize for size

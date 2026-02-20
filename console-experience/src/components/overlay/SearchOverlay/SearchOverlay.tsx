@@ -339,45 +339,46 @@ export const SearchOverlay = memo(function SearchOverlay({
             </Command.Group>
           )}
 
-          {/* Fix #15: Grouped results by source */}
-          {Object.entries(groupedGames).map(([source, sourceGames]) => (
-            <Command.Group key={source} heading={source} className="search-group">
-              {sourceGames.map((game) => (
-                <Command.Item
-                  key={game.id}
-                  value={game.id} // Fix #7: Use ID for uniqueness
-                  onSelect={() => handleSelect(game.id)}
-                  className="result-item"
-                  keywords={[game.title, game.source]} // Searchable keywords
-                >
-                  {/* Fix #20: Lazy loaded images */}
-                  <img
-                    src={getCachedAssetSrc(game.image, defaultCover)}
-                    alt={`${game.title} cover`} // Fix #7: Proper alt text
-                    className="result-thumbnail"
-                    loading="lazy"
-                  />
-                  <div className="result-info">
-                    <h3 className="result-title">{game.title}</h3>
-                    {/* Fix #16: Show metadata */}
-                    <div className="result-metadata">
-                      <span className="result-source" data-source={game.source}>
-                        {game.source}
-                      </span>
-                      {game.last_played ? (
-                        <span className="result-last-played">
-                          {new Date(game.last_played).toLocaleDateString()}
+          {/* Fix #15: Grouped results by source — only shown when user has typed */}
+          {debouncedQuery.length > 0 &&
+            Object.entries(groupedGames).map(([source, sourceGames]) => (
+              <Command.Group key={source} heading={source} className="search-group">
+                {sourceGames.map((game) => (
+                  <Command.Item
+                    key={game.id}
+                    value={game.id} // Fix #7: Use ID for uniqueness
+                    onSelect={() => handleSelect(game.id)}
+                    className="result-item"
+                    keywords={[game.title, game.source]} // Searchable keywords
+                  >
+                    {/* Fix #20: Lazy loaded images */}
+                    <img
+                      src={getCachedAssetSrc(game.image, defaultCover)}
+                      alt={`${game.title} cover`} // Fix #7: Proper alt text
+                      className="result-thumbnail"
+                      loading="lazy"
+                    />
+                    <div className="result-info">
+                      <h3 className="result-title">{game.title}</h3>
+                      {/* Fix #16: Show metadata */}
+                      <div className="result-metadata">
+                        <span className="result-source" data-source={game.source}>
+                          {game.source}
                         </span>
-                      ) : null}
+                        {game.last_played ? (
+                          <span className="result-last-played">
+                            {new Date(game.last_played).toLocaleDateString()}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                  <div className="result-action">
-                    <kbd>Enter</kbd>
-                  </div>
-                </Command.Item>
-              ))}
-            </Command.Group>
-          ))}
+                    <div className="result-action">
+                      <kbd>Enter</kbd>
+                    </div>
+                  </Command.Item>
+                ))}
+              </Command.Group>
+            ))}
         </Command.List>
 
         {/* Results count footer */}

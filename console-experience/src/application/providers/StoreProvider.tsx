@@ -15,6 +15,13 @@ import { TauriGameRepository, TauriSystemRepository } from '../../infrastructure
 import { toast } from '../../utils/toast';
 import { type AppStoreHook, createAppStore } from '../stores/app-store';
 
+// TypeScript interface for dev-mode window globals
+declare global {
+  interface Window {
+    __STORE__?: AppStoreHook;
+  }
+}
+
 /**
  * Store context type
  */
@@ -32,6 +39,10 @@ const gameRepository = new TauriGameRepository();
 const systemRepository = new TauriSystemRepository();
 
 const appStore = createAppStore(gameRepository, systemRepository);
+
+if (import.meta.env.DEV) {
+  window.__STORE__ = appStore;
+}
 
 /**
  * Provider component with event listeners

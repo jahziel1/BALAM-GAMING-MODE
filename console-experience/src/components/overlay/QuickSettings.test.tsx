@@ -22,29 +22,7 @@ describe('QuickSettings Component', () => {
   });
 
   it('does not render when isOpen is false', () => {
-    const { container } = render(
-      <QuickSettings
-        isOpen={false}
-        onClose={() => {}}
-        focusedSliderIndex={0}
-        onFocusChange={() => {}}
-      />
-    );
+    const { container } = render(<QuickSettings isOpen={false} onClose={() => {}} />);
     expect(container.firstChild).toBeNull();
-  });
-
-  it('registers adjust handler when provided', () => {
-    const handleRegister = vi.fn();
-    render(
-      <QuickSettings
-        isOpen={false}
-        onClose={() => {}}
-        focusedSliderIndex={0}
-        onFocusChange={() => {}}
-        onRegisterAdjustHandler={handleRegister}
-      />
-    );
-    // Handler should be registered even when not open
-    expect(handleRegister).toHaveBeenCalled();
   });
 });

@@ -138,6 +138,7 @@ const TopBar: React.FC<TopBarProps> = ({
 
           {/* Volume Indicator */}
           <div
+            id="topbar-volume"
             className="status-item clickable"
             onClick={() => void handleVolumeClick()}
             onKeyDown={(e) => {
@@ -154,6 +155,7 @@ const TopBar: React.FC<TopBarProps> = ({
 
           {/* Network Indicator - Clickable to open WiFi panel */}
           <div
+            id="topbar-wifi"
             className="status-item clickable"
             onClick={() => onOpenWiFiPanel?.()}
             onKeyDown={(e) => {
@@ -187,6 +189,7 @@ const TopBar: React.FC<TopBarProps> = ({
 
           {/* Bluetooth Indicator - Clickable to open Bluetooth panel */}
           <div
+            id="topbar-bluetooth"
             className="status-item clickable"
             onClick={() => onOpenBluetoothPanel?.()}
             onKeyDown={(e) => {

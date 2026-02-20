@@ -274,7 +274,6 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
               </IconWrapper>
             }
             onClick={() => void handleResume()}
-            autoFocus
             fullWidth
           >
             Resume Game

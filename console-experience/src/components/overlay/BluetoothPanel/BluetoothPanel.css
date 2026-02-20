@@ -15,13 +15,17 @@
   transition: all var(--transition-fast);
 }
 
-.bluetooth-device:hover {
+.bluetooth-device:hover,
+.bluetooth-device:focus,
+.bluetooth-device:focus-visible {
+  outline: none;
   background: rgba(var(--color-primary-rgb), 0.1);
   border-color: var(--color-primary);
   box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow */
 }
 
-.bluetooth-device.focused {
+.bluetooth-device.focused,
+.bluetooth-device:focus {
   border-color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.15);
   box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.4); /* Blue glow dramático */

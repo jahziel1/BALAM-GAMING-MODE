@@ -80,7 +80,10 @@
   transition: all var(--transition-fast);
 }
 
-.wifi-network:hover {
+.wifi-network:hover,
+.wifi-network:focus,
+.wifi-network:focus-visible {
+  outline: none;
   background: rgba(var(--color-primary-rgb), 0.1);
   border-color: var(--color-primary);
   box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow */

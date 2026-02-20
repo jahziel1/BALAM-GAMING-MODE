@@ -17,6 +17,7 @@
 ///                                            Balam App reads
 /// ```
 mod etw_monitor;
+mod game_detector;
 mod ipc_server;
 mod service;
 

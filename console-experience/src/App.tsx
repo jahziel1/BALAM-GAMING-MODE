@@ -4,6 +4,20 @@ import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+// TypeScript interface for dev-mode window globals
+declare global {
+  interface Window {
+    __TOGGLE_WIFI__?: () => void;
+    __TOGGLE_BLUETOOTH__?: () => void;
+    __OPEN_EXPLORER__?: () => void;
+    __CLOSE_EXPLORER__?: () => void;
+    __OPEN_SETTINGS__?: () => void;
+    __CLOSE_SETTINGS__?: () => void;
+    __OPEN_POWER__?: () => void;
+    __CLOSE_POWER__?: () => void;
+  }
+}
+
 // Zustand stores
 import { useAppStore, useGameStore } from './application/providers/StoreProvider';
 import defaultCover from './assets/default_cover.png';
@@ -290,7 +304,6 @@ function App() {
   // ============================================================================
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleQuitRef = useRef<() => void>(() => {});
-  const quickSettingsAdjustRef = useRef<((direction: number) => void) | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleLaunchRawRef = useRef<(index: number) => void>(() => {});
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -304,10 +317,6 @@ function App() {
     setInGameMenuOpen,
     activeIndex,
     setActiveIndex,
-    sidebarIndex,
-    setSidebarIndex,
-    quickSettingsSliderIndex,
-    setQuickSettingsSliderIndex,
   } = useNavigation(
     filteredGamesForNav.length,
     carouselOffsets,
@@ -322,11 +331,7 @@ function App() {
     () => handleQuitRef.current(),
     activeRunningGame,
     isExplorerOpen,
-    (direction: number) => {
-      if (quickSettingsAdjustRef.current) {
-        quickSettingsAdjustRef.current(direction);
-      }
-    }
+    isSearchOpen
   );
 
   // ============================================================================
@@ -429,6 +434,7 @@ function App() {
   const anyOverlayOpen =
     overlay.leftSidebarOpen ||
     overlay.rightSidebarOpen ||
+    isSearchOpen ||
     isSettingsOpen ||
     isWiFiPanelOpen ||
     isBluetoothPanelOpen ||
@@ -527,8 +533,9 @@ function App() {
   }, [setFocusArea]);
 
   const handleKeyboardClose = useCallback(() => {
-    setFocusArea('HERO');
-  }, [setFocusArea]);
+    // Return to search context if search overlay is still open
+    setFocusArea(isSearchOpen ? 'SEARCH' : 'HERO');
+  }, [setFocusArea, isSearchOpen]);
 
   const handleKeyboardTextChange = useCallback((text: string) => {
     window.dispatchEvent(new CustomEvent('virtual-keyboard-text-change', { detail: text }));
@@ -636,6 +643,32 @@ function App() {
     };
   }, []);
 
+  // DEV-mode: expose toggle/open functions for E2E tests (local state overlays)
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      window.__TOGGLE_WIFI__ = () => setIsWiFiPanelOpen((prev) => !prev);
+      window.__TOGGLE_BLUETOOTH__ = () => setIsBluetoothPanelOpen((prev) => !prev);
+      window.__OPEN_EXPLORER__ = () => setIsExplorerOpen(true);
+      window.__CLOSE_EXPLORER__ = () => setIsExplorerOpen(false);
+      window.__OPEN_SETTINGS__ = () => setIsSettingsOpen(true);
+      window.__CLOSE_SETTINGS__ = () => setIsSettingsOpen(false);
+      window.__OPEN_POWER__ = () => setIsPowerModalOpen(true);
+      window.__CLOSE_POWER__ = () => setIsPowerModalOpen(false);
+    }
+    return () => {
+      if (import.meta.env.DEV) {
+        delete window.__TOGGLE_WIFI__;
+        delete window.__TOGGLE_BLUETOOTH__;
+        delete window.__OPEN_EXPLORER__;
+        delete window.__CLOSE_EXPLORER__;
+        delete window.__OPEN_SETTINGS__;
+        delete window.__CLOSE_SETTINGS__;
+        delete window.__OPEN_POWER__;
+        delete window.__CLOSE_POWER__;
+      }
+    };
+  }, []);
+
   // ============================================================================
   // DERIVED STATE
   // ============================================================================
@@ -680,10 +713,8 @@ function App() {
 
       <Sidebar
         isOpen={isSidebarOpen}
-        focusedIndex={sidebarIndex}
         onToggle={() => setSidebarOpen(!isSidebarOpen)}
         onAction={(id) => void handleSidebarAction(id)}
-        onFocusItem={setSidebarIndex}
       />
 
       <div className="app-container" data-focus-area={focusArea}>
@@ -759,11 +790,6 @@ function App() {
         onOpenQuickSettingsFromSettings={() => {
           setIsSettingsOpen(false);
           openRightSidebar();
-        }}
-        quickSettingsSliderIndex={quickSettingsSliderIndex}
-        onQuickSettingsFocusChange={setQuickSettingsSliderIndex}
-        onRegisterQuickSettingsAdjustHandler={(handler) => {
-          quickSettingsAdjustRef.current = handler;
         }}
         onOpenWiFiPanel={() => setIsWiFiPanelOpen(true)}
         onOpenBluetoothPanel={() => setIsBluetoothPanelOpen(true)}

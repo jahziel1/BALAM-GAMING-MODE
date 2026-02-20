@@ -39,7 +39,7 @@ const SystemOSD: React.FC<SystemOSDProps> = memo(({ type, value, isVisible }) =>
   };
 
   return (
-    <div className={`osd-container ${isExiting ? 'osd-exit' : ''}`}>
+    <div className={`osd-container ${isExiting ? 'osd-exit' : ''}`} data-testid="system-osd">
       <span className="osd-label">{type === 'volume' ? 'Volume' : 'Brightness'}</span>
       <div className="osd-pill">
         {renderIcon()}

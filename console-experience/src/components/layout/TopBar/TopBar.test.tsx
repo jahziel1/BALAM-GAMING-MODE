@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import TopBar from './TopBar';
 
+// Mock Tauri event API so TopBar's volume-changed listener doesn't crash in jsdom
+vi.mock('@tauri-apps/api/event', () => ({
+  listen: vi.fn().mockResolvedValue(vi.fn()),
+}));
+
 describe('TopBar Component', () => {
   beforeEach(() => {
     vi.useFakeTimers();

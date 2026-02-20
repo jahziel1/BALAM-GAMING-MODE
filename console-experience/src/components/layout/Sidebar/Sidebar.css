@@ -125,7 +125,9 @@
   box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); /* Blue glow on hover */
 }
 
-.menu-item.focused {
+.menu-item.focused,
+.menu-item:focus {
+  outline: none;
   background: rgba(var(--color-accent-rgb), 0.15); /* ORANGE background */
   color: var(--color-accent) !important; /* ORANGE text */
   border-left-color: var(--color-accent); /* ORANGE border */
@@ -134,7 +136,8 @@
   box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.4); /* ORANGE glow - dramatic */
 }
 
-.menu-item.focused .icon {
+.menu-item.focused .icon,
+.menu-item:focus .icon {
   color: var(--color-accent); /* ORANGE icon */
   filter: drop-shadow(0 0 8px rgba(var(--color-accent-rgb), 0.6)); /* ORANGE glow */
   animation: pulse 2s ease-in-out infinite; /* Pulse animation */

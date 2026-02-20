@@ -11,7 +11,7 @@ import {
   Settings as SettingsIcon,
   Zap,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useAppStore } from '../../../application/providers/StoreProvider';
 import ButtonHint from '../../ui/ButtonHint/ButtonHint';
@@ -53,6 +53,35 @@ const CATEGORIES: CategoryItem[] = [
   { id: 'about', icon: <Info size={20} />, label: 'About' },
 ];
 
+interface SettingsCategoryButtonProps {
+  category: CategoryItem;
+  isActive: boolean;
+  onSelect: (id: SettingsCategory) => void;
+}
+
+const SettingsCategoryButton: React.FC<SettingsCategoryButtonProps> = ({
+  category,
+  isActive,
+  onSelect,
+}) => {
+  return (
+    <button
+      className={`settings-category ${isActive ? 'active' : ''}`}
+      onClick={() => onSelect(category.id)}
+      onFocus={() => onSelect(category.id)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(category.id);
+        }
+      }}
+    >
+      <span className="settings-category-icon">{category.icon}</span>
+      <span className="settings-category-label">{category.label}</span>
+    </button>
+  );
+};
+
 /**
  * Settings Panel - Application configuration
  *
@@ -75,7 +104,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   onOpenQuickSettings,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<SettingsCategory>('general');
-  const [focusedIndex, setFocusedIndex] = useState(0);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const { settings, updateSetting, resetSettings } = useAppStore();
@@ -95,40 +123,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   // Version info
   const version = '0.1.0';
-
-  // Keyboard navigation
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'Escape':
-          e.preventDefault();
-          onClose();
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setFocusedIndex((prev) => Math.max(0, prev - 1));
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          setFocusedIndex((prev) => Math.min(CATEGORIES.length - 1, prev + 1));
-          break;
-        case 'ArrowLeft':
-        case 'ArrowRight':
-          e.preventDefault();
-          // Navigate between category list and content (future enhancement)
-          break;
-        case 'Enter':
-          e.preventDefault();
-          setSelectedCategory(CATEGORIES[focusedIndex].id);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, focusedIndex, onClose]);
 
   // Reset all settings to defaults
   const handleResetConfirmed = () => {
@@ -475,22 +469,18 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         side="left"
         width="900px"
         footer={footer}
+        initialFocusSelector=".settings-category"
       >
         <div className="settings-container">
           {/* Category Sidebar */}
           <div className="settings-sidebar">
-            {CATEGORIES.map((category, index) => (
-              <button
+            {CATEGORIES.map((category) => (
+              <SettingsCategoryButton
                 key={category.id}
-                className={`settings-category ${selectedCategory === category.id ? 'active' : ''} ${focusedIndex === index ? 'focused' : ''}`}
-                onClick={() => {
-                  setSelectedCategory(category.id);
-                  setFocusedIndex(index);
-                }}
-              >
-                <span className="settings-category-icon">{category.icon}</span>
-                <span className="settings-category-label">{category.label}</span>
-              </button>
+                category={category}
+                isActive={selectedCategory === category.id}
+                onSelect={setSelectedCategory}
+              />
             ))}
           </div>
 

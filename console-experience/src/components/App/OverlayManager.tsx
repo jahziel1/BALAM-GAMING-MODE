@@ -45,10 +45,7 @@ interface OverlayManagerProps {
   onCloseSettings: () => void;
   onOpenQuickSettingsFromSettings?: () => void;
 
-  // Quick Settings (NEW: managed by app-store, but still needs focus/adjust handlers for gamepad)
-  quickSettingsSliderIndex: number;
-  onQuickSettingsFocusChange: (index: number) => void;
-  onRegisterQuickSettingsAdjustHandler: (handler: (direction: number) => void) => void;
+  // Quick Settings (managed by app-store)
   onOpenWiFiPanel?: () => void;
   onOpenBluetoothPanel?: () => void;
 
@@ -128,9 +125,6 @@ export function OverlayManager({
   isSettingsOpen,
   onCloseSettings,
   onOpenQuickSettingsFromSettings,
-  quickSettingsSliderIndex,
-  onQuickSettingsFocusChange,
-  onRegisterQuickSettingsAdjustHandler,
   onOpenWiFiPanel,
   onOpenBluetoothPanel,
   isWiFiPanelOpen,
@@ -222,10 +216,7 @@ export function OverlayManager({
       <QuickSettings
         isOpen={overlay.rightSidebarOpen}
         onClose={closeRightSidebar}
-        focusedSliderIndex={quickSettingsSliderIndex}
-        onFocusChange={onQuickSettingsFocusChange}
         controllerType={controllerType}
-        onRegisterAdjustHandler={onRegisterQuickSettingsAdjustHandler}
         onOpenWiFiPanel={onOpenWiFiPanel}
         onOpenBluetoothPanel={onOpenBluetoothPanel}
       />

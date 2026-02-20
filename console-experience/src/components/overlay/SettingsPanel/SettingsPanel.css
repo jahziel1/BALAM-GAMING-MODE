@@ -52,8 +52,13 @@
   box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.3); /* Glow siempre visible */
 }
 
-.settings-category.focused {
-  border-color: var(--color-primary, var(--color-primary));
+.settings-category:focus-visible,
+.settings-category:focus {
+  outline: none;
+  background: rgba(var(--color-accent-rgb), 0.15);
+  border-color: var(--color-accent);
+  color: var(--color-text-primary, #fff);
+  box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.3);
 }
 
 .settings-category-icon {

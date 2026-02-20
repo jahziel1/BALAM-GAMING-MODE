@@ -28,10 +28,7 @@ import { OverlayPanel } from './OverlayPanel/OverlayPanel';
 interface QuickSettingsProps {
   isOpen: boolean;
   onClose: () => void;
-  focusedSliderIndex: number;
-  onFocusChange: (index: number) => void;
   controllerType?: 'XBOX' | 'PLAYSTATION' | 'SWITCH' | 'KEYBOARD' | 'GENERIC';
-  onRegisterAdjustHandler?: (handler: (direction: number) => void) => void;
   onOpenWiFiPanel?: () => void;
   onOpenBluetoothPanel?: () => void;
 }
@@ -106,10 +103,7 @@ const ERROR_MESSAGES: Record<string, { message: string; hint: string }> = {
 export const QuickSettings: React.FC<QuickSettingsProps> = ({
   isOpen,
   onClose,
-  focusedSliderIndex,
-  onFocusChange,
   controllerType = 'KEYBOARD',
-  onRegisterAdjustHandler,
   onOpenWiFiPanel,
   onOpenBluetoothPanel,
 }) => {
@@ -260,104 +254,8 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
     [showErrorToast]
   );
 
-  // Adjust focused slider value with LEFT/RIGHT (gamepad D-Pad)
-  // Moved before useEffect to fix react-hooks/immutability
-  const handleRadixSliderAdjust = useCallback(
-    (direction: number) => {
-      // nearestRate must be computed inside since it depends on state
-      const nearestRate = supportedRates.reduce((prev, curr) =>
-        Math.abs(curr - refreshRate) < Math.abs(prev - refreshRate) ? curr : prev
-      );
-
-      switch (focusedSliderIndex) {
-        case 0: // Volume
-          {
-            const newValue = Math.max(0, Math.min(100, volume + direction * 5));
-            void handleVolumeChange(newValue);
-          }
-          break;
-        case 1: // Brightness
-          if (supportsBrightness) {
-            const newValue = Math.max(0, Math.min(100, brightness + direction * 5));
-            void handleBrightnessChange(newValue);
-          }
-          break;
-        case 2: // Refresh Rate
-          {
-            const currentIndex = supportedRates.indexOf(nearestRate);
-            const newIndex = Math.max(
-              0,
-              Math.min(supportedRates.length - 1, currentIndex + direction)
-            );
-            void handleRefreshRateChange(supportedRates[newIndex]);
-          }
-          break;
-        case 3: // TDP
-          if (supportsTDP) {
-            const newValue = Math.max(
-              tdpConfig.min_watts,
-              Math.min(tdpConfig.max_watts, tdp + direction)
-            );
-            void handleTDPChange(newValue);
-          }
-          break;
-      }
-    },
-    [
-      focusedSliderIndex,
-      volume,
-      brightness,
-      refreshRate,
-      tdp,
-      supportedRates,
-      tdpConfig,
-      supportsBrightness,
-      supportsTDP,
-      handleVolumeChange,
-      handleBrightnessChange,
-      handleRefreshRateChange,
-      handleTDPChange,
-    ]
-  );
-
-  // Register slider adjustment handler with parent
-  useEffect(() => {
-    if (onRegisterAdjustHandler) {
-      onRegisterAdjustHandler(handleRadixSliderAdjust);
-    }
-  }, [onRegisterAdjustHandler, handleRadixSliderAdjust]);
-
-  // Keyboard/Gamepad handling
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'Escape':
-          onClose();
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          onFocusChange(Math.max(0, focusedSliderIndex - 1));
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          onFocusChange(Math.min(3, focusedSliderIndex + 1));
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          handleRadixSliderAdjust(-1);
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          handleRadixSliderAdjust(1);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, focusedSliderIndex, onClose, onFocusChange, handleRadixSliderAdjust]);
+  // Manual DOM focus navigation — moveFocusInOverlay() from useNavigation handles UP/DOWN.
+  // Radix Slider's built-in keyboard handlers process LEFT/RIGHT Arrow keys to adjust values.
 
   if (!isOpen) return null;
 
@@ -458,7 +356,6 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
           </IconWrapper>
         }
         unit="%"
-        isFocused={focusedSliderIndex === 0}
       />
 
       {/* Audio Output Devices */}
@@ -495,7 +392,6 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
           </IconWrapper>
         }
         unit="%"
-        isFocused={focusedSliderIndex === 1}
         disabled={!supportsBrightness}
       />
 
@@ -512,7 +408,6 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
           </IconWrapper>
         }
         unit="Hz"
-        isFocused={focusedSliderIndex === 2}
       />
 
       <RadixSlider
@@ -528,7 +423,6 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
           </IconWrapper>
         }
         unit="W"
-        isFocused={focusedSliderIndex === 3}
         disabled={!supportsTDP}
       />
     </OverlayPanel>

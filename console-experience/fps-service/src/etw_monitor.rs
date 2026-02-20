@@ -164,10 +164,32 @@ impl EtwMonitor {
         Ok(())
     }
 
-    /// Get current FPS
-    pub fn get_fps(&self) -> f32 {
+    /// Get current FPS and active game PID
+    pub fn get_fps(&self) -> (f32, Option<u32>) {
         self.update_fps();
-        *self.current_fps.lock()
+        (*self.current_fps.lock(), self.get_active_game_pid())
+    }
+
+    /// Get PID of the game with highest FPS (active game)
+    fn get_active_game_pid(&self) -> Option<u32> {
+        let map = FRAME_TIMES_PER_PROCESS.lock();
+        let now = std::time::Instant::now();
+        let one_second_ago = now - std::time::Duration::from_secs(1);
+
+        let mut max_fps = 0.0f32;
+        let mut max_fps_pid = None;
+
+        for (&pid, times) in map.iter() {
+            let recent_frames = times.iter().filter(|&&time| time > one_second_ago).count();
+            let fps = recent_frames as f32;
+
+            if fps > max_fps && (10.0..=240.0).contains(&fps) {
+                max_fps = fps;
+                max_fps_pid = Some(pid);
+            }
+        }
+
+        max_fps_pid
     }
 
     /// Stop any existing trace session with our name

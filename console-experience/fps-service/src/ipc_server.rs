@@ -10,16 +10,29 @@ use windows::Win32::Foundation::*;
 use windows::Win32::Storage::FileSystem::*;
 use windows::Win32::System::Pipes::*;
 
-/// FPS data structure
+/// Game state information
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GameState {
+    pub pid: u32,
+    pub name: String,
+    pub dx_version: u32,
+    pub has_fso: bool,
+    pub is_compatible_topmost: bool,
+}
+
+/// FPS data structure (expanded with game info)
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct FpsData {
     pub fps: f32,
+    pub game_state: Option<GameState>, // None if no game running
 }
 
 /// IPC Server for FPS sharing
 pub struct IpcServer {
     /// Current FPS value
     current_fps: Arc<Mutex<f32>>,
+    /// Current active game PID (if any)
+    active_game_pid: Arc<Mutex<Option<u32>>>,
     /// Server running flag
     running: Arc<Mutex<bool>>,
 }
@@ -29,6 +42,7 @@ impl IpcServer {
     pub fn new() -> WinResult<Self> {
         Ok(Self {
             current_fps: Arc::new(Mutex::new(0.0)),
+            active_game_pid: Arc::new(Mutex::new(None)),
             running: Arc::new(Mutex::new(false)),
         })
     }
@@ -37,13 +51,14 @@ impl IpcServer {
     pub fn start(&mut self) -> WinResult<()> {
         *self.running.lock() = true;
         let current_fps = self.current_fps.clone();
+        let active_game_pid = self.active_game_pid.clone();
         let running = self.running.clone();
 
         // Spawn thread
         std::thread::Builder::new()
             .name("IPC Server".to_string())
             .spawn(move || {
-                let _ = run_pipe_server(current_fps, running);
+                let _ = run_pipe_server(current_fps, active_game_pid, running);
             })
             .map_err(|_| windows::core::Error::from_win32())?;
 
@@ -57,14 +72,20 @@ impl IpcServer {
         Ok(())
     }
 
-    /// Update FPS value
-    pub fn update_fps(&mut self, fps: f32) {
+    /// Update FPS value and active game PID
+    pub fn update_fps(&mut self, fps: f32, active_pid: Option<u32>) {
         *self.current_fps.lock() = fps;
+        *self.active_game_pid.lock() = active_pid;
     }
 }
 
 /// Run named pipe server loop
-fn run_pipe_server(current_fps: Arc<Mutex<f32>>, running: Arc<Mutex<bool>>) -> WinResult<()> {
+fn run_pipe_server(
+    current_fps: Arc<Mutex<f32>>,
+    active_game_pid: Arc<Mutex<Option<u32>>>,
+    running: Arc<Mutex<bool>>,
+) -> WinResult<()> {
+    use crate::game_detector;
     use std::fs;
     use std::io::Write;
 
@@ -167,9 +188,22 @@ fn run_pipe_server(current_fps: Arc<Mutex<f32>>, running: Arc<Mutex<bool>>) -> W
 
             // No read needed - this is outbound only (server writes, client reads)
 
-            // Prepare response
+            // Prepare response with game info
             let fps = *current_fps.lock();
-            let data = FpsData { fps };
+            let pid_opt = *active_game_pid.lock();
+
+            // Get game info if there's an active game
+            let game_state = pid_opt.and_then(|pid| {
+                game_detector::get_game_info(pid).map(|info| GameState {
+                    pid: info.pid,
+                    name: info.name,
+                    dx_version: info.dx_version,
+                    has_fso: info.has_fso,
+                    is_compatible_topmost: info.is_compatible_topmost,
+                })
+            });
+
+            let data = FpsData { fps, game_state };
             let json = serde_json::to_string(&data).unwrap_or_default();
             let response = json.as_bytes();
 

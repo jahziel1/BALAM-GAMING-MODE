@@ -147,6 +147,7 @@ export const HeroSection = memo(function HeroSection({
   return (
     <div
       className={`hero-section ${focusArea === 'HERO' ? 'hero-focused' : ''}`}
+      data-testid="hero-section"
       onMouseEnter={() => onSetFocusArea('HERO')}
     >
       {/* Background Image */}

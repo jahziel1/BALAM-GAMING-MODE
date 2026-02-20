@@ -2,7 +2,7 @@ import './WiFiPanel.css';
 
 import { invoke } from '@tauri-apps/api/core';
 import { Lock, Wifi, WifiOff } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useToast } from '@/hooks/useToast';
 
@@ -24,6 +24,74 @@ interface WiFiNetwork {
   is_connected: boolean;
 }
 
+const getSignalBars = (dbm: number): number => {
+  if (dbm >= -50) return 4;
+  if (dbm >= -60) return 3;
+  if (dbm >= -70) return 2;
+  if (dbm >= -80) return 1;
+  return 0;
+};
+
+const getSignalColor = (dbm: number): string => {
+  const bars = getSignalBars(dbm);
+  if (bars >= 3) return 'var(--color-success)';
+  if (bars >= 2) return 'var(--color-warning)';
+  return 'var(--color-error)';
+};
+
+interface WiFiNetworkItemProps {
+  network: WiFiNetwork;
+  isConnecting: boolean;
+  onConnect: (network: WiFiNetwork) => void;
+}
+
+const WiFiNetworkItem: React.FC<WiFiNetworkItemProps> = ({ network, isConnecting, onConnect }) => {
+  return (
+    <div
+      className={`wifi-network ${network.is_connected ? 'connected' : ''} ${isConnecting ? 'connecting' : ''}`}
+      role="option"
+      tabIndex={0}
+      aria-selected={network.is_connected}
+      aria-label={`${network.ssid}${network.is_connected ? ', connected' : ''}${network.security !== 'Open' ? ', secured' : ', open'}`}
+      onClick={() => onConnect(network)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onConnect(network);
+        }
+      }}
+    >
+      <div className="wifi-network-header">
+        <Wifi
+          className="wifi-icon"
+          size={20}
+          style={{ color: getSignalColor(network.signal_strength) }}
+        />
+        <span className="wifi-ssid">{network.ssid}</span>
+        {network.security !== 'Open' && <Lock className="wifi-lock" size={16} />}
+        {network.is_connected ? <span className="wifi-badge">Connected</span> : null}
+      </div>
+      <div className="wifi-network-meta">
+        <div className="wifi-signal">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className={`wifi-bar ${i < getSignalBars(network.signal_strength) ? 'active' : ''}`}
+              style={{
+                backgroundColor:
+                  i < getSignalBars(network.signal_strength)
+                    ? getSignalColor(network.signal_strength)
+                    : 'var(--color-surface-secondary)',
+              }}
+            />
+          ))}
+        </div>
+        <span className="wifi-security">{network.security}</span>
+      </div>
+    </div>
+  );
+};
+
 /**
  * WiFi Panel - Network management overlay
  *
@@ -38,13 +106,11 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
   controllerType = 'KEYBOARD',
 }) => {
   const [networks, setNetworks] = useState<WiFiNetwork[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState<WiFiNetwork | null>(null);
-  const networkRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Toast notifications
   const { success, error: showErrorToast } = useToast();
@@ -55,13 +121,6 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
       setErrorMessage(null);
       const nets = await invoke<WiFiNetwork[]>('scan_wifi_networks');
       setNetworks(nets);
-      // Reset selection if out of bounds
-      setSelectedIndex((current) => {
-        if (nets.length > 0 && current >= nets.length) {
-          return 0;
-        }
-        return current;
-      });
     } catch {
       const errorMsg = 'Failed to scan WiFi networks';
       const hint = 'Make sure WiFi adapter is enabled and working';
@@ -77,18 +136,6 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
       void loadNetworks();
     }
   }, [isOpen, loadNetworks]);
-
-  // Auto-scroll to selected network for keyboard/gamepad navigation
-  useEffect(() => {
-    const selectedElement = networkRefs.current[selectedIndex];
-    if (selectedElement) {
-      selectedElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'nearest',
-      });
-    }
-  }, [selectedIndex]);
 
   const handleConnect = useCallback(
     async (network: WiFiNetwork) => {
@@ -165,78 +212,6 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
     [selectedNetwork, success, showErrorToast, loadNetworks]
   );
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle keys if WiFi panel is open
-      if (!isOpen) return;
-
-      switch (e.key) {
-        case 'Escape':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          onClose();
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          setSelectedIndex((prev) => Math.max(0, prev - 1));
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          setSelectedIndex((prev) => {
-            // Get current networks length from state
-            const maxIndex = networks.length - 1;
-            return Math.min(maxIndex, prev + 1);
-          });
-          break;
-        case 'Enter':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          setSelectedIndex((currentIndex) => {
-            // Use current index to get network
-            if (networks[currentIndex]) {
-              void handleConnect(networks[currentIndex]);
-            }
-            return currentIndex;
-          });
-          break;
-        case 'r':
-        case 'R':
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          void loadNetworks();
-          break;
-      }
-    };
-
-    // Use capture phase to intercept events BEFORE other handlers
-    window.addEventListener('keydown', handleKeyDown, { capture: true });
-    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isOpen, networks, onClose, handleConnect, loadNetworks]);
-
-  const getSignalBars = (dbm: number): number => {
-    if (dbm >= -50) return 4;
-    if (dbm >= -60) return 3;
-    if (dbm >= -70) return 2;
-    if (dbm >= -80) return 1;
-    return 0;
-  };
-
-  const getSignalColor = (dbm: number): string => {
-    const bars = getSignalBars(dbm);
-    if (bars >= 3) return 'var(--color-success)';
-    if (bars >= 2) return 'var(--color-warning)';
-    return 'var(--color-error)';
-  };
-
   const footer = (
     <div className="wifi-footer">
       <ButtonHint action="BACK" type={controllerType} label="Close" />
@@ -283,57 +258,13 @@ export const WiFiPanel: React.FC<WiFiPanelProps> = ({
 
     return (
       <div className="wifi-networks" role="listbox" aria-label="Available networks">
-        {networks.map((network, index) => (
-          <div
+        {networks.map((network) => (
+          <WiFiNetworkItem
             key={network.ssid}
-            ref={(el) => {
-              networkRefs.current[index] = el;
-            }}
-            className={`wifi-network ${index === selectedIndex ? 'focused' : ''} ${network.is_connected ? 'connected' : ''} ${isConnecting ? 'connecting' : ''}`}
-            role="option"
-            tabIndex={0}
-            aria-selected={network.is_connected}
-            aria-label={`${network.ssid}${network.is_connected ? ', connected' : ''}${network.security !== 'Open' ? ', secured' : ', open'}`}
-            onClick={() => {
-              setSelectedIndex(index);
-              void handleConnect(network);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelectedIndex(index);
-                void handleConnect(network);
-              }
-            }}
-          >
-            <div className="wifi-network-header">
-              <Wifi
-                className="wifi-icon"
-                size={20}
-                style={{ color: getSignalColor(network.signal_strength) }}
-              />
-              <span className="wifi-ssid">{network.ssid}</span>
-              {network.security !== 'Open' && <Lock className="wifi-lock" size={16} />}
-              {network.is_connected ? <span className="wifi-badge">Connected</span> : null}
-            </div>
-            <div className="wifi-network-meta">
-              <div className="wifi-signal">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`wifi-bar ${i < getSignalBars(network.signal_strength) ? 'active' : ''}`}
-                    style={{
-                      backgroundColor:
-                        i < getSignalBars(network.signal_strength)
-                          ? getSignalColor(network.signal_strength)
-                          : 'var(--color-surface-secondary)',
-                    }}
-                  />
-                ))}
-              </div>
-              <span className="wifi-security">{network.security}</span>
-            </div>
-          </div>
+            network={network}
+            isConnecting={isConnecting}
+            onConnect={(network) => void handleConnect(network)}
+          />
         ))}
       </div>
     );
