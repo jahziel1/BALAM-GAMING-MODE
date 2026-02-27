@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
+import { invoke } from '@tauri-apps/api/core';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -156,7 +157,7 @@ describe('useNavigation Behavioral Tests', () => {
   });
 
   describe('In-Game Menu Logic', () => {
-    it('should open In-Game Menu when BACK is pressed and a game is running', () => {
+    it('should toggle native overlay when BACK is pressed and a game is running', () => {
       const activeRunningGame = { id: '1', game: { title: 'Test Game' } };
       setupHook({ activeRunningGame });
 
@@ -164,7 +165,10 @@ describe('useNavigation Behavioral Tests', () => {
         navigationCallback({ action: NavigationAction.BACK });
       });
 
-      expect(mockOpenLeftSidebar).toHaveBeenCalled();
+      // With a game running the BACK action toggles the native overlay window,
+      // it does NOT open the left sidebar (that was the old pre-overlay behaviour).
+      expect(invoke).toHaveBeenCalledWith('toggle_game_overlay');
+      expect(mockOpenLeftSidebar).not.toHaveBeenCalled();
     });
 
     it('BACK when InGameMenu is open closes it and hides window', () => {

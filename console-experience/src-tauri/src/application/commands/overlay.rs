@@ -74,10 +74,9 @@ pub async fn show_game_overlay(app: AppHandle) -> Result<OverlayConfig, String> 
 /// Does not unload DLL to avoid game crashes.
 #[tauri::command]
 pub async fn hide_game_overlay(app: AppHandle) -> Result<(), String> {
-    // Try to hide TOPMOST overlay (safe if not present)
-    if let Some(_window) = app.get_webview_window("overlay") {
-        let strategy = OverlayMethod::TopMost(crate::adapters::overlay::topmost_overlay::TopMostOverlay::new());
-        strategy.hide()?;
+    // Hide TOPMOST overlay window (safe if not present)
+    if let Some(window) = app.get_webview_window("overlay") {
+        window.hide().map_err(|e| format!("Failed to hide overlay: {}", e))?;
     }
 
     // TODO: Send IPC to DLL overlay to hide (Phase 7)
@@ -85,15 +84,27 @@ pub async fn hide_game_overlay(app: AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// Show the main window (used when returning to home screen after a game session)
+#[tauri::command]
+pub async fn show_main_window(app: AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("main") {
+        window.show().map_err(|e| format!("Failed to show main window: {}", e))?;
+        window.set_focus().map_err(|e| format!("Failed to focus main window: {}", e))?;
+    }
+    Ok(())
+}
+
 /// Toggle overlay visibility
 ///
 /// Shows overlay if hidden, hides if shown.
+/// Creates TOPMOST overlay window without requiring FPS Service detection.
 #[tauri::command]
 pub async fn toggle_game_overlay(app: AppHandle) -> Result<OverlayConfig, String> {
     // Check if overlay window exists
     if let Some(window) = app.get_webview_window("overlay") {
         // TOPMOST overlay exists
         if window.is_visible().unwrap_or(false) {
+            // Hide overlay
             hide_game_overlay(app).await?;
             Ok(OverlayConfig {
                 visible: false,
@@ -102,11 +113,28 @@ pub async fn toggle_game_overlay(app: AppHandle) -> Result<OverlayConfig, String
                 click_through: false,
             })
         } else {
-            show_game_overlay(app).await
+            // Show existing overlay and give it OS focus so WebView2 stays active.
+            // Without focus, Chromium suspends JS execution when the game occludes the window.
+            window.show().map_err(|e| format!("Failed to show overlay: {}", e))?;
+            window.set_focus().map_err(|e| format!("Failed to focus overlay: {}", e))?;
+            Ok(OverlayConfig {
+                visible: true,
+                overlay_type: "TopMost".to_string(),
+                opacity: 0.98,
+                click_through: false,
+            })
         }
     } else {
-        // No overlay window - show it
-        show_game_overlay(app).await
+        // No overlay window - create it using TOPMOST strategy (no FPS Service needed)
+        let strategy = OverlayMethod::TopMost(topmost_overlay::TopMostOverlay::new());
+        strategy.show(&app)?;
+
+        Ok(OverlayConfig {
+            visible: true,
+            overlay_type: "TopMost".to_string(),
+            opacity: 0.98,
+            click_through: false,
+        })
     }
 }
 

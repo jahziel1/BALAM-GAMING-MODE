@@ -30,6 +30,7 @@
 import './InGameMenu.css';
 
 import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Loader2, Play, Settings, X } from 'lucide-react';
 import { memo, useEffect, useState } from 'react';
@@ -60,8 +61,77 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
   const [isFpsLoading, setIsFpsLoading] = useState(true);
 
-  const isOpen = overlay.leftSidebarOpen;
-  const activeGame = game.activeRunningGame;
+  // In overlay window, fetch active game from backend (no shared Zustand store)
+  const isOverlayWindow = getCurrentWindow().label === 'overlay';
+  const [overlayActiveGame, setOverlayActiveGame] = useState<typeof game.activeRunningGame>(null);
+
+  const fetchOverlayGame = () => {
+    invoke<typeof game.activeRunningGame>('get_active_game')
+      .then((g) => {
+        setOverlayActiveGame(g);
+      })
+      .catch((_e: unknown) => {
+        /* ignore fetch errors */
+      });
+  };
+
+  useEffect(() => {
+    if (!isOverlayWindow) return;
+    // Fetch on mount
+    fetchOverlayGame();
+    // Re-fetch every time the overlay window becomes visible
+    const handleVisibility = () => {
+      if (!document.hidden) fetchOverlayGame();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOverlayWindow]);
+
+  // In overlay window: hide when game ends externally (game crashed, exited normally, etc.)
+  useEffect(() => {
+    if (!isOverlayWindow) return;
+    const unlisten = listen('game-ended', () => {
+      void invoke('hide_game_overlay');
+      void invoke('show_main_window');
+    });
+    return () => {
+      void unlisten.then((fn) => fn());
+    };
+  }, [isOverlayWindow]);
+
+  // Rust-Native navigation: focus the button that the Rust gamepad thread selected.
+  // This keeps visual focus in sync when WebView JS is alive, and provides the
+  // correct DOM activeElement so CONFIRM (A button via nav event) can .click() it.
+  useEffect(() => {
+    if (!isOverlayWindow) return;
+    const unlisten = listen<number>('overlay-focus-changed', (e) => {
+      document.getElementById(`overlay-btn-${e.payload}`)?.focus();
+    });
+    return () => {
+      void unlisten.then((fn) => fn());
+    };
+  }, [isOverlayWindow]);
+
+  // Rust-Native actions: Quick Settings and Close Game triggered from Rust gamepad thread.
+  useEffect(() => {
+    if (!isOverlayWindow) return;
+    const unlisten = listen<string>('overlay-action', (e) => {
+      if (e.payload === 'OPEN_QUICK_SETTINGS') {
+        openRightSidebar();
+      } else if (e.payload === 'CLOSE_GAME_REQUEST') {
+        setShowCloseConfirm(true);
+      }
+    });
+    return () => {
+      void unlisten.then((fn) => fn());
+    };
+  }, [isOverlayWindow, openRightSidebar]);
+
+  // In overlay window, always render the panel — don't depend on Zustand leftSidebarOpen
+  // (which starts false and requires an async useEffect to become true)
+  const isOpen = isOverlayWindow ? true : overlay.leftSidebarOpen;
+  const activeGame = isOverlayWindow ? overlayActiveGame : game.activeRunningGame;
   const isQuickSettingsOpen = overlay.rightSidebarOpen;
 
   // Performance metrics (real-time FPS, GPU temp, etc.)
@@ -79,12 +149,21 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   /**
    * Resume game handler
    * Closes left sidebar and returns to game
+   * Context-aware: uses native overlay if in overlay window, otherwise uses Zustand
    */
   const handleResume = async () => {
-    await invoke('log_message', { message: '🔴 handleResume called - hiding window' });
-    console.log('🔴 handleResume called - hiding window');
-    closeLeftSidebar();
-    await getCurrentWindow().hide();
+    await invoke('log_message', { message: '🔴 handleResume called' });
+
+    if (isOverlayWindow) {
+      // In overlay window: close native overlay
+      await invoke('log_message', { message: '🔴 Closing native overlay' });
+      await invoke('toggle_game_overlay');
+    } else {
+      // In main window: close sidebar and hide
+      await invoke('log_message', { message: '🔴 Closing sidebar in MAIN' });
+      closeLeftSidebar();
+      await getCurrentWindow().hide();
+    }
   };
 
   /**
@@ -108,45 +187,16 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   };
 
   const handleCloseGameConfirmed = async () => {
-    // Send logs to backend terminal so we can see them during gameplay
-    await invoke('log_message', { message: '🔴 FRONTEND STEP 1: handleCloseGameConfirmed called' });
-    console.log('🔴 STEP 1: handleCloseGameConfirmed called');
-    console.log('activeGame:', activeGame);
+    await invoke('log_message', { message: '🔴 handleCloseGameConfirmed called' });
 
-    if (!activeGame) {
-      await invoke('log_message', {
-        message: '❌ FRONTEND: No game is currently running (activeGame is null)',
-      });
-      console.warn('❌ No game is currently running');
-      return;
-    }
-
-    const gameId = activeGame.game.id;
-    const gamePid = activeGame.pid;
-    await invoke('log_message', {
-      message: `🔴 FRONTEND STEP 2: Got game ID: ${gameId}, PID: ${gamePid ?? 'null (Steam/Xbox)'}`,
-    });
-    console.log('🔴 STEP 2: Got game ID:', gameId, 'PID:', gamePid);
+    const gamePid = activeGame?.pid ?? 0;
 
     try {
-      await invoke('log_message', { message: '🔴 FRONTEND STEP 3: Setting isClosingGame = true' });
-      console.log('🔴 STEP 3: Setting isClosingGame = true');
       setIsClosingGame(true);
-
-      await invoke('log_message', { message: '🔴 FRONTEND STEP 4: Closing confirmation dialog' });
-      console.log('🔴 STEP 4: Closing confirmation dialog');
       setShowCloseConfirm(false);
 
-      // Use kill_game with PID (works for Steam with PID=0, Xbox, and native games)
-      await invoke('log_message', {
-        message: `🔴 FRONTEND STEP 5: Calling kill_game with PID: ${gamePid}`,
-      });
-      console.log('🔴 STEP 5: Calling kill_game with PID:', gamePid);
-
-      // kill_game handles PID=0 for Steam/Xbox games
-      await invoke('kill_game', {
-        pid: gamePid,
-      });
+      await invoke('log_message', { message: `🔴 Calling kill_game with PID: ${gamePid}` });
+      await invoke('kill_game', { pid: gamePid });
 
       await invoke('log_message', { message: '✅ FRONTEND STEP 6: Game killed successfully' });
       console.log('✅ STEP 6: Game killed successfully');
@@ -157,33 +207,27 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
       // Immediately clear the active game state (don't wait for watchdog)
       clearActiveGame();
 
-      await invoke('log_message', { message: '🔴 FRONTEND STEP 8: Closing all sidebars' });
-      console.log('🔴 STEP 8: Closing all sidebars');
-      closeAllSidebars();
+      await invoke('log_message', { message: '✅ Game killed - closing overlay' });
 
-      await invoke('log_message', { message: '🔴 FRONTEND STEP 9: Showing window' });
-      console.log('🔴 STEP 9: Showing window');
-      await getCurrentWindow().show();
-
-      await invoke('log_message', {
-        message: '✅ FRONTEND STEP 9: Close game completed successfully',
-      });
-      console.log('✅ STEP 9: Close game completed successfully');
+      if (isOverlayWindow) {
+        // In overlay: hide overlay and restore main window (home screen)
+        await invoke('hide_game_overlay');
+        await invoke('show_main_window');
+      } else {
+        // In main window: close sidebars and show dashboard
+        closeAllSidebars();
+        await getCurrentWindow().show();
+      }
     } catch (error) {
-      console.error('❌ ERROR IN STEP:', error);
-      console.error('Error details:', {
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      });
-
-      // Still close sidebar and show dashboard even if close failed
-      console.log('🔴 Attempting recovery: closing sidebars');
-      closeAllSidebars();
-
-      console.log('🔴 Attempting recovery: showing window');
-      await getCurrentWindow().show();
+      await invoke('log_message', { message: `❌ Error closing game: ${String(error)}` });
+      if (isOverlayWindow) {
+        await invoke('hide_game_overlay');
+        await invoke('show_main_window');
+      } else {
+        closeAllSidebars();
+        await getCurrentWindow().show();
+      }
     } finally {
-      console.log('🔴 STEP 10 (finally): Setting isClosingGame = false');
       setIsClosingGame(false);
     }
   };
@@ -193,9 +237,8 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   };
 
   const handleClose = () => {
-    // Only close if QuickSettings is NOT open
-    // Otherwise clicking on QuickSettings would close everything
-    if (!isQuickSettingsOpen) {
+    // Don't close if QuickSettings or confirm dialog are open
+    if (!isQuickSettingsOpen && !showCloseConfirm) {
       void handleResume();
     }
   };
@@ -208,8 +251,8 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
       side="left"
       width="30%"
       className="in-game-menu-panel"
-      enableBlur={!isQuickSettingsOpen}
-      enableBackground={!isQuickSettingsOpen}
+      enableBlur={!isOverlayWindow && !isQuickSettingsOpen}
+      enableBackground={!isOverlayWindow && !isQuickSettingsOpen}
       header={
         <div className="game-header">
           {activeGame?.game.image ? (
@@ -266,6 +309,7 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
       <section className="actions-section">
         <div className="menu-actions">
           <Button
+            id="overlay-btn-0"
             variant="primary"
             size="lg"
             icon={
@@ -280,6 +324,7 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
           </Button>
 
           <Button
+            id="overlay-btn-1"
             variant="secondary"
             size="lg"
             icon={
@@ -294,6 +339,7 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
           </Button>
 
           <Button
+            id="overlay-btn-2"
             variant="danger"
             size="lg"
             icon={

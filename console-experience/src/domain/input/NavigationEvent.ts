@@ -14,6 +14,7 @@ export enum NavigationAction {
   BACK = 'BACK',
   MENU = 'MENU',
   QUICK_SETTINGS = 'QUICK_SETTINGS',
+  TOGGLE_OVERLAY = 'TOGGLE_OVERLAY', // LB+RB+Start - Native overlay system
   // Virtual Keyboard shortcuts (Steam-style)
   VK_BACKSPACE = 'VK_BACKSPACE', // L Bumper
   VK_SHIFT = 'VK_SHIFT', // R Bumper

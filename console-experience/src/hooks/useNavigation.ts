@@ -12,7 +12,6 @@
  */
 
 import { invoke } from '@tauri-apps/api/core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 
 import { inputAdapter } from '../adapters/input/InputAdapter';
@@ -179,7 +178,8 @@ export const useNavigation = (
   onQuit: () => void,
   activeRunningGame: ActiveGame | null,
   isDisabled = false,
-  isSearchOpen = false
+  isSearchOpen = false,
+  isOverlayWindow = false
 ) => {
   const [state, dispatch] = useReducer(navReducer, initialState);
   const lastActionTime = useRef(0);
@@ -234,19 +234,66 @@ export const useNavigation = (
     (navAction: NavigationAction) => {
       const currentState = stateRef.current;
 
-      if (isDisabled && currentState.focusArea !== 'VIRTUAL_KEYBOARD') {
+      if (
+        isDisabled &&
+        currentState.focusArea !== 'VIRTUAL_KEYBOARD' &&
+        navAction !== NavigationAction.TOGGLE_OVERLAY
+      ) {
         return;
       }
       const now = Date.now();
       if (now - lastActionTime.current < 75) return;
       lastActionTime.current = now;
 
+      // --- Handle TOGGLE_OVERLAY (LB+RB+Start) ---
+      if (navAction === NavigationAction.TOGGLE_OVERLAY) {
+        const debugMsg = `🎮 TOGGLE_OVERLAY: activeRunningGame=${activeRunningGame ? 'YES' : 'NO'}`;
+        console.log(debugMsg);
+        void invoke('log_message', { message: debugMsg });
+
+        if (activeRunningGame) {
+          // With game running: toggle native overlay
+          console.log('🔍 Calling toggle_game_overlay...');
+          void invoke('log_message', { message: '🔍 Calling toggle_game_overlay...' });
+
+          invoke('toggle_game_overlay')
+            .then(() => {
+              console.log('✅ toggle_game_overlay SUCCESS');
+              void invoke('log_message', { message: '✅ toggle_game_overlay SUCCESS' });
+            })
+            .catch((err) => {
+              console.error('❌ toggle_game_overlay ERROR:', err);
+              void invoke('log_message', { message: `❌ toggle_game_overlay ERROR: ${err}` });
+            });
+        } else {
+          // Without game: show main window (wakeup)
+          void (async () => {
+            const { getCurrentWindow } = await import('@tauri-apps/api/window');
+            const win = getCurrentWindow();
+            const isVisible = await win.isVisible();
+            if (!isVisible) {
+              await win.show();
+              await win.setAlwaysOnTop(true);
+              await win.setFocus();
+            }
+          })();
+        }
+        return;
+      }
+
       // --- Handle BACK ---
+      // DEBUG: Log MENU action
+      if (navAction === NavigationAction.MENU) {
+        const debugMsg = `🔍 DEBUG MENU: activeRunningGame=${activeRunningGame ? 'YES' : 'NO'}, leftSidebarOpen=${overlay.leftSidebarOpen}`;
+        console.log(debugMsg);
+        void invoke('log_message', { message: debugMsg });
+      }
+
       if (
         navAction === NavigationAction.BACK ||
         (navAction === NavigationAction.MENU && activeRunningGame)
       ) {
-        const backMsg = `🎮 ${navAction} action - Left:${overlay.leftSidebarOpen} Right:${overlay.rightSidebarOpen}`;
+        const backMsg = `🎮 ${navAction} action - Left:${overlay.leftSidebarOpen} Right:${overlay.rightSidebarOpen}, activeRunningGame:${activeRunningGame ? 'YES' : 'NO'}`;
         console.log(backMsg);
         void invoke('log_message', { message: backMsg });
 
@@ -270,16 +317,21 @@ export const useNavigation = (
           dispatch({ type: 'SET_FOCUS', area: 'HERO' });
         } else if (currentState.isSidebarOpen) {
           dispatch({ type: 'SET_SIDEBAR', open: false });
-        } else if (overlay.leftSidebarOpen) {
-          const closeMsg = '🔴 Closing InGameMenu from BACK';
+        } else if (overlay.leftSidebarOpen && (activeRunningGame || isOverlayWindow)) {
+          // With game running OR inside overlay window: close native overlay window
+          const closeMsg = '🔴 Closing native overlay from BACK';
+          console.log(closeMsg);
+          void invoke('log_message', { message: closeMsg });
+          void invoke('toggle_game_overlay');
+        } else if (overlay.leftSidebarOpen && !activeRunningGame) {
+          // Without game in MAIN window: close sidebar
+          const closeMsg = '🔴 Closing sidebar from BACK';
           console.log(closeMsg);
           void invoke('log_message', { message: closeMsg });
           closeLeftSidebar();
-          if (!overlay.rightSidebarOpen) {
-            void getCurrentWindow().hide();
-          }
         } else if (activeRunningGame) {
-          openLeftSidebar();
+          // Use native overlay (same as Ctrl+Shift+Q)
+          void invoke('toggle_game_overlay');
         } else {
           dispatch({ type: 'SET_FOCUS', area: 'HERO' });
         }
@@ -312,14 +364,21 @@ export const useNavigation = (
 
         // If any overlay/sidebar is open, dispatch Enter to the currently focused element
         // isSearchOpenRef guards the race window where sidebar=false but search hasn't rendered yet
+        const dialogInDom = document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
         const anyOverlayOpen =
           currentState.isSidebarOpen ||
           isSearchOpenRef.current ||
           overlay.leftSidebarOpen ||
           overlay.rightSidebarOpen ||
-          document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
+          dialogInDom;
+
+        const activeEl = document.activeElement;
+        void invoke('log_message', {
+          message: `🎮 CONFIRM: focusArea=${currentState.focusArea} isSidebarOpen=${currentState.isSidebarOpen} leftSidebar=${overlay.leftSidebarOpen} rightSidebar=${overlay.rightSidebarOpen} dialogInDom=${dialogInDom} anyOverlayOpen=${anyOverlayOpen} activeElement=${activeEl?.tagName ?? 'null'}#${activeEl?.id ?? ''}[${activeEl?.className ?? ''}] text="${(activeEl as HTMLElement)?.innerText?.slice(0, 30) ?? ''}"`,
+        });
 
         if (anyOverlayOpen || currentState.focusArea === 'TOPBAR') {
+          void invoke('log_message', { message: `🎮 CONFIRM: dispatching Enter to activeElement` });
           inputAdapter.dispatchKeyEvent('Enter');
           return;
         }
@@ -395,6 +454,7 @@ export const useNavigation = (
           [NavigationAction.BACK]: '',
           [NavigationAction.MENU]: '',
           [NavigationAction.QUICK_SETTINGS]: '',
+          [NavigationAction.TOGGLE_OVERLAY]: '',
         };
         const key = keyMap[navAction];
         if (key) {
@@ -470,14 +530,27 @@ export const useNavigation = (
           document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
 
         if (anyOverlayOpen) {
+          // For range sliders, arrow keys change the value — keep dispatching ArrowLeft/Right.
+          // For everything else (buttons, links), move DOM focus so .click() can activate them.
+          const activeEl = document.activeElement as HTMLElement | null;
+          const isRangeInput = activeEl instanceof HTMLInputElement && activeEl.type === 'range';
+
           if (navAction === NavigationAction.UP) {
             moveFocusInOverlay('up');
           } else if (navAction === NavigationAction.DOWN) {
             moveFocusInOverlay('down');
           } else if (navAction === NavigationAction.LEFT) {
-            inputAdapter.dispatchKeyEvent('ArrowLeft');
+            if (isRangeInput) {
+              inputAdapter.dispatchKeyEvent('ArrowLeft');
+            } else {
+              moveFocusInOverlay('up');
+            }
           } else if (navAction === NavigationAction.RIGHT) {
-            inputAdapter.dispatchKeyEvent('ArrowRight');
+            if (isRangeInput) {
+              inputAdapter.dispatchKeyEvent('ArrowRight');
+            } else {
+              moveFocusInOverlay('down');
+            }
           }
           return;
         }
@@ -495,6 +568,7 @@ export const useNavigation = (
       itemCount,
       activeRunningGame,
       isDisabled,
+      isOverlayWindow,
       overlay,
       openLeftSidebar,
       closeLeftSidebar,
@@ -512,27 +586,9 @@ export const useNavigation = (
     return unsubscribe;
   }, [handleAction]);
 
-  // Listen for window focus to open in-game menu
-  useEffect(() => {
-    const unlistenPromise = getCurrentWindow().listen('tauri://focus', () => {
-      void (async () => {
-        if (!activeRunningGame) return;
-
-        const isVisible = await getCurrentWindow().isVisible();
-        if (!isVisible) {
-          console.log('⚠️ Window focused but not visible - skipping InGameMenu open');
-          return;
-        }
-
-        console.log('✅ Window focused and visible - opening InGameMenu');
-        openLeftSidebar();
-      })();
-    });
-
-    return () => {
-      void unlistenPromise.then((unlisten) => unlisten());
-    };
-  }, [activeRunningGame, openLeftSidebar]);
+  // REMOVED: Window focus listener for InGameMenu
+  // With native overlay system, the overlay window is created on-demand via toggle_game_overlay()
+  // The main window no longer needs to open InGameMenu on focus when a game is running
 
   // Stable callback references — dispatch from useReducer never changes
   const setFocusArea = useCallback((area: FocusArea) => dispatch({ type: 'SET_FOCUS', area }), []);
@@ -548,11 +604,17 @@ export const useNavigation = (
     setFocusArea,
     setSidebarOpen,
     setInGameMenuOpen: (open: boolean) => {
-      if (open) {
-        openLeftSidebar();
+      if (activeRunningGame) {
+        // With game running: use native overlay system
+        void invoke('toggle_game_overlay');
       } else {
-        closeLeftSidebar();
-        dispatch({ type: 'SET_FOCUS', area: 'HERO' });
+        // Without game: use sidebar in main window
+        if (open) {
+          openLeftSidebar();
+        } else {
+          closeLeftSidebar();
+          dispatch({ type: 'SET_FOCUS', area: 'HERO' });
+        }
       }
     },
     setQuickSettingsOpen: (open: boolean) => {

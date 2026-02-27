@@ -115,10 +115,10 @@ impl TopMostOverlay {
             return Ok(());
         }
 
-        // Create overlay window
+        // Create fullscreen overlay window
         let window = WebviewWindowBuilder::new(app, &self.window_label, WebviewUrl::App("/overlay".into()))
             .title("Balam Overlay")
-            .inner_size(1920.0, 1080.0) // Default 1080p, will adapt to screen
+            .fullscreen(true) // Fullscreen for immersive Steam Deck-like experience
             .resizable(false)
             .decorations(false)
             .transparent(true)
@@ -156,6 +156,7 @@ impl OverlayStrategy for TopMostOverlay {
             .ok_or("Overlay window not found")?;
 
         window.show().map_err(|e| format!("Failed to show overlay: {}", e))?;
+        window.set_focus().map_err(|e| format!("Failed to focus overlay: {}", e))?;
 
         // Re-apply TOPMOST in case window lost focus
         let hwnd = window.hwnd().map_err(|e| format!("Failed to get HWND: {}", e))?;

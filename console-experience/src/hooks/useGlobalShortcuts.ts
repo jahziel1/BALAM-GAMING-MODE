@@ -6,6 +6,7 @@ interface GlobalShortcutsProps {
   onToggleWiFi: () => void;
   onToggleBluetooth: () => void;
   onVolumeChange: (newVolume: number) => void;
+  onOpenKeyboardShortcuts?: () => void;
 }
 
 /**
@@ -21,16 +22,15 @@ export function useGlobalShortcuts({
   onToggleWiFi,
   onToggleBluetooth,
   onVolumeChange,
+  onOpenKeyboardShortcuts,
 }: GlobalShortcutsProps) {
-  // Global keyboard shortcuts (Ctrl+K, Ctrl+F)
+  // Global keyboard shortcuts (Ctrl+K, Ctrl+F, F1, ?)
   useEffect(() => {
     const handleGlobalKeyboard = (e: KeyboardEvent) => {
-      // Ctrl+K or Cmd+K (Mac)
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         onOpenSearch();
       }
-      // Ctrl+F or Cmd+F (Mac) - only if not in an input
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         const target = e.target as HTMLElement;
         const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
@@ -39,11 +39,15 @@ export function useGlobalShortcuts({
           onOpenSearch();
         }
       }
+      if ((e.key === 'F1' || e.key === '?') && onOpenKeyboardShortcuts) {
+        e.preventDefault();
+        onOpenKeyboardShortcuts();
+      }
     };
 
     window.addEventListener('keydown', handleGlobalKeyboard);
     return () => window.removeEventListener('keydown', handleGlobalKeyboard);
-  }, [onOpenSearch]);
+  }, [onOpenSearch, onOpenKeyboardShortcuts]);
 
   // Toggle Overlay (Global Shortcut)
   // REMOVED: toggle-overlay listener (obsolete)

@@ -50,11 +50,13 @@ use crate::application::commands::{
     haptic_navigation,
     // PiP commands
     hide_game_overlay,
+    show_main_window,
     hide_performance_pip,
     install_fps_service,
     is_bluetooth_available,
     is_game_whitelisted,
     is_haptic_supported,
+    get_active_game,
     is_nvml_available,
     is_pip_visible,
     kill_game,
@@ -106,6 +108,16 @@ use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut, ShortcutState};
 pub fn run() {
     use std::io;
     use tracing_subscriber::fmt::writer::MakeWriterExt;
+
+    // Disable Chromium's Windows Native Window Occlusion tracking so the WebView2
+    // process is never throttled/suspended when covered by the fullscreen game.
+    // Without this, requestAnimationFrame stops and JS execution slows down after
+    // a few minutes, causing Tauri IPC events to stop being processed in the overlay.
+    // Reference: https://chromium.googlesource.com/chromium/src.git/+/master/docs/windows_native_window_occlusion_tracking.md
+    std::env::set_var(
+        "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+        "--disable-backgrounding-occluded-windows --disable-renderer-backgrounding --disable-background-timer-throttling",
+    );
 
     // Initialize tracing with BOTH file AND terminal output
     let file_appender = RollingFileAppender::new(Rotation::DAILY, "logs", "balam.log");
@@ -273,6 +285,7 @@ pub fn run() {
             list_directory,
             get_system_drives,
             launch_game,
+            get_active_game,
             kill_game,
             get_system_status,
             log_message,
@@ -345,6 +358,7 @@ pub fn run() {
             // Overlay commands
             show_game_overlay,
             hide_game_overlay,
+            show_main_window,
             toggle_game_overlay,
             set_overlay_opacity,
             set_overlay_click_through,

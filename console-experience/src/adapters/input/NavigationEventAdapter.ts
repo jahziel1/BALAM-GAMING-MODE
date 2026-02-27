@@ -18,13 +18,23 @@ export class NavigationEventAdapter implements NavigationEventListener {
   private callbacks = new Set<(event: NavigationEvent) => void>();
   private keyboardListener?: (e: KeyboardEvent) => void;
   private wheelListener?: (e: WheelEvent) => void;
-  private gamepadRAF?: number;
+  private gamepadInterval?: ReturnType<typeof setInterval>;
   private lastAxisTime = 0;
   private lastWheelTime = 0;
   private buttonStates = new Array(20).fill(false);
   private triggerStates = { LT: false, RT: false }; // Track trigger states
-  private unlistenNative?: () => void;
   private unlistenController?: () => void;
+
+  constructor() {
+    // The Tauri 'nav' listener is set up ONCE at construction time and never torn down.
+    // inputAdapter is a module-level singleton so this lives for the entire page lifetime.
+    // Keeping it outside initialize()/cleanup() prevents a race condition where the async
+    // listen() hasn't resolved before the next cleanup(), leaving nav events unhandled.
+    void listen<string>('nav', (e) => {
+      const action = e.payload as NavigationAction;
+      this.emit(createNavigationEvent(action, 'NATIVE'));
+    });
+  }
 
   onNavigationEvent(callback: (event: NavigationEvent) => void): () => void {
     this.callbacks.add(callback);
@@ -96,8 +106,10 @@ export class NavigationEventAdapter implements NavigationEventListener {
     };
     window.addEventListener('wheel', this.wheelListener, { passive: true });
 
-    // Gamepad navigation (polling)
-    const checkGamepad = (time: number) => {
+    // Gamepad navigation (polling via setInterval — more reliable than RAF
+    // when the window doesn't have OS-level focus, e.g. overlay behind a game)
+    const checkGamepad = () => {
+      const time = Date.now();
       const gamepads = navigator.getGamepads();
       const gp = gamepads[0] ?? gamepads[1] ?? gamepads[2] ?? gamepads[3];
 
@@ -168,18 +180,8 @@ export class NavigationEventAdapter implements NavigationEventListener {
           this.triggerStates.RT = false;
         }
       }
-
-      this.gamepadRAF = requestAnimationFrame(checkGamepad);
     };
-    this.gamepadRAF = requestAnimationFrame(checkGamepad);
-
-    // Native Tauri events
-    void listen<string>('nav', (e) => {
-      const action = e.payload as NavigationAction;
-      this.emit(createNavigationEvent(action, 'NATIVE'));
-    }).then((unlisten) => {
-      this.unlistenNative = unlisten;
-    });
+    this.gamepadInterval = setInterval(checkGamepad, 16);
   }
 
   private cleanup(): void {
@@ -189,11 +191,8 @@ export class NavigationEventAdapter implements NavigationEventListener {
     if (this.wheelListener) {
       window.removeEventListener('wheel', this.wheelListener);
     }
-    if (this.gamepadRAF) {
-      cancelAnimationFrame(this.gamepadRAF);
-    }
-    if (this.unlistenNative) {
-      this.unlistenNative();
+    if (this.gamepadInterval !== undefined) {
+      clearInterval(this.gamepadInterval);
     }
     if (this.unlistenController) {
       this.unlistenController();

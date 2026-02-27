@@ -345,6 +345,17 @@ pub fn launch_game(
     Ok(ActiveGame::from(active_info))
 }
 
+/// Get the currently active game (used by overlay window which has no Zustand store)
+#[tauri::command]
+pub fn get_active_game(container: State<DIContainer>) -> Option<ActiveGame> {
+    let active_games = container.active_games_tracker.list_active();
+    active_games
+        .into_iter()
+        .next()
+        .and_then(|game_id| container.active_games_tracker.get(&game_id))
+        .map(ActiveGame::from)
+}
+
 #[tauri::command]
 pub fn kill_game(pid: u32, container: State<DIContainer>) -> Result<(), String> {
     info!("🎯 Kill request for PID: {}", pid);

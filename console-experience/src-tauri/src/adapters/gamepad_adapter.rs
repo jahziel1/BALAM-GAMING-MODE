@@ -40,9 +40,10 @@ impl ButtonState {
     }
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
     thread::spawn(move || {
-        info!("--- BALAM ENGINE: DUAL-CHANNEL NAVIGATION (Sync-Active v2) ---");
+        info!("--- BALAM ENGINE: DUAL-CHANNEL NAVIGATION (Rust-Native v3) ---");
 
         let mut btn_a = ButtonState::new();
         let mut btn_b = ButtonState::new();
@@ -51,9 +52,17 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
         let mut btn_left = ButtonState::new();
         let mut btn_right = ButtonState::new();
         let mut btn_menu = ButtonState::new();
+        let mut btn_toggle_overlay = ButtonState::new();
 
         let mut current_controller = ControllerType::Keyboard;
         let mut gilrs = Gilrs::new().ok();
+        let mut keepalive_counter: u32 = 0;
+
+        // Overlay navigation state — tracked entirely in Rust so critical actions
+        // (Resume, Back) work even if the WebView renderer is throttled/suspended.
+        let mut overlay_focus_idx: i32 = 0; // 0=Resume, 1=QuickSettings, 2=CloseGame
+        let mut overlay_confirm_pending = false; // Close Game confirm dialog is open
+        let mut overlay_was_visible = false;
 
         loop {
             let mut pressed_a = false;
@@ -111,8 +120,17 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
 
                 let lb = (b & XINPUT_GAMEPAD_LEFT_SHOULDER.0) != 0;
                 let rb = (b & XINPUT_GAMEPAD_RIGHT_SHOULDER.0) != 0;
-                if lb && rb && pressed_menu {
-                    handle_wakeup(&app);
+
+                // LB+RB+Start: Toggle game overlay (native overlay system)
+                // Uses ButtonState to only fire ONCE on press (not every 8ms poll cycle)
+                let is_toggle_combo = lb && rb && pressed_menu;
+                if btn_toggle_overlay.update(is_toggle_combo) {
+                    if let Some(win) = app.get_webview_window("main") {
+                        let _ = win.emit("nav", "TOGGLE_OVERLAY");
+                    }
+                }
+                if is_toggle_combo {
+                    pressed_menu = false; // Consume to prevent MENU event firing simultaneously
                 }
             } else if let Some(ref mut g) = gilrs {
                 while g.next_event().is_some() {}
@@ -161,28 +179,147 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
                 let _ = app.emit("controller-type-changed", type_str);
             }
 
-            if let Some(win) = app.get_webview_window("main") {
-                if win.is_visible().unwrap_or(false) {
-                    if btn_a.update(pressed_a) {
-                        let _ = win.emit("nav", "CONFIRM");
-                    }
-                    if btn_b.update(pressed_b) {
-                        let _ = win.emit("nav", "BACK");
-                    }
+            // ── Overlay or Main Window Navigation ────────────────────────────────
+            let overlay_win_opt = app.get_webview_window("overlay");
+            let overlay_is_visible = overlay_win_opt
+                .as_ref()
+                .map(|w| w.is_visible().unwrap_or(false))
+                .unwrap_or(false);
+
+            // Reset overlay state each time the overlay becomes visible.
+            // This ensures focus always starts on Resume when the overlay opens.
+            if overlay_is_visible && !overlay_was_visible {
+                overlay_focus_idx = 0;
+                overlay_confirm_pending = false;
+                if let Some(ref ov) = overlay_win_opt {
+                    let _ = ov.emit("overlay-focus-changed", 0i32);
+                }
+            }
+            overlay_was_visible = overlay_is_visible;
+
+            if overlay_is_visible {
+                // ─── OVERLAY: Rust-Native Navigation ─────────────────────────────
+                // Critical actions (Resume, Back) are executed directly from Rust,
+                // bypassing WebView JS. This keeps the overlay navigable even when
+                // Chromium throttles the renderer due to Windows Occlusion Tracking.
+                //
+                // Non-critical actions (Quick Settings, Close Game confirmation)
+                // still emit events to JS as fallback — they work when JS is alive.
+                if let Some(ref ov) = overlay_win_opt {
+                    const OVERLAY_ITEMS: i32 = 3; // Resume | QuickSettings | CloseGame
+
+                    // UP: cycle focus upward
                     if btn_up.update(pressed_up) {
-                        let _ = win.emit("nav", "UP");
+                        overlay_focus_idx = if overlay_focus_idx == 0 {
+                            OVERLAY_ITEMS - 1
+                        } else {
+                            overlay_focus_idx - 1
+                        };
+                        let _ = ov.emit("overlay-focus-changed", overlay_focus_idx);
                     }
+
+                    // DOWN: cycle focus downward
                     if btn_down.update(pressed_down) {
-                        let _ = win.emit("nav", "DOWN");
+                        overlay_focus_idx = (overlay_focus_idx + 1) % OVERLAY_ITEMS;
+                        let _ = ov.emit("overlay-focus-changed", overlay_focus_idx);
                     }
+
+                    // LEFT/RIGHT: forward to JS (confirm dialog & slider navigation)
                     if btn_left.update(pressed_left) {
-                        let _ = win.emit("nav", "LEFT");
+                        let _ = ov.emit("nav", "LEFT");
                     }
                     if btn_right.update(pressed_right) {
-                        let _ = win.emit("nav", "RIGHT");
+                        let _ = ov.emit("nav", "RIGHT");
                     }
+
+                    // A (CONFIRM)
+                    if btn_a.update(pressed_a) {
+                        if overlay_confirm_pending {
+                            // Confirm dialog is open: forward CONFIRM to JS so the
+                            // focused button (Cancel or Close Game) gets .click()ed
+                            let _ = ov.emit("nav", "CONFIRM");
+                        } else {
+                            match overlay_focus_idx {
+                                0 => {
+                                    // Resume: hide overlay DIRECTLY — no JS needed.
+                                    // Critical path: works even when WebView is suspended.
+                                    let _ = ov.hide();
+                                },
+                                1 => {
+                                    // Quick Settings: emit to JS (non-critical)
+                                    let _ = ov.emit("overlay-action", "OPEN_QUICK_SETTINGS");
+                                },
+                                2 => {
+                                    // Close Game: open confirm dialog via JS (non-critical)
+                                    overlay_confirm_pending = true;
+                                    let _ = ov.emit("overlay-action", "CLOSE_GAME_REQUEST");
+                                },
+                                _ => {},
+                            }
+                        }
+                    }
+
+                    // B (BACK): cancel confirm dialog OR hide overlay
+                    if btn_b.update(pressed_b) {
+                        if overlay_confirm_pending {
+                            // Cancel confirm via JS so dialog closes cleanly
+                            overlay_confirm_pending = false;
+                            let _ = ov.emit("nav", "BACK");
+                        } else {
+                            // Hide overlay DIRECTLY — critical path, no JS needed.
+                            let _ = ov.hide();
+                        }
+                    }
+
+                    // MENU: same behaviour as B
                     if btn_menu.update(pressed_menu) {
-                        let _ = win.emit("nav", "MENU");
+                        if overlay_confirm_pending {
+                            overlay_confirm_pending = false;
+                            let _ = ov.emit("nav", "BACK");
+                        } else {
+                            let _ = ov.hide();
+                        }
+                    }
+                }
+            } else {
+                // ─── MAIN WINDOW: JS-based Navigation ───────────────────────────
+                if let Some(win) = app.get_webview_window("main") {
+                    if win.is_visible().unwrap_or(false) {
+                        if btn_a.update(pressed_a) {
+                            let _ = win.emit("nav", "CONFIRM");
+                        }
+                        if btn_b.update(pressed_b) {
+                            let _ = win.emit("nav", "BACK");
+                        }
+                        if btn_up.update(pressed_up) {
+                            let _ = win.emit("nav", "UP");
+                        }
+                        if btn_down.update(pressed_down) {
+                            let _ = win.emit("nav", "DOWN");
+                        }
+                        if btn_left.update(pressed_left) {
+                            let _ = win.emit("nav", "LEFT");
+                        }
+                        if btn_right.update(pressed_right) {
+                            let _ = win.emit("nav", "RIGHT");
+                        }
+                        if btn_menu.update(pressed_menu) {
+                            let _ = win.emit("nav", "MENU");
+                        }
+                    }
+                }
+            }
+
+            // Keepalive: every 5 seconds, execute a no-op in the overlay WebView.
+            // WebView2 can suspend JS execution when it detects the window is occluded
+            // by a fullscreen game. eval() bypasses that suspension and keeps the
+            // event loop alive so Tauri nav events continue to be processed.
+            keepalive_counter += 1;
+            if keepalive_counter >= 625 {
+                keepalive_counter = 0;
+                if let Some(overlay) = app.get_webview_window("overlay") {
+                    if overlay.is_visible().unwrap_or(false) {
+                        let _ = overlay.eval("void 0");
                     }
                 }
             }
@@ -190,14 +327,4 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
             thread::sleep(Duration::from_millis(8));
         }
     });
-}
-
-fn handle_wakeup<R: Runtime>(app: &AppHandle<R>) {
-    if let Some(win) = app.get_webview_window("main") {
-        if !win.is_visible().unwrap_or(false) {
-            let _ = win.show();
-            let _ = win.set_always_on_top(true);
-            let _ = win.set_focus();
-        }
-    }
 }

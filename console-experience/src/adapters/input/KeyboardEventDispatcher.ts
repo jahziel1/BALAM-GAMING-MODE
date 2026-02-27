@@ -9,6 +9,17 @@ import { KeyboardEventDispatcher as IKeyboardEventDispatcher } from '../../ports
 
 export class KeyboardEventDispatcher implements IKeyboardEventDispatcher {
   dispatchKeyEvent(key: string, modifiers?: { shift?: boolean }): void {
+    const target = (document.activeElement as HTMLElement | null) ?? document.body;
+
+    // For Enter on buttons/links: use .click() directly.
+    // Tauri's WebView (Chromium) only fires button activation for trusted keyboard events
+    // (isTrusted=true). Synthetic KeyboardEvent dispatches are NOT trusted, so the browser
+    // won't fire a click. .click() bypasses this restriction and triggers React's onClick.
+    if (key === 'Enter' && (target.tagName === 'BUTTON' || target.tagName === 'A')) {
+      target.click();
+      return;
+    }
+
     const event = new KeyboardEvent('keydown', {
       key,
       bubbles: true,
@@ -17,9 +28,6 @@ export class KeyboardEventDispatcher implements IKeyboardEventDispatcher {
     });
     // Dispatch on the focused element so the event bubbles through the DOM tree,
     // reaching React onKeyDown handlers and native element behaviours (e.g. range sliders).
-    // window.dispatchEvent() only reaches window-level listeners and is ignored by React and
-    // native elements — that's why gamepad key events had no effect inside panels.
-    const target = (document.activeElement as HTMLElement | null) ?? document.body;
     target.dispatchEvent(event);
   }
 }
