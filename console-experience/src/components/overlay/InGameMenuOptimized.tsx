@@ -32,7 +32,7 @@ import './InGameMenu.css';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Loader2, Play, Settings, X } from 'lucide-react';
+import { Home, Loader2, Play, Settings, X } from 'lucide-react';
 import { memo, useEffect, useState } from 'react';
 
 import { useAppStore } from '@/application/providers/StoreProvider';
@@ -53,8 +53,15 @@ import { getCachedAssetSrc } from '@/utils/image-cache';
  */
 export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
   // App store (Slices Pattern)
-  const { overlay, game, closeLeftSidebar, openRightSidebar, closeAllSidebars, clearActiveGame } =
-    useAppStore();
+  const {
+    overlay,
+    game,
+    closeLeftSidebar,
+    openRightSidebar,
+    closeRightSidebar,
+    closeAllSidebars,
+    clearActiveGame,
+  } = useAppStore();
 
   // Local state
   const [isClosingGame, setIsClosingGame] = useState(false);
@@ -88,6 +95,18 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOverlayWindow]);
 
+  // Reset Quick Settings to closed every time the overlay becomes visible.
+  // Prevents QS from appearing "auto-opened" due to stale Zustand state from a previous session.
+  useEffect(() => {
+    if (!isOverlayWindow) return;
+    closeRightSidebar();
+    const handleVisibility = () => {
+      if (!document.hidden) closeRightSidebar();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [isOverlayWindow, closeRightSidebar]);
+
   // In overlay window: hide when game ends externally (game crashed, exited normally, etc.)
   useEffect(() => {
     if (!isOverlayWindow) return;
@@ -113,7 +132,7 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
     };
   }, [isOverlayWindow]);
 
-  // Rust-Native actions: Quick Settings and Close Game triggered from Rust gamepad thread.
+  // Rust-Native actions: Quick Settings, Close Game, and Return to Home.
   useEffect(() => {
     if (!isOverlayWindow) return;
     const unlisten = listen<string>('overlay-action', (e) => {
@@ -121,6 +140,9 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
         openRightSidebar();
       } else if (e.payload === 'CLOSE_GAME_REQUEST') {
         setShowCloseConfirm(true);
+      } else if (e.payload === 'RETURN_TO_HOME') {
+        void invoke('hide_game_overlay');
+        void invoke('show_main_window');
       }
     });
     return () => {
@@ -234,6 +256,19 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
 
   const handleCloseGameCancelled = () => {
     setShowCloseConfirm(false);
+  };
+
+  /**
+   * Return to Home — hides the overlay and shows the launcher WITHOUT closing the game.
+   * The game keeps running in the background.
+   */
+  const handleReturnToHome = async () => {
+    if (isOverlayWindow) {
+      await invoke('hide_game_overlay');
+      await invoke('show_main_window');
+    } else {
+      closeAllSidebars();
+    }
   };
 
   const handleClose = () => {
@@ -352,6 +387,21 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
             fullWidth
           >
             {isClosingGame ? 'Closing Game...' : 'Close Game'}
+          </Button>
+
+          <Button
+            id="overlay-btn-3"
+            variant="ghost"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <Home />
+              </IconWrapper>
+            }
+            onClick={() => void handleReturnToHome()}
+            fullWidth
+          >
+            Return to Home
           </Button>
         </div>
       </section>

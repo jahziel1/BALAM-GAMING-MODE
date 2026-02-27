@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { useHdrManager } from '@/hooks/useHdrManager';
 import { useToast } from '@/hooks/useToast';
 
 import { Button } from '../core/Button/Button';
@@ -123,6 +124,15 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   // Toast notifications
   const { error: showErrorToast } = useToast();
 
+  // HDR management — primary display only
+  const {
+    getPrimaryDisplay,
+    isHdrSupported,
+    isHdrEnabled,
+    toggleHdr,
+    refresh: refreshDisplays,
+  } = useHdrManager();
+
   // Load current values function - declared before useEffect
   const loadCurrentValues = useCallback(async () => {
     try {
@@ -180,6 +190,22 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
       void loadCurrentValues();
     }
   }, [isOpen, loadCurrentValues]);
+
+  // Refresh HDR display info each time the panel opens
+  useEffect(() => {
+    if (isOpen) void refreshDisplays();
+  }, [isOpen, refreshDisplays]);
+
+  const handleHdrToggle = useCallback(
+    async (displayId: number, currentEnabled: boolean) => {
+      try {
+        await toggleHdr(displayId, !currentEnabled);
+      } catch {
+        showErrorToast('HDR toggle failed', 'Check if your display supports HDR');
+      }
+    },
+    [toggleHdr, showErrorToast]
+  );
 
   // Handlers
   const handleVolumeChange = useCallback(
@@ -258,6 +284,11 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
   // Radix Slider's built-in keyboard handlers process LEFT/RIGHT Arrow keys to adjust values.
 
   if (!isOpen) return null;
+
+  // Derived HDR state — only computed when panel is open
+  const primaryDisplay = getPrimaryDisplay();
+  const hdrSupported = primaryDisplay ? isHdrSupported(primaryDisplay.id) : false;
+  const hdrEnabled = primaryDisplay ? isHdrEnabled(primaryDisplay.id) : false;
 
   console.log('🎛️ QuickSettings rendering with:', {
     volume,
@@ -342,6 +373,27 @@ export const QuickSettings: React.FC<QuickSettingsProps> = ({
           Bluetooth
         </Button>
       </div>
+
+      {/* HDR Toggle — only shown when primary display supports HDR */}
+      {hdrSupported && primaryDisplay ? (
+        <div className="display-section">
+          <SectionHeader level={3}>Display</SectionHeader>
+          <button
+            className={`display-toggle-row ${hdrEnabled ? 'active' : ''}`}
+            onClick={() => void handleHdrToggle(primaryDisplay.id, hdrEnabled)}
+            role="switch"
+            aria-checked={hdrEnabled}
+            aria-label={hdrEnabled ? 'Disable HDR' : 'Enable HDR'}
+          >
+            <span className="toggle-icon">
+              <Monitor size={20} />
+            </span>
+            <span className="toggle-label">HDR</span>
+            <span className="toggle-state">{hdrEnabled ? 'On' : 'Off'}</span>
+            <span className={`toggle-pill ${hdrEnabled ? 'on' : ''}`} />
+          </button>
+        </div>
+      ) : null}
 
       <RadixSlider
         label="Volume"

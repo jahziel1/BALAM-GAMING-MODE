@@ -95,6 +95,99 @@
   flex-shrink: 0;
 }
 
+/* Display Settings — Toggle Rows (HDR, etc.) */
+.display-section {
+  margin-bottom: calc(2 * var(--space-1));
+}
+
+.display-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--card-radius, 8px);
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.2s ease);
+  color: var(--color-text-primary, #fff);
+  text-align: left;
+  width: 100%;
+}
+
+.display-toggle-row:hover,
+.display-toggle-row:focus-visible {
+  background: rgba(45, 115, 255, 0.1);
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.display-toggle-row.active {
+  border-color: var(--color-primary);
+}
+
+.toggle-icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.toggle-label {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.toggle-state {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  margin-right: var(--space-2);
+}
+
+.display-toggle-row.active .toggle-state {
+  color: var(--color-primary);
+}
+
+.toggle-pill {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background: var(--color-background-elevated-2, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--glass-border);
+  flex-shrink: 0;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.toggle-pill.on {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.toggle-pill::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-pill.on::after {
+  left: 20px;
+}
+
 /* Responsive for handhelds */
 @media (max-width: 768px) {
   .prompts-container {
