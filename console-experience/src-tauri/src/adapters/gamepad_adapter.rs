@@ -206,7 +206,7 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
                 // Non-critical actions (Quick Settings, Close Game confirmation)
                 // still emit events to JS as fallback — they work when JS is alive.
                 if let Some(ref ov) = overlay_win_opt {
-                    const OVERLAY_ITEMS: i32 = 4; // Resume | QuickSettings | CloseGame | ReturnHome
+                    const OVERLAY_ITEMS: i32 = 3; // Resume | QuickSettings | CloseGame
 
                     // UP: cycle focus upward
                     if btn_up.update(pressed_up) {
@@ -253,15 +253,6 @@ pub fn start_gamepad_listener<R: Runtime>(app: AppHandle<R>) {
                                     // Close Game: open confirm dialog via JS (non-critical)
                                     overlay_confirm_pending = true;
                                     let _ = ov.emit("overlay-action", "CLOSE_GAME_REQUEST");
-                                },
-                                3 => {
-                                    // Return to Home: hide overlay + restore main window DIRECTLY.
-                                    // Game keeps running. No JS needed — critical path.
-                                    let _ = ov.hide();
-                                    if let Some(main) = app.get_webview_window("main") {
-                                        let _ = main.show();
-                                        let _ = main.set_focus();
-                                    }
                                 },
                                 _ => {},
                             }
