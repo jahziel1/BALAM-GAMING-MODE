@@ -32,7 +32,7 @@ import './InGameMenu.css';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Loader2, Play, Settings, X } from 'lucide-react';
+import { Home, Loader2, Play, Settings, X } from 'lucide-react';
 import { memo, useEffect, useState } from 'react';
 
 import { useAppStore } from '@/application/providers/StoreProvider';
@@ -113,7 +113,7 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
     };
   }, [isOverlayWindow]);
 
-  // Rust-Native actions: Quick Settings and Close Game triggered from Rust gamepad thread.
+  // Rust-Native actions: Quick Settings, Close Game, and Return to Home triggered from Rust gamepad thread.
   useEffect(() => {
     if (!isOverlayWindow) return;
     const unlisten = listen<string>('overlay-action', (e) => {
@@ -121,11 +121,27 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
         openRightSidebar();
       } else if (e.payload === 'CLOSE_GAME_REQUEST') {
         setShowCloseConfirm(true);
+      } else if (e.payload === 'RETURN_TO_HOME') {
+        void invoke('hide_game_overlay');
+        void invoke('show_main_window');
       }
     });
     return () => {
       void unlisten.then((fn) => fn());
     };
+  }, [isOverlayWindow, openRightSidebar]);
+
+  // Auto-open Quick Settings whenever the overlay becomes visible.
+  // This removes the dependency on the "Quick Settings" button — QS is always shown
+  // alongside the InGameMenu so users can adjust settings immediately.
+  useEffect(() => {
+    if (!isOverlayWindow) return;
+    openRightSidebar();
+    const handleVisibility = () => {
+      if (!document.hidden) openRightSidebar();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [isOverlayWindow, openRightSidebar]);
 
   // In overlay window, always render the panel — don't depend on Zustand leftSidebarOpen
@@ -234,6 +250,20 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
 
   const handleCloseGameCancelled = () => {
     setShowCloseConfirm(false);
+  };
+
+  /**
+   * Return to Home handler
+   * Hides the overlay and shows the main launcher WITHOUT closing the game.
+   * The game keeps running in the background — the user can return to it later.
+   */
+  const handleReturnToHome = async () => {
+    if (isOverlayWindow) {
+      await invoke('hide_game_overlay');
+      await invoke('show_main_window');
+    } else {
+      closeAllSidebars();
+    }
   };
 
   const handleClose = () => {
@@ -352,6 +382,21 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
             fullWidth
           >
             {isClosingGame ? 'Closing Game...' : 'Close Game'}
+          </Button>
+
+          <Button
+            id="overlay-btn-3"
+            variant="ghost"
+            size="lg"
+            icon={
+              <IconWrapper size="lg">
+                <Home />
+              </IconWrapper>
+            }
+            onClick={() => void handleReturnToHome()}
+            fullWidth
+          >
+            Return to Home
           </Button>
         </div>
       </section>
