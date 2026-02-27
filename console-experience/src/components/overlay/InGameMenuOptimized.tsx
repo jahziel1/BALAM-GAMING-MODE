@@ -131,19 +131,6 @@ export const InGameMenuOptimized = memo(function InGameMenuOptimized() {
     };
   }, [isOverlayWindow, openRightSidebar]);
 
-  // Auto-open Quick Settings whenever the overlay becomes visible.
-  // This removes the dependency on the "Quick Settings" button — QS is always shown
-  // alongside the InGameMenu so users can adjust settings immediately.
-  useEffect(() => {
-    if (!isOverlayWindow) return;
-    openRightSidebar();
-    const handleVisibility = () => {
-      if (!document.hidden) openRightSidebar();
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [isOverlayWindow, openRightSidebar]);
-
   // In overlay window, always render the panel — don't depend on Zustand leftSidebarOpen
   // (which starts false and requires an async useEffect to become true)
   const isOpen = isOverlayWindow ? true : overlay.leftSidebarOpen;
